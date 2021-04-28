@@ -7,24 +7,16 @@ using System.Threading.Tasks;
 
 namespace PoolGame
 {
-	[Library("pool_ball")]
-	public partial class PoolBall : ModelEntity
+	[Library("pool_cue")]
+	public partial class PoolCue : ModelEntity
 	{
-		public PoolBallType Type { get; set; }
-
 		public override void Spawn()
 		{
 			base.Spawn();
 
-			SetModel( "models/pool/pool_ball.vmdl" );
-			SetupPhysicsFromModel( PhysicsMotionType.Dynamic, true );
+			SetModel( "models/pool/pool_cue.vmdl" );
 
 			//EnableTouch = true;
-		}
-
-		public virtual void OnEnterPocket( TriggerBallPocket pocket )
-		{
-
 		}
 	}
 }

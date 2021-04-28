@@ -16,6 +16,7 @@ namespace PoolGame
 		}
 
 		[Net] public BaseRound Round { get; private set; }
+		[Net] public PoolBall WhiteBall { get; set; }
 
 		private BaseRound _lastRound;
 
@@ -56,8 +57,11 @@ namespace PoolGame
 					{
 						RenderColor = spawner.RenderColor,
 						WorldPos = spawner.WorldPos,
-						Type = (PoolBallType)spawner.Type
+						Type = spawner.Type
 					};
+
+					if ( ball.Type == PoolBallType.White )
+						WhiteBall = ball;
 				}
 				else
 				{

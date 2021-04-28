@@ -11,6 +11,6 @@ namespace PoolGame
 	public partial class PoolBallSpawn : ModelEntity
 	{
 		[HammerProp]
-		public int Type { get; set; }
+		public PoolBallType Type { get; set; }
 	}
 }

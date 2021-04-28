@@ -7,12 +7,31 @@ namespace PoolGame
 {
 	public partial class Player : BasePlayer
 	{
+		public bool IsFollowingWhiteBall { get; set; }
+
 		public Player()
 		{
 			Controller = new PoolController();
 			Camera = new PoolCamera();
 		}
-		
+
+		private float _cuePullBack;
+
+		public override void Spawn()
+		{
+			if ( IsServer )
+			{
+				var cue = new PoolCue
+				{
+					Owner = this
+				};
+
+				ActiveChild = cue;
+			}
+
+			base.Spawn();
+		}
+
 		public override void Respawn()
 		{
 			Game.Instance?.Round?.OnPlayerSpawn( this );
@@ -29,32 +48,49 @@ namespace PoolGame
 				ActiveChild = Input.ActiveChild;
 			}
 
-			if ( Input.Pressed( InputButton.Attack1 ) )
+			if ( IsFollowingWhiteBall )
+				return;
+
+			var whiteBall = Game.Instance.WhiteBall;
+			var playerCue = (ActiveChild as PoolCue);
+
+			if ( whiteBall != null && playerCue != null )
 			{
-				Log.Info( "Pressed Attack" );
-
-				if ( Host.IsServer )
+				if ( !Input.Down( InputButton.Attack1 ) )
 				{
-					var whiteBall = Entity.All.Find( ( e ) => e is PoolBall ball && ball.Type == PoolBallType.White ) as PoolBall;
+					var yaw = Input.Rot.Yaw();
+					playerCue.WorldRot = Rotation.From( playerCue.WorldRot.Angles().WithYaw( yaw ) );
+				}
+				else
+				{
+					_cuePullBack = Math.Clamp( _cuePullBack + Input.MouseDelta.y, -10f, 60f );
 
-					if ( whiteBall != null && whiteBall.IsValid() )
+					if ( _cuePullBack < -5f )
 					{
-						whiteBall.PhysicsBody.Wake();
-						Log.Info( "Apply Impulse" );
-						whiteBall.ApplyLocalImpulse( new Vector3( 0f, 1000f, 0f ) );
+						using ( Prediction.Off() )
+						{
+							// TODO: This is shit, work out another way to determine it.
+							var force = Input.MouseDelta.y * 200f;
+							whiteBall.PhysicsBody.Velocity = playerCue.WorldRot.Left * force;
+							ResetAndFollowWhite();
+						}
 					}
 				}
-			}
 
-			if ( LifeState != LifeState.Alive )
-			{
-				return;
+				playerCue.WorldPos = whiteBall.WorldPos - playerCue.WorldRot.Left * ( 250f + _cuePullBack );
 			}
 		}
 
 		protected override void UseFail()
 		{
 			// Do nothing. By default this plays a sound that we don't want.
+		}
+
+		private void ResetAndFollowWhite()
+		{
+			ActiveChild.EnableDrawing = false;
+			IsFollowingWhiteBall = true;
+			_cuePullBack = 0f;
 		}
 	}
 }
