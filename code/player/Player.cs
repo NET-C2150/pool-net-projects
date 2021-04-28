@@ -9,13 +9,38 @@ namespace PoolGame
 	{
 		public bool IsFollowingWhiteBall { get; set; }
 
+		public PoolCue Cue
+		{
+			get => (ActiveChild as PoolCue);
+		}
+
+		[NetLocalPredicted] public BaseView View { get; set; }
+
 		public Player()
 		{
 			Controller = new PoolController();
 			Camera = new PoolCamera();
+			View = new TopDownView()
+			{
+				Viewer = this
+			};
 		}
 
-		private float _cuePullBack;
+		public void StrikeWhiteBall( PoolCue cue, PoolBall whiteBall, float force )
+		{
+			var direction = (whiteBall.WorldPos - cue.WorldPos).Normal;
+			var tipPos = cue.GetAttachment( "tip", true ).Pos;
+
+			whiteBall.PhysicsBody.ApplyImpulseAt(
+				whiteBall.PhysicsBody.Transform.PointToLocal(tipPos),
+				direction * 1000f * whiteBall.PhysicsBody.Mass
+			);
+
+			ActiveChild.EnableDrawing = false;
+			IsFollowingWhiteBall = true;
+
+			View?.OnWhiteBallStriked( cue, whiteBall, force );
+		}
 
 		public override void Spawn()
 		{
@@ -44,53 +69,14 @@ namespace PoolGame
 			TickActiveChild();
 
 			if ( Input.ActiveChild != null )
-			{
 				ActiveChild = Input.ActiveChild;
-			}
 
-			if ( IsFollowingWhiteBall )
-				return;
-
-			var whiteBall = Game.Instance.WhiteBall;
-			var playerCue = (ActiveChild as PoolCue);
-
-			if ( whiteBall != null && playerCue != null )
-			{
-				if ( !Input.Down( InputButton.Attack1 ) )
-				{
-					var yaw = Input.Rot.Yaw();
-					playerCue.WorldRot = Rotation.From( playerCue.WorldRot.Angles().WithYaw( yaw ) );
-				}
-				else
-				{
-					_cuePullBack = Math.Clamp( _cuePullBack + Input.MouseDelta.y, -10f, 60f );
-
-					if ( _cuePullBack < -5f )
-					{
-						using ( Prediction.Off() )
-						{
-							// TODO: This is shit, work out another way to determine it.
-							var force = Input.MouseDelta.y * 200f;
-							whiteBall.PhysicsBody.Velocity = playerCue.WorldRot.Left * force;
-							ResetAndFollowWhite();
-						}
-					}
-				}
-
-				playerCue.WorldPos = whiteBall.WorldPos - playerCue.WorldRot.Left * ( 250f + _cuePullBack );
-			}
+			View?.Tick();
 		}
 
 		protected override void UseFail()
 		{
 			// Do nothing. By default this plays a sound that we don't want.
-		}
-
-		private void ResetAndFollowWhite()
-		{
-			ActiveChild.EnableDrawing = false;
-			IsFollowingWhiteBall = true;
-			_cuePullBack = 0f;
 		}
 	}
 }

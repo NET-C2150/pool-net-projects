@@ -23,7 +23,10 @@ namespace PoolGame
 
 			if ( Sandbox.Player.Local is Player player )
 			{
-				isHidden = true;
+				var whiteBall = Game.Instance.WhiteBall;
+				var cue = player.Cue;
+
+				isHidden = (whiteBall != null && cue != null);
 			}
 
 			SetClass( "hidden", isHidden );
