@@ -32,6 +32,40 @@ namespace PoolGame
 			_ = StartTickTimer();
 		}
 
+		public void RespawnAllBalls()
+		{
+			foreach ( var entity in All.Where( ( e ) => e is PoolBall ) )
+			{
+				entity.Delete();
+			}
+
+			var entities = All.Where( ( e ) => e is PoolBallSpawn );
+
+			Log.Warning( "Found " + entities.Count() + " Ball Spawners" );
+
+			var spawners = new List<Entity>();
+			spawners.AddRange( entities );
+
+			foreach ( var entity in spawners )
+			{
+				if ( entity is PoolBallSpawn spawner )
+				{
+					Log.Info( "Spawning " + spawner.Type.ToString() + " Ball" );
+
+					var ball = new PoolBall
+					{
+						RenderColor = spawner.RenderColor,
+						WorldPos = spawner.WorldPos,
+						Type = (PoolBallType)spawner.Type
+					};
+				}
+				else
+				{
+					Log.Warning( entity.EngineEntityName + " was not a spawner!" );
+				}
+			}
+		}
+
 		public void ChangeRound(BaseRound round)
 		{
 			Assert.NotNull( round );

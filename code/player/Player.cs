@@ -9,7 +9,8 @@ namespace PoolGame
 	{
 		public Player()
 		{
-			
+			Controller = new PoolController();
+			Camera = new PoolCamera();
 		}
 		
 		public override void Respawn()
@@ -26,6 +27,23 @@ namespace PoolGame
 			if ( Input.ActiveChild != null )
 			{
 				ActiveChild = Input.ActiveChild;
+			}
+
+			if ( Input.Pressed( InputButton.Attack1 ) )
+			{
+				Log.Info( "Pressed Attack" );
+
+				if ( Host.IsServer )
+				{
+					var whiteBall = Entity.All.Find( ( e ) => e is PoolBall ball && ball.Type == PoolBallType.White ) as PoolBall;
+
+					if ( whiteBall != null && whiteBall.IsValid() )
+					{
+						whiteBall.PhysicsBody.Wake();
+						Log.Info( "Apply Impulse" );
+						whiteBall.ApplyLocalImpulse( new Vector3( 0f, 1000f, 0f ) );
+					}
+				}
 			}
 
 			if ( LifeState != LifeState.Alive )

@@ -18,6 +18,8 @@ namespace PoolGame
 			if ( Host.IsServer )
 			{
 				Sandbox.Player.All.ForEach( ( player ) => (player as Player).Respawn() );
+
+				Game.Instance.RespawnAllBalls();
 			}
 		}
 

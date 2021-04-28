@@ -1,0 +1,16 @@
+@SolidClass = trigger_ball_pocket
+[
+]
+
+@PointClass editormodel( "models/pool/pool_ball.vmdl" ) = pool_ball_spawn
+[
+	rendercolor(color255) : "Color" : "255,255,255,255" : "The color of the ball"
+
+	type(choices) : "Type" : 0 : "The type of ball" =
+	[
+		0 : "Red"
+		1 : "Yellow"
+		2 : "White"
+		3 : "Black"
+	]
+]
