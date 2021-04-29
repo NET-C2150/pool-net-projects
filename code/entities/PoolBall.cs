@@ -10,6 +10,7 @@ namespace PoolGame
 	[Library( "pool_ball" )]
 	public partial class PoolBall : ModelEntity
 	{
+		public Player LastStriker { get; private set; }
 		public PoolBallType Type { get; set; }
 
 		public override void Spawn()
@@ -24,16 +25,17 @@ namespace PoolGame
 			PhysicsBody.LinearDamping = 0.5f;
 			PhysicsBody.AngularDamping = 0.5f;
 
+			// Make it harder to lift these balls off the table.
+			PhysicsBody.GravityScale = 2f;
+
 			//EnableTouch = true;
 		}
 
 		public virtual void OnEnterPocket( TriggerBallPocket pocket )
 		{
-			var scorer = Game.Instance.CurrentPlayer;
-
 			Log.Info( "Ball Entered Pocket On: " + (Host.IsClient ? "Client" : "Server") );
 
-			if ( IsServer && scorer.IsValid )
+			if ( IsServer && LastStriker != null && LastStriker.IsValid() )
 			{
 				if ( Type == PoolBallType.White )
 				{
@@ -42,9 +44,20 @@ namespace PoolGame
 				else
 				{
 					Game.Instance.RemoveBall( this );
-					scorer.Entity.Score++;
+					LastStriker.Score++;
 				}
 			}
+		}
+
+		protected override void OnPhysicsCollision( CollisionEventData eventData )
+		{
+			// Our last striker is the one responsible for this collision.
+			if ( eventData.Entity is PoolBall other )
+			{
+				LastStriker = Game.Instance.CurrentPlayer;
+			}
+
+			base.OnPhysicsCollision( eventData );
 		}
 	}
 }

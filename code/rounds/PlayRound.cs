@@ -38,7 +38,7 @@ namespace PoolGame
 
 		public override void OnTick()
 		{
-			if ( Host.IsServer )
+			if ( Host.IsServer && Game.Instance != null )
 			{
 				var currentPlayer = Game.Instance.CurrentPlayer;
 
@@ -120,6 +120,12 @@ namespace PoolGame
 
 			if ( Host.IsServer )
 			{
+				var playerOne = Game.Instance.PlayerOne.Entity;
+				var playerTwo = Game.Instance.PlayerTwo.Entity;
+
+				playerOne?.MakeSpectator( true );
+				playerTwo?.MakeSpectator( true );
+
 				Spectators.Clear();
 			}
 		}

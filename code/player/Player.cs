@@ -35,12 +35,13 @@ namespace PoolGame
 
 			IsFollowingBall = false;
 			IsSpectator = isSpectator;
+			IsTurn = false;
+			Score = 0;
 		}
 
 		public void StartPlaying()
 		{
 			MakeSpectator( false );
-
 			Score = 0;
 		}
 
@@ -56,6 +57,7 @@ namespace PoolGame
 
 		public void FinishTurn()
 		{
+			IsFollowingBall = false;
 			ShowPoolCue( false );
 			IsTurn = false;
 		}
