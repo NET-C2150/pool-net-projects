@@ -8,15 +8,25 @@ namespace PoolGame
 {
 	public class PlayerDisplayItem : Panel
 	{
+		public Panel PlayerContainer;
 		public Label Name;
 		public Image Avatar;
+
+		public Panel ScoreContainer;
 		public Label Score;
+		public Panel BallType;
+		
 
 		public PlayerDisplayItem()
 		{
-			Name = Add.Label( "Name", "name" );
-			Avatar = Add.Image( "", "avatar" );
-			Score = Add.Label( "0", "score" );
+			PlayerContainer = Add.Panel("player-container");
+			Avatar = PlayerContainer.Add.Image( "", "avatar" );
+			Name = PlayerContainer.Add.Label("Name", "name");
+
+			ScoreContainer = Add.Panel("score-container");
+			Score = ScoreContainer.Add.Label("0", "score");
+			BallType = ScoreContainer.Add.Panel("ball");
+
 		}
 
 		public void Update( EntityHandle<Player> player )

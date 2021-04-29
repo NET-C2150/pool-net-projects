@@ -1,50 +1,112 @@
 ﻿playerdisplay {
+    flex-direction: row;
+    justify-content: center;
     position: absolute;
-    width: 100%;
     height: 100%;
     left: 0px;
-    top: 0px;
+    top: 0;
+    width: 100%;
 
     playerdisplayitem {
-        position: absolute;
-        background-color: rgba(0, 0, 0, 0.9);
-        border-radius: 16px;
+        align-items: center;
         font-size: 24px;
-        width: 400px;
-        height: 40px;
-        top: 80px;
+        height: 60px;
+        padding: 10px;
+        top: 120px;
+        transform: scale(0.9);
+        transition: all 0.2s ease;
 
         &.one {
-            left: 80px;
+
+            .score-container {
+                .ball {
+                    background-color: #EAD458; // Set dynamically with Ball Colour
+                    margin-left: 8px;
+                }
+            }
+
+            .player-container {
+                flex-direction: row-reverse;
+                margin-right: 16px;
+
+                .avatar {
+                    margin-left: 8px;
+                }
+            }
         }
 
         &.two {
-            right: 80px;
+            flex-direction: row-reverse;
+
+            .score-container {
+                flex-direction: row-reverse;
+
+                .ball {
+                    background-color: #EA5858; // Set dynamically with Ball Colour
+                    margin-right: 8px;
+                }
+            }
+
+            .player-container {
+                margin-left: 16px;
+
+                .avatar {
+                    margin-right: 8px;
+                }
+            }
         }
 
-        .avatar {
-            position: absolute;
+        .player-container {
+            flex-grow: 1;
+            align-items: center;
+            opacity: 0.5;
+
+            .name {
+                color: #fff;
+                font-size: 20px;
+                font-weight: bold;
+                text-shadow: 0 1px 2px rgba(#000,0.8);
+            }
+
+            .avatar {
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+
+        .score-container {
+            align-items: center;
+            background-color: rgba(#040507,0.7);
             border-radius: 50%;
-            width: 40px;
             height: 40px;
+            justify-content: center;
+            padding: 16px;
+
+            .ball {
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+            }
+
+            .score {
+                color: #fff;
+                font-size: 20px;
+            }
         }
 
-        .score {
-            position: absolute;
-            color: lawngreen;
-            right: 30px;
-            top: 8px;
-        }
-
-        .name {
-            position: absolute;
-            color: white;
-            left: 50px;
-            top: 8px;
-        }
 
         &.active {
-            border: 2px #00ff00 solid;
+            transform: scale(1.1);
+
+            .score-container {
+                background-color: rgba(#43AC4E,0.5);
+            }
+
+            .player-container {
+                opacity: 1;
+            }
         }
 
         &.hidden {
