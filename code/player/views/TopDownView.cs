@@ -10,29 +10,35 @@ namespace PoolGame
 	public class TopDownView : BaseView
 	{
 		public float CuePullBackOffset { get; set; }
+		public float CueYaw { get; set; }
 
 		public override void UpdateCamera( PoolCamera camera )
 		{
-			camera.Pos = camera.Pos.LerpTo( new Vector3( 0f, 0f, 1600f ), Time.Delta );
+			var zoomOutDistance = 900f;
+
+			if ( Viewer.Input.Down( InputButton.Attack1 ) )
+				zoomOutDistance = 750f;
+
+			camera.Pos = camera.Pos.LerpTo( new Vector3( 0f, 0f, zoomOutDistance ), Time.Delta );
 			camera.Rot = Rotation.Lerp( camera.Rot, Rotation.LookAt( Vector3.Down ), Time.Delta );
 		}
 
 		public override void Tick()
 		{
-			if ( Viewer.IsFollowingWhiteBall )
+			if ( !Viewer.IsTurn || Viewer.IsFollowingBall )
 				return;
 
 			var whiteBall = Game.Instance.WhiteBall;
 			var input = Viewer.Input;
 			var cue = Viewer.Cue;
 
-			if ( whiteBall == null || cue == null )
+			if ( !whiteBall.IsValid || !cue.IsValid )
 				return;
 
 			if ( !input.Down( InputButton.Attack1 ) )
 			{
-				var yaw = input.Rot.Yaw();
-				cue.WorldRot = Rotation.From( cue.WorldRot.Angles().WithYaw( yaw ) );
+				CueYaw += input.MouseDelta.x;
+				cue.Entity.WorldRot = Rotation.From( cue.Entity.WorldRot.Angles().WithYaw( CueYaw ) );
 			}
 			else
 			{
@@ -42,20 +48,17 @@ namespace PoolGame
 				{
 					using ( Prediction.Off() )
 					{
-						// TODO: This is shit, it will likely be physics based.
-						Log.Info( "Apply Force: " + (Host.IsClient.ToString()) );
-						var force = input.MouseDelta.y * 200f;
+						var force = input.MouseDelta.y * -200f;
 						Viewer.StrikeWhiteBall( cue, whiteBall, force );
 						return;
 					}
 				}
 			}
 
-			cue.EnableDrawing = true;
-			cue.WorldPos = whiteBall.WorldPos - cue.WorldRot.Left * (250f + CuePullBackOffset);
+			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (250f + CuePullBackOffset);
 		}
 
-		public override void OnWhiteBallStriked( PoolCue cue, PoolBall whiteBall, float force )
+		public override void OnWhiteBallStruck( PoolCue cue, PoolBall whiteBall, float force )
 		{
 			CuePullBackOffset = 0f;
 		}

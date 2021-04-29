@@ -23,6 +23,6 @@ namespace PoolGame
 
 		public virtual void BuildInput( ClientInput input ) { }
 
-		public virtual void OnWhiteBallStriked( PoolCue cue, PoolBall whiteBall, float force ) { }
+		public virtual void OnWhiteBallStruck( PoolCue cue, PoolBall whiteBall, float force ) { }
 	}
 }

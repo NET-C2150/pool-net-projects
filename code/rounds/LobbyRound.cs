@@ -19,7 +19,7 @@ namespace PoolGame
 			{
 				Sandbox.Player.All.ForEach( ( player ) => (player as Player).Respawn() );
 
-				Game.Instance.RespawnAllBalls();
+				Game.Instance.RemoveAllBalls();
 			}
 		}
 
@@ -28,26 +28,14 @@ namespace PoolGame
 			Log.Info( "Finished Lobby Round" );
 		}
 
-		public override void OnPlayerKilled( Player player )
-		{
-			_ = StartRespawnTimer( player );
-
-			base.OnPlayerKilled( player );
-		}
-
-		private async Task StartRespawnTimer( Player player )
-		{
-			await Task.Delay( 1000 );
-
-			player.Respawn();
-		}
-
 		public override void OnPlayerSpawn( Player player )
 		{
 			if ( Players.Contains( player ) )
 			{
 				return;
 			}
+
+			player.MakeSpectator( true );
 
 			AddPlayer( player );
 

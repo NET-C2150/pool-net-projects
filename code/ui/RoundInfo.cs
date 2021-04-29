@@ -11,15 +11,13 @@ namespace PoolGame
 		public Panel Container;
 		public Label RoundName;
 		public Label TimeLeft;
-		public Panel Icon;
 
 		public RoundInfo()
 		{
 			StyleSheet.Load( "/ui/RoundInfo.scss" );
 
-			Container = Add.Panel( "roundContainer" );
+			Container = Add.Panel( "container" );
 			RoundName = Container.Add.Label( "Round", "roundName" );
-			Icon = Container.Add.Panel( "icon" );
 			TimeLeft = Container.Add.Label( "00:00", "timeLeft" );
 		}
 

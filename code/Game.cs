@@ -8,6 +8,9 @@ namespace PoolGame
 	[Library( "pool", Title = "Pool" )]
 	partial class Game : Sandbox.Game
 	{
+		public Player PreviousWinner { get; set; }
+		public Player PreviousLoser { get; set; }
+		public List<PoolBall> AllBalls { get; private set; }
 		public Hud Hud { get; set; }
 
 		public static Game Instance
@@ -16,7 +19,10 @@ namespace PoolGame
 		}
 
 		[Net] public BaseRound Round { get; private set; }
-		[Net] public PoolBall WhiteBall { get; set; }
+		[Net] public EntityHandle<PoolBall> WhiteBall { get; set; }
+		[Net] public EntityHandle<Player> CurrentPlayer { get; set; }
+		[Net] public EntityHandle<Player> PlayerOne { get; set; }
+		[Net] public EntityHandle<Player> PlayerTwo { get; set; }
 
 		private BaseRound _lastRound;
 
@@ -33,12 +39,54 @@ namespace PoolGame
 			_ = StartTickTimer();
 		}
 
+		public void RespawnWhiteBall()
+		{
+			var whiteBall = WhiteBall.Entity;
+			var entities = All.Where( ( e ) => e is PoolBallSpawn );
+
+			foreach ( var entity in entities )
+			{
+				if ( entity is PoolBallSpawn spawner )
+				{
+					if ( spawner.Type == PoolBallType.White )
+					{
+						whiteBall.WorldPos = spawner.WorldPos;
+						whiteBall.PhysicsBody.AngularVelocity = Vector3.Zero;
+						whiteBall.PhysicsBody.Velocity = Vector3.Zero;
+						whiteBall.PhysicsBody.ClearForces();
+
+						return;
+					}
+				}
+			}
+		}
+
+		public void RemoveBall( PoolBall ball )
+		{
+			AllBalls.Remove( ball );
+			ball.Delete();
+		}
+
+		public void RemoveAllBalls()
+		{
+			if ( AllBalls != null )
+			{
+				foreach ( var entity in AllBalls )
+				{
+					entity.Delete();
+				}
+
+				AllBalls.Clear();
+			}
+			else
+			{
+				AllBalls = new();
+			}
+		}
+
 		public void RespawnAllBalls()
 		{
-			foreach ( var entity in All.Where( ( e ) => e is PoolBall ) )
-			{
-				entity.Delete();
-			}
+			RemoveAllBalls();
 
 			var entities = All.Where( ( e ) => e is PoolBallSpawn );
 
@@ -62,6 +110,8 @@ namespace PoolGame
 
 					if ( ball.Type == PoolBallType.White )
 						WhiteBall = ball;
+
+					AllBalls.Add( ball );
 				}
 				else
 				{

@@ -17,10 +17,10 @@ namespace PoolGame
 			var whiteBall = Game.Instance.WhiteBall;
 			var cue = Viewer.Cue;
 
-			if ( whiteBall != null && cue != null )
+			if ( whiteBall.IsValid && cue.IsValid )
 			{
-				camera.Pos = cue.WorldPos + new Vector3( 0f, 0f, 50f + HeightOffset );
-				var difference = (whiteBall.WorldPos - camera.Pos).Normal;
+				camera.Pos = cue.Entity.WorldPos + new Vector3( 0f, 0f, 50f + HeightOffset );
+				var difference = (whiteBall.Entity.WorldPos - camera.Pos).Normal;
 				camera.Rot = Rotation.LookAt( difference, Vector3.Up );
 			}
 			else
@@ -32,20 +32,20 @@ namespace PoolGame
 
 		public override void Tick()
 		{
-			if ( Viewer.IsFollowingWhiteBall )
+			if ( Viewer.IsFollowingBall )
 				return;
 
 			var whiteBall = Game.Instance.WhiteBall;
 			var input = Viewer.Input;
 			var cue = Viewer.Cue;
 
-			if ( whiteBall == null || cue == null )
+			if ( !whiteBall.IsValid || !cue.IsValid )
 				return;
 
 			if ( !input.Down( InputButton.Attack1 ) )
 			{
 				var yaw = input.Rot.Yaw();
-				cue.WorldRot = Rotation.From( cue.WorldRot.Angles().WithYaw( yaw ) );
+				cue.Entity.WorldRot = Rotation.From( cue.Entity.WorldRot.Angles().WithYaw( yaw ) );
 			}
 			else
 			{
@@ -63,8 +63,7 @@ namespace PoolGame
 				}
 			}
 
-			cue.EnableDrawing = true;
-			cue.WorldPos = whiteBall.WorldPos - cue.WorldRot.Left * (250f + CuePullBackOffset);
+			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (250f + CuePullBackOffset);
 		}
 
 		public override void BuildInput( ClientInput input )
@@ -75,7 +74,7 @@ namespace PoolGame
 			}
 		}
 
-		public override void OnWhiteBallStriked( PoolCue cue, PoolBall whiteBall, float force )
+		public override void OnWhiteBallStruck( PoolCue cue, PoolBall whiteBall, float force )
 		{
 			CuePullBackOffset = 0f;
 		}

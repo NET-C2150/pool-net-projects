@@ -29,6 +29,17 @@ namespace PoolGame
 				isHidden = (whiteBall != null && cue != null);
 			}
 
+			var round = Game.Instance.Round;
+
+			if ( round is PlayRound )
+			{
+				var playerOne = Game.Instance.PlayerOne;
+				var playerTwo = Game.Instance.PlayerTwo;
+
+				if ( playerOne == null || playerTwo == null )
+					isHidden = true;
+			}
+
 			SetClass( "hidden", isHidden );
 
 			base.Tick();
