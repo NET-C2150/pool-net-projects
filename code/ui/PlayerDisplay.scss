@@ -16,11 +16,21 @@
         transform: scale(0.9);
         transition: all 0.2s ease;
 
-        &.one {
+        .ball {
+            background-color: white;
 
+            &.red {
+                background-color: #EA5858;
+            }
+
+            &.yellow {
+                background-color: #EAD458;
+            }
+        }
+
+        &.one {
             .score-container {
                 .ball {
-                    background-color: #EAD458; // Set dynamically with Ball Colour
                     margin-left: 8px;
                 }
             }
@@ -42,7 +52,6 @@
                 flex-direction: row-reverse;
 
                 .ball {
-                    background-color: #EA5858; // Set dynamically with Ball Colour
                     margin-right: 8px;
                 }
             }

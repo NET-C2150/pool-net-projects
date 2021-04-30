@@ -26,7 +26,6 @@ namespace PoolGame
 			ScoreContainer = Add.Panel("score-container");
 			Score = ScoreContainer.Add.Label("0", "score");
 			BallType = ScoreContainer.Add.Panel("ball");
-
 		}
 
 		public void Update( EntityHandle<Player> player )
@@ -37,7 +36,11 @@ namespace PoolGame
 			{
 				Name.Text = player.Entity.Name;
 				Score.Text = player.Entity.Score.ToString();
+
 				Avatar.SetTexture( $"avatar:{player.Entity.SteamId}" );
+
+				BallType.SetClass( "red", player.Entity.BallType == PoolBallType.Red );
+				BallType.SetClass( "yellow", player.Entity.BallType == PoolBallType.Yellow );
 
 				SetClass( "active", player.Entity.IsTurn );
 			}

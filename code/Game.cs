@@ -84,6 +84,14 @@ namespace PoolGame
 			}
 		}
 
+		public Player GetOtherPlayer( Player player )
+		{
+			if ( player == PlayerOne )
+				return PlayerTwo;
+			else
+				return PlayerOne;
+		}
+
 		public void RespawnAllBalls()
 		{
 			RemoveAllBalls();

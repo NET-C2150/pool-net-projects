@@ -35,18 +35,7 @@ namespace PoolGame
 		{
 			Log.Info( "Ball Entered Pocket On: " + (Host.IsClient ? "Client" : "Server") );
 
-			if ( IsServer && LastStriker != null && LastStriker.IsValid() )
-			{
-				if ( Type == PoolBallType.White )
-				{
-					Game.Instance.RespawnWhiteBall();
-				}
-				else
-				{
-					Game.Instance.RemoveBall( this );
-					LastStriker.Score++;
-				}
-			}
+			Game.Instance.Round?.OnBallEnterPocket( this, pocket );
 		}
 
 		protected override void OnPhysicsCollision( CollisionEventData eventData )
@@ -55,6 +44,8 @@ namespace PoolGame
 			if ( eventData.Entity is PoolBall other )
 			{
 				LastStriker = Game.Instance.CurrentPlayer;
+
+				Game.Instance.Round?.OnBallHitOtherBall( this, other );
 			}
 
 			base.OnPhysicsCollision( eventData );

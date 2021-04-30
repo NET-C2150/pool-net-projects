@@ -10,11 +10,25 @@ namespace PoolGame
 		[NetLocalPredicted] public BaseView View { get; set; }
 		[NetLocalPredicted] public bool IsFollowingBall { get; set; }
 		[Net] public PoolBallType BallType { get; set; }
-
 		[Net] public bool IsSpectator { get; private set;  }
+		[Net] public FoulReason FoulReason { get; private set; }
+		[Net] public bool HasSecondShot { get; set; }
 		[Net] public bool IsTurn { get; private set; }
 		[Net] public int Score { get; set; }
 		[Net] public EntityHandle<PoolCue> Cue { get; private set; }
+
+		public int BallsLeft
+		{
+			get
+			{
+				var balls = Entity.All.Where( ( e ) =>
+				{
+					return (e is PoolBall ball && ball.Type == BallType);
+				} );
+
+				return balls.Count();
+			}
+		}
 
 		public Player()
 		{
@@ -39,17 +53,27 @@ namespace PoolGame
 			Score = 0;
 		}
 
+		public void Foul( FoulReason reason )
+		{
+			Log.Info( Name + " has fouled (reason: " + reason.ToString() + ")" );
+			HasSecondShot = false;
+			FoulReason = reason;
+		}
+
 		public void StartPlaying()
 		{
 			MakeSpectator( false );
+			BallType = PoolBallType.White;
 			Score = 0;
 		}
 
-		public void StartTurn()
+		public void StartTurn(bool hasSecondShot = false)
 		{
 			Game.Instance.CurrentPlayer = this;
 
 			IsFollowingBall = false;
+			HasSecondShot = hasSecondShot;
+			FoulReason = FoulReason.None;
 			IsTurn = true;
 
 			ShowPoolCue( true );

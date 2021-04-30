@@ -12,6 +12,7 @@ namespace PoolGame
 		public virtual int RoundDuration => 0;
 		public virtual string RoundName => "";
 		public virtual bool CanPlayerSuicide => false;
+		public virtual bool ShowTimeLeft => false;
 
 		public List<Player> Players = new();
 
@@ -58,6 +59,10 @@ namespace PoolGame
 				Players.Add( player );
 			}
 		}
+
+		public virtual void OnBallEnterPocket( PoolBall ball, TriggerBallPocket pocket ) { }
+
+		public virtual void OnBallHitOtherBall( PoolBall ball, PoolBall other ) { }
 
 		public virtual void OnPlayerSpawn( Player player ) { }
 
