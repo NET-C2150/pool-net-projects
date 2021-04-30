@@ -56,6 +56,15 @@ namespace PoolGame
 			}
 
 			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (250f + CuePullBackOffset);
+
+			var tip = cue.Entity.GetAttachment( "tip", true );
+
+			var trace = Trace.Ray( whiteBall.Entity.WorldPos, tip.Pos + cue.Entity.WorldRot.Left * 1000f )
+				.Ignore( whiteBall.Entity )
+				.Ignore( cue.Entity )
+				.Run();
+
+			DebugOverlay.Line( trace.StartPos, trace.EndPos, Color.White );
 		}
 
 		public override void OnWhiteBallStruck( PoolCue cue, PoolBall whiteBall, float force )

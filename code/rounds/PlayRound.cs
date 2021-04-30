@@ -17,8 +17,6 @@ namespace PoolGame
 		public List<Player> Spectators = new();
 		public float PlayerTurnEndTime { get; set; }
 
-		private bool _isGameOver;
-
 		public override void OnPlayerLeave( Player player )
 		{
 			base.OnPlayerLeave( player );
@@ -246,8 +244,6 @@ namespace PoolGame
 
 		private async Task LoadStatsRound(string title = "", int delay = 3)
 		{
-			_isGameOver = true;
-
 			await Task.Delay( delay * 1000 );
 
 			if ( Game.Instance.Round != this )
