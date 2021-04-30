@@ -13,6 +13,11 @@ namespace PoolGame
 		public Player LastStriker { get; private set; }
 		public PoolBallType Type { get; set; }
 
+		public void ResetLastStriker()
+		{
+			LastStriker = null;
+		}
+
 		public override void Spawn()
 		{
 			base.Spawn();
@@ -26,7 +31,7 @@ namespace PoolGame
 			PhysicsBody.AngularDamping = 0.5f;
 
 			// Make it harder to lift these balls off the table.
-			PhysicsBody.GravityScale = 2f;
+			PhysicsBody.GravityScale = 5f;
 
 			//EnableTouch = true;
 		}

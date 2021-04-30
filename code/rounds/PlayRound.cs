@@ -39,24 +39,38 @@ namespace PoolGame
 
 		public override void OnBallEnterPocket( PoolBall ball, TriggerBallPocket pocket )
 		{
-			if ( Host.IsServer && ball.LastStriker != null && ball.LastStriker.IsValid() )
+			if ( Host.IsServer )
 			{
+				if ( ball.LastStriker == null || !ball.LastStriker.IsValid() )
+				{
+					if ( ball.Type == PoolBallType.White )
+					{
+						Game.Instance.RespawnWhiteBall();
+					}
+					else if ( ball.Type == PoolBallType.Black )
+					{
+						Game.Instance.RespawnBlackBall();
+					}
+					else
+					{
+						var player = Game.Instance.GetBallPlayer( ball );
+
+						if ( player != null && player.IsValid() )
+							player.Score++;
+
+						Game.Instance.RemoveBall( ball );
+					}
+
+					return;
+				}
+
 				if ( ball.Type == PoolBallType.White )
 				{
 					ball.LastStriker.Foul( FoulReason.PotWhiteBall );
 					Game.Instance.RespawnWhiteBall();
 				}
-				else if ( ball.Type == ball.LastStriker.BallType || ball.LastStriker.BallType == PoolBallType.White )
+				else if ( ball.Type == ball.LastStriker.BallType )
 				{
-					if ( ball.LastStriker.BallType == PoolBallType.White )
-					{
-						// This is our ball type now, we've claimed it.
-						ball.LastStriker.BallType = ball.Type;
-
-						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
-						otherPlayer.BallType = (ball.Type == PoolBallType.Red ? PoolBallType.Yellow : PoolBallType.Red);
-					}
-
 					Game.Instance.RemoveBall( ball );
 					ball.LastStriker.Score++;
 				}
@@ -65,31 +79,35 @@ namespace PoolGame
 					Game.Instance.RemoveBall( ball );
 
 					if ( ball.LastStriker.BallsLeft == 0 )
-					{
 						DoPlayerWin( ball.LastStriker );
-					}
 					else
-					{
 						DoPlayerWin( Game.Instance.GetOtherPlayer( ball.LastStriker ) );
-					}
 				}
 				else
 				{
+					if ( ball.LastStriker.BallType == PoolBallType.White )
+					{
+						// This is our ball type now, we've claimed it.
+						ball.LastStriker.BallType = ball.Type;
+						ball.LastStriker.Score++;
+
+						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
+						otherPlayer.BallType = (ball.Type == PoolBallType.Red ? PoolBallType.Yellow : PoolBallType.Red);
+					}
+					else
+					{
+						// We get to pot another player's ball in our first shot after a foul.
+						if ( !ball.LastStriker.HasSecondShot )
+							ball.LastStriker.Foul( FoulReason.PotOtherBall );
+
+						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
+
+						// Let's be sure it's the other player's ball type before we give them score.
+						if ( otherPlayer.BallType == ball.Type )
+							otherPlayer.Score++;
+					}
+
 					Game.Instance.RemoveBall( ball );
-
-					// We get to pot another player's ball in our first shot after a foul.
-					if ( !ball.LastStriker.HasSecondShot )
-					{
-						ball.LastStriker.Foul( FoulReason.PotOtherBall );
-					}
-
-					var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
-
-					// Let's be sure it's the other player's ball type before we give them score.
-					if ( otherPlayer.BallType == ball.Type )
-					{
-						otherPlayer.Score++;
-					}
 				}
 			}
 		}
@@ -272,6 +290,23 @@ namespace PoolGame
 			}
 
 			var currentPlayer = Game.Instance.CurrentPlayer.Entity;
+			var didHitAnyBall = false;
+
+			foreach ( var ball in Game.Instance.AllBalls )
+			{
+				if ( ball.LastStriker == currentPlayer )
+				{
+					didHitAnyBall = true;
+					break;
+				}
+			}
+
+			foreach ( var ball in Game.Instance.AllBalls )
+				ball.ResetLastStriker();
+
+			if ( !didHitAnyBall )
+				currentPlayer.Foul( FoulReason.HitNothing );
+
 			var otherPlayer = Game.Instance.GetOtherPlayer( currentPlayer );
 
 			if ( !currentPlayer.HasSecondShot )

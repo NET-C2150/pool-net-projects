@@ -37,7 +37,9 @@ namespace PoolGame
 
 			if ( !input.Down( InputButton.Attack1 ) )
 			{
-				CueYaw += input.MouseDelta.x;
+				CuePullBackOffset = CuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
+				CueYaw += (input.MouseDelta.x * Time.Delta) * 20f;
+
 				cue.Entity.WorldRot = Rotation.From( cue.Entity.WorldRot.Angles().WithYaw( CueYaw ) );
 			}
 			else

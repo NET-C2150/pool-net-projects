@@ -32,9 +32,7 @@ namespace PoolGame
 		public void Start()
 		{
 			if ( Host.IsServer && RoundDuration > 0 )
-			{
 				RoundEndTime = Sandbox.Time.Now + RoundDuration;
-			}
 			
 			OnStart();
 		}
@@ -55,9 +53,7 @@ namespace PoolGame
 			Host.AssertServer();
 
 			if ( !Players.Contains(player) )
-			{
 				Players.Add( player );
-			}
 		}
 
 		public virtual void OnBallEnterPocket( PoolBall ball, TriggerBallPocket pocket ) { }

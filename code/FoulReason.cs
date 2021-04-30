@@ -13,6 +13,7 @@ namespace PoolGame
 		BallLeftTable = 2,
 		PotBlackTooEarly = 3,
 		HitOtherBall = 4,
-		PotOtherBall = 5
+		PotOtherBall = 5,
+		HitNothing = 6
 	}
 }

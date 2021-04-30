@@ -20,6 +20,7 @@ namespace PoolGame
 
 		[Net] public BaseRound Round { get; private set; }
 		[Net] public EntityHandle<PoolBall> WhiteBall { get; set; }
+		[Net] public EntityHandle<PoolBall> BlackBall { get; set; }
 		[Net] public EntityHandle<Player> CurrentPlayer { get; set; }
 		[Net] public EntityHandle<Player> PlayerOne { get; set; }
 		[Net] public EntityHandle<Player> PlayerTwo { get; set; }
@@ -37,6 +38,28 @@ namespace PoolGame
 			}
 
 			_ = StartTickTimer();
+		}
+
+		public void RespawnBlackBall()
+		{
+			var whiteBall = WhiteBall.Entity;
+			var entities = All.Where( ( e ) => e is PoolBallSpawn );
+
+			foreach ( var entity in entities )
+			{
+				if ( entity is PoolBallSpawn spawner )
+				{
+					if ( spawner.Type == PoolBallType.Black )
+					{
+						whiteBall.WorldPos = spawner.WorldPos;
+						whiteBall.PhysicsBody.AngularVelocity = Vector3.Zero;
+						whiteBall.PhysicsBody.Velocity = Vector3.Zero;
+						whiteBall.PhysicsBody.ClearForces();
+
+						return;
+					}
+				}
+			}
 		}
 
 		public void RespawnWhiteBall()
@@ -72,16 +95,22 @@ namespace PoolGame
 			if ( AllBalls != null )
 			{
 				foreach ( var entity in AllBalls )
-				{
 					entity.Delete();
-				}
 
 				AllBalls.Clear();
 			}
 			else
-			{
 				AllBalls = new();
-			}
+		}
+
+		public Player GetBallPlayer( PoolBall ball )
+		{
+			if ( PlayerOne.Entity.BallType == ball.Type )
+				return PlayerOne;
+			else if ( PlayerTwo.Entity.BallType == ball.Type )
+				return PlayerTwo;
+			else
+				return null;
 		}
 
 		public Player GetOtherPlayer( Player player )
@@ -118,6 +147,8 @@ namespace PoolGame
 
 					if ( ball.Type == PoolBallType.White )
 						WhiteBall = ball;
+					else if ( ball.Type == PoolBallType.Black )
+						BlackBall = ball;
 
 					AllBalls.Add( ball );
 				}
