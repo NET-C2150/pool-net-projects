@@ -18,6 +18,18 @@ namespace PoolGame
 			LastStriker = null;
 		}
 
+		public void StartPlacing()
+		{
+			EnableAllCollisions = false;
+			PhysicsEnabled = false;
+		}
+
+		public void StopPlacing()
+		{
+			EnableAllCollisions = true;
+			PhysicsEnabled = true;
+		}
+
 		public override void Spawn()
 		{
 			base.Spawn();

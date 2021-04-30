@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,21 +11,28 @@ namespace PoolGame
 	public class TopDownView : BaseView
 	{
 		public float CuePullBackOffset { get; set; }
+		public float CueRoll { get; set; }
 		public float CueYaw { get; set; }
 
+		private float _maxCueRoll = 35f;
+		private float _minCueRoll = 5f;
+
 		public override void UpdateCamera( PoolCamera camera )
+		{
+			camera.Pos = camera.Pos.LerpTo( Viewer.WorldPos, Time.Delta );
+			camera.Rot = Rotation.Lerp( camera.Rot, Viewer.WorldRot, Time.Delta );
+		}
+
+		public override void Tick()
 		{
 			var zoomOutDistance = 900f;
 
 			if ( Viewer.Input.Down( InputButton.Attack1 ) )
 				zoomOutDistance = 750f;
 
-			camera.Pos = camera.Pos.LerpTo( new Vector3( 0f, 0f, zoomOutDistance ), Time.Delta );
-			camera.Rot = Rotation.Lerp( camera.Rot, Rotation.LookAt( Vector3.Down ), Time.Delta );
-		}
+			Viewer.WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
+			Viewer.WorldRot = Rotation.LookAt( Vector3.Down );
 
-		public override void Tick()
-		{
 			if ( !Viewer.IsTurn || Viewer.IsFollowingBall )
 				return;
 
@@ -35,12 +43,32 @@ namespace PoolGame
 			if ( !whiteBall.IsValid || !cue.IsValid )
 				return;
 
+			if ( Host.IsServer && Viewer.IsPlacingWhiteBall )
+			{
+				var moveVector = new Vector3( -input.MouseDelta.y, -input.MouseDelta.x ) * Time.Delta * 20f;
+				whiteBall.Entity.WorldPos += moveVector;
+				return;
+			}
+
 			if ( !input.Down( InputButton.Attack1 ) )
 			{
-				CuePullBackOffset = CuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
-				CueYaw += (input.MouseDelta.x * Time.Delta) * 20f;
+				var direction = cue.Entity.DirectionTo( whiteBall );
+				var rollTrace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos - direction * 100f )
+					.Ignore( cue )
+					.Ignore( whiteBall )
+					.Run();
 
-				cue.Entity.WorldRot = Rotation.From( cue.Entity.WorldRot.Angles().WithYaw( CueYaw ) );
+				CuePullBackOffset = CuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
+				CueYaw = (CueYaw + (input.MouseDelta.x * Time.Delta * 20f)).Normalize( 0f, 360f );
+				CueRoll = CueRoll.LerpTo( _minCueRoll + ((_maxCueRoll - _minCueRoll) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
+
+				Log.Info( CueYaw.ToString() );
+
+				cue.Entity.WorldRot = Rotation.From(
+					cue.Entity.WorldRot.Angles()
+						.WithYaw( CueYaw )
+						.WithRoll( -CueRoll )
+				);
 			}
 			else
 			{
@@ -57,11 +85,9 @@ namespace PoolGame
 				}
 			}
 
-			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (250f + CuePullBackOffset);
+			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (250f + CuePullBackOffset + (CueRoll * 0.3f));
 
-			var tip = cue.Entity.GetAttachment( "tip", true );
-
-			var trace = Trace.Ray( whiteBall.Entity.WorldPos, tip.Pos + cue.Entity.WorldRot.Left * 1000f )
+			var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + cue.Entity.DirectionTo( whiteBall.Entity) * 1000f )
 				.Ignore( whiteBall.Entity )
 				.Ignore( cue.Entity )
 				.Run();

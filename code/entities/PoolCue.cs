@@ -10,6 +10,11 @@ namespace PoolGame
 	[Library( "pool_cue" )]
 	public partial class PoolCue : ModelEntity
 	{
+		public Vector3 DirectionTo( PoolBall ball )
+		{
+			return (ball.WorldPos - WorldPos.WithZ( ball.WorldPos.z )).Normal;
+		}
+
 		public override void Spawn()
 		{
 			base.Spawn();

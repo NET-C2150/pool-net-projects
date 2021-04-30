@@ -307,6 +307,9 @@ namespace PoolGame
 			if ( !didHitAnyBall )
 				currentPlayer.Foul( FoulReason.HitNothing );
 
+			if ( currentPlayer.IsPlacingWhiteBall )
+				currentPlayer.StopPlacingWhiteBall();
+
 			var otherPlayer = Game.Instance.GetOtherPlayer( currentPlayer );
 
 			if ( !currentPlayer.HasSecondShot )

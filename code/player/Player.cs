@@ -12,6 +12,7 @@ namespace PoolGame
 		[Net] public PoolBallType BallType { get; set; }
 		[Net] public bool IsSpectator { get; private set;  }
 		[Net] public FoulReason FoulReason { get; private set; }
+		[Net] public bool IsPlacingWhiteBall { get; private set; }
 		[Net] public bool HasSecondShot { get; set; }
 		[Net] public bool IsTurn { get; private set; }
 		[Net] public int Score { get; set; }
@@ -43,14 +44,37 @@ namespace PoolGame
 		public void MakeSpectator( bool isSpectator )
 		{
 			if ( isSpectator )
-			{
 				ShowPoolCue( false );
-			}
 
 			IsFollowingBall = false;
 			IsSpectator = isSpectator;
 			IsTurn = false;
 			Score = 0;
+		}
+
+		public void StartPlacingWhiteBall()
+		{
+			var whiteBall = Game.Instance.WhiteBall;
+
+			if ( whiteBall.IsValid )
+				whiteBall.Entity.StartPlacing();
+
+			IsPlacingWhiteBall = true;
+
+			ShowPoolCue( false );
+		}
+
+		public void StopPlacingWhiteBall()
+		{
+			var whiteBall = Game.Instance.WhiteBall;
+
+			if ( whiteBall.IsValid )
+				whiteBall.Entity.StopPlacing();
+
+			IsPlacingWhiteBall = false;
+
+			if ( IsTurn )
+				ShowPoolCue( true );
 		}
 
 		public void Foul( FoulReason reason )
@@ -76,7 +100,10 @@ namespace PoolGame
 			FoulReason = FoulReason.None;
 			IsTurn = true;
 
-			ShowPoolCue( true );
+			//if ( hasSecondShot )
+				//StartPlacingWhiteBall();
+			//else
+				ShowPoolCue( true );
 		}
 
 		public void FinishTurn()
@@ -93,7 +120,7 @@ namespace PoolGame
 
 		public void StrikeWhiteBall( PoolCue cue, PoolBall whiteBall, float force )
 		{
-			var direction = (whiteBall.WorldPos - cue.WorldPos).Normal;
+			var direction = cue.DirectionTo( whiteBall );
 			var tipPos = cue.GetAttachment( "tip", true ).Pos;
 
 			whiteBall.PhysicsBody.ApplyImpulseAt(
