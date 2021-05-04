@@ -14,6 +14,8 @@ namespace PoolGame
 
 		public override void Spawn()
 		{
+			Game.Instance.WhiteArea = this;
+
 			Transmit = TransmitType.Always;
 
 			Quad = new WhiteAreaQuad
@@ -24,6 +26,13 @@ namespace PoolGame
 			};
 
 			base.Spawn();
+		}
+
+		public override void OnActive()
+		{
+			Game.Instance.WhiteArea = this;
+
+			base.OnActive();
 		}
 
 		public override void StartTouch( Entity other )

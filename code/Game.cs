@@ -207,8 +207,6 @@ namespace PoolGame
 		{
 			_ = StartSecondTimer();
 
-			WhiteArea = All.OfType<TriggerWhiteArea>().FirstOrDefault();
-
 			base.PostLevelLoaded();
 		}
 

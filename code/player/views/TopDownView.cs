@@ -43,16 +43,19 @@ namespace PoolGame
 			if ( !whiteBall.IsValid || !cue.IsValid )
 				return;
 
-			if ( Host.IsServer && Viewer.IsPlacingWhiteBall )
+			if ( Viewer.IsPlacingWhiteBall )
 			{
-				var moveVector = new Vector3( -input.MouseDelta.y, -input.MouseDelta.x ) * Time.Delta * 30f;
-				var whiteArea = Game.Instance.WhiteArea;
-				var whiteAreaWorldOBB = whiteArea.CollisionBounds.ToWorldSpace( whiteArea );
+				if ( Host.IsServer )
+				{
+					var moveVector = new Vector3( -input.MouseDelta.y, -input.MouseDelta.x ) * Time.Delta * 30f;
+					var whiteArea = Game.Instance.WhiteArea;
+					var whiteAreaWorldOBB = whiteArea.CollisionBounds.ToWorldSpace( whiteArea );
 
-				whiteBall.Entity.TryMoveTo( whiteBall.Entity.WorldPos + moveVector, whiteAreaWorldOBB );
+					whiteBall.Entity.TryMoveTo( whiteBall.Entity.WorldPos + moveVector, whiteAreaWorldOBB );
 
-				if ( input.Released( InputButton.Attack1 ) )
-					Viewer.StopPlacingWhiteBall();
+					if ( input.Released( InputButton.Attack1 ) )
+						Viewer.StopPlacingWhiteBall();
+				}
 
 				return;
 			}
