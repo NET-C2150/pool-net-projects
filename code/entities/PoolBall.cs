@@ -43,12 +43,12 @@ namespace PoolGame
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic, true );
 
 			// The World Pool-Billiard Association says so.
-			PhysicsBody.Mass = 170f;
-			PhysicsBody.LinearDamping = 0.5f;
-			PhysicsBody.AngularDamping = 0.5f;
+		//	PhysicsBody.Mass = 170f;
+		//	PhysicsBody.LinearDamping = 0.5f;
+		//	PhysicsBody.AngularDamping = 0.5f;
 
 			// Make it harder to lift these balls off the table.
-			PhysicsBody.GravityScale = 5f;
+		//	PhysicsBody.GravityScale = 5f;
 
 			//EnableTouch = true;
 		}

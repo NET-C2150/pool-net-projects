@@ -4,10 +4,10 @@
 	{
 		Base = "default"
 		Friction = 1.0
-		Elasticity = 0.5
-		Density = 2000.0
+		Elasticity = 0.7
+		Density = 100.0
 		Thickness = -1.0
-		Dampening = 10.0
+		Dampening = 0.0
 		ImpactEffects = 
 		{
 		}

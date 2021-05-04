@@ -3,9 +3,9 @@
 	data = 
 	{
 		Base = "default"
-		Friction = 1.0
-		Elasticity = 0.1
-		Density = 1000.0
+		Friction = 0.0
+		Elasticity = 1.0
+		Density = 10000.0
 		Thickness = -1.0
 		Dampening = 10.0
 		ImpactEffects = 
