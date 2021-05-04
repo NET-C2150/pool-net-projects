@@ -8,6 +8,7 @@ namespace PoolGame
 	[Library( "pool", Title = "Pool" )]
 	partial class Game : Sandbox.Game
 	{
+		public TriggerWhiteArea WhiteArea { get; set; }
 		public Player PreviousWinner { get; set; }
 		public Player PreviousLoser { get; set; }
 		public List<PoolBall> AllBalls { get; private set; }
@@ -205,6 +206,8 @@ namespace PoolGame
 		public override void PostLevelLoaded()
 		{
 			_ = StartSecondTimer();
+
+			WhiteArea = All.OfType<TriggerWhiteArea>().FirstOrDefault();
 
 			base.PostLevelLoaded();
 		}

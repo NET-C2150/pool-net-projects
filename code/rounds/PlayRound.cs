@@ -56,7 +56,12 @@ namespace PoolGame
 						var player = Game.Instance.GetBallPlayer( ball );
 
 						if ( player != null && player.IsValid() )
+						{
+							if ( Game.Instance.CurrentPlayer == player )
+								player.HasSecondShot = true;
+
 							player.Score++;
+						}
 
 						Game.Instance.RemoveBall( ball );
 					}
@@ -71,8 +76,12 @@ namespace PoolGame
 				}
 				else if ( ball.Type == ball.LastStriker.BallType )
 				{
-					Game.Instance.RemoveBall( ball );
+					if ( Game.Instance.CurrentPlayer == ball.LastStriker )
+						ball.LastStriker.HasSecondShot = true;
+
 					ball.LastStriker.Score++;
+
+					Game.Instance.RemoveBall( ball );
 				}
 				else if ( ball.Type == PoolBallType.Black )
 				{
@@ -88,6 +97,7 @@ namespace PoolGame
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
 						// This is our ball type now, we've claimed it.
+						ball.LastStriker.HasSecondShot = true;
 						ball.LastStriker.BallType = ball.Type;
 						ball.LastStriker.Score++;
 
@@ -104,7 +114,12 @@ namespace PoolGame
 
 						// Let's be sure it's the other player's ball type before we give them score.
 						if ( otherPlayer.BallType == ball.Type )
+						{
+							if ( Game.Instance.CurrentPlayer == otherPlayer )
+								otherPlayer.HasSecondShot = true;
+
 							otherPlayer.Score++;
+						}
 					}
 
 					Game.Instance.RemoveBall( ball );

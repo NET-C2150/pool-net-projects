@@ -45,8 +45,15 @@ namespace PoolGame
 
 			if ( Host.IsServer && Viewer.IsPlacingWhiteBall )
 			{
-				var moveVector = new Vector3( -input.MouseDelta.y, -input.MouseDelta.x ) * Time.Delta * 20f;
-				whiteBall.Entity.WorldPos += moveVector;
+				var moveVector = new Vector3( -input.MouseDelta.y, -input.MouseDelta.x ) * Time.Delta * 30f;
+				var whiteArea = Game.Instance.WhiteArea;
+				var whiteAreaWorldOBB = whiteArea.CollisionBounds.ToWorldSpace( whiteArea );
+
+				whiteBall.Entity.TryMoveTo( whiteBall.Entity.WorldPos + moveVector, whiteAreaWorldOBB );
+
+				if ( input.Released( InputButton.Attack1 ) )
+					Viewer.StopPlacingWhiteBall();
+
 				return;
 			}
 
@@ -61,8 +68,6 @@ namespace PoolGame
 				CuePullBackOffset = CuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
 				CueYaw = (CueYaw + (input.MouseDelta.x * Time.Delta * 20f)).Normalize( 0f, 360f );
 				CueRoll = CueRoll.LerpTo( _minCueRoll + ((_maxCueRoll - _minCueRoll) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
-
-				Log.Info( CueYaw.ToString() );
 
 				cue.Entity.WorldRot = Rotation.From(
 					cue.Entity.WorldRot.Angles()

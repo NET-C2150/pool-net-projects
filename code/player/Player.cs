@@ -59,6 +59,8 @@ namespace PoolGame
 			if ( whiteBall.IsValid )
 				whiteBall.Entity.StartPlacing();
 
+			Game.Instance.RespawnWhiteBall();
+
 			IsPlacingWhiteBall = true;
 
 			ShowPoolCue( false );
@@ -100,9 +102,9 @@ namespace PoolGame
 			FoulReason = FoulReason.None;
 			IsTurn = true;
 
-			//if ( hasSecondShot )
-				//StartPlacingWhiteBall();
-			//else
+			if ( hasSecondShot )
+				StartPlacingWhiteBall();
+			else
 				ShowPoolCue( true );
 		}
 

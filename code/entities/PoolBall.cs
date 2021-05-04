@@ -1,9 +1,6 @@
 ﻿using Sandbox;
+using Sandbox.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PoolGame
 {
@@ -28,6 +25,14 @@ namespace PoolGame
 		{
 			EnableAllCollisions = true;
 			PhysicsEnabled = true;
+		}
+
+		public void TryMoveTo( Vector3 worldPos, BBox within )
+		{
+			var worldOBB = CollisionBounds + worldPos;
+
+			if ( within.ContainsXY( worldOBB ) )
+				WorldPos = worldPos;
 		}
 
 		public override void Spawn()
