@@ -11,7 +11,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models\\pool\\dmx\\mesh\\pool_cue.dmx"
+						filename = "models/pool/pool_cue_a.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0
@@ -35,7 +35,7 @@
 						_class = "Attachment"
 						name = "tip"
 						parent_bone = ""
-						relative_origin = [ 0.0, 233.963379, 0.0 ]
+						relative_origin = [ 0.0, 29.674999, 0.0 ]
 						relative_angles = [ 0.0, 0.0, 0.0 ]
 						weight = 1.0
 						ignore_rotation = false
@@ -51,8 +51,8 @@
 						remaps = 
 						[
 							{
-								from = "materials/dev/dev_measuregeneric01.vmat"
-								to = "materials/pool_cue.vmat"
+								from = "pool_cue.vmat"
+								to = "materials/pool_cue_a.vmat"
 							},
 						]
 						use_global_default = false
