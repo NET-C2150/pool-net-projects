@@ -17,7 +17,7 @@ Layer0
 
 	//---- Color ----
 	g_flModelTintAmount "1.000"
-	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
+	g_vColorTint "[0.901961 0.901961 0.901961 0.000000]"
 	TextureColor "[1.000000 1.000000 1.000000 0.000000]"
 
 	//---- Fade ----
@@ -37,7 +37,7 @@ Layer0
 	TextureNormal "[0.501961 0.501961 1.000000 0.000000]"
 
 	//---- Roughness ----
-	TextureRoughness "[0.133333 0.133333 0.133333 0.000000]"
+	TextureRoughness "[0.137255 0.137255 0.137255 0.000000]"
 
 	//---- Texture Coordinates ----
 	g_nScaleTexCoordUByModelScaleAxis "0"

@@ -18,9 +18,9 @@
 						angles = [ 0.0, 0.0, 0.0 ]
 						max_u = 1.0
 						max_v = 1.0
-						radius = 15.0
-						segments_u = 16
-						segments_v = 16
+						radius = 1.125
+						segments_u = 12
+						segments_v = 24
 					},
 				]
 			},
@@ -33,7 +33,7 @@
 						parent_bone = ""
 						surface_prop = "pool.ball"
 						collision_prop = "default"
-						radius = 15.0
+						radius = 1.125
 						center = [ 0.0, 0.0, 0.0 ]
 					},
 				]
@@ -48,7 +48,7 @@
 						game_keys = 
 						{
 							bonename = ""
-							radius = 15.0
+							radius = 1.125
 							point0 = [ 0.0, 0.0, 0.0 ]
 							point1 = [ 0.0, 0.0, 0.0 ]
 						}
@@ -70,6 +70,171 @@
 						]
 						use_global_default = false
 						global_default_material = ""
+					},
+					{
+						_class = "MaterialGroup"
+						name = "1"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_1.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "2"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_2.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "3"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_3.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "4"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_4.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "5"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_5.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "6"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_6.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "7"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_7.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "8"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_8.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "9"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_9.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "10"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_10.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "11"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_11.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "12"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_12.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "13"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_13.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "14"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_14.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "15"
+						remaps = 
+						[
+							{
+								from = "materials/pool_ball.vmat"
+								to = "materials/pool_ball_15.vmat"
+							},
+						]
 					},
 				]
 			},
