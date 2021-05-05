@@ -45,7 +45,12 @@ namespace PoolGame
 			if ( Viewer.IsPlacingWhiteBall )
 			{
 				HandleWhiteBallPlacement( input, whiteBall );
+				ShowWhiteArea( true );
 				return;
+			}
+			else
+			{
+				ShowWhiteArea( false );
 			}
 
 			if ( !input.Down( InputButton.Attack1 ) )
@@ -74,6 +79,16 @@ namespace PoolGame
 
 			DebugOverlay.Sphere( trace.EndPos, 10f, Color.White );
 			DebugOverlay.Line( trace.StartPos, trace.EndPos, Color.White );
+		}
+
+		private void ShowWhiteArea( bool shouldShow )
+		{
+			if ( Host.IsServer ) return;
+
+			var whiteArea = Game.Instance.WhiteArea;
+
+			if ( whiteArea != null && whiteArea.IsValid() )
+				whiteArea.Quad.IsEnabled = shouldShow;
 		}
 
 		private void TakeShot( EntityHandle<PoolCue> cue, EntityHandle<PoolBall> whiteBall )
@@ -137,13 +152,13 @@ namespace PoolGame
 				.WorldOnly()
 				.Run();
 
-			var cursorDir = (whiteBall.Entity.WorldPos - cursorTrace.EndPos).Normal;
-			var cursorRot = Rotation.LookAt( cursorDir, Vector3.Up );
+			var cursorDir = (whiteBall.Entity.WorldPos - cursorTrace.EndPos).TemporaryNormalFix();
+			var cursorRot = Rotation.LookAt( cursorDir, Vector3.Forward );
 
 			_cuePullBackOffset = _cuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
 
 			CueRoll = CueRoll.LerpTo( _minCueRoll + ((_maxCueRoll - _minCueRoll) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
-			CueYaw = cursorRot.Yaw() + 90f;
+			CueYaw = ( cursorRot.Yaw() + 90f ).Normalize( 0f, 360f );
 
 			cue.Entity.WorldRot = Rotation.From(
 				cue.Entity.WorldRot.Angles()

@@ -12,27 +12,22 @@ namespace PoolGame
 	{
 		public WhiteAreaQuad Quad { get; set; }
 
+		public void MakeAreaQuad()
+		{
+			Quad = new WhiteAreaQuad
+			{
+				RenderBounds = CollisionBounds,
+				WorldPos = WorldPos
+			};
+		}
+
 		public override void Spawn()
 		{
+			base.Spawn();
+
 			Game.Instance.WhiteArea = this;
 
 			Transmit = TransmitType.Always;
-
-			Quad = new WhiteAreaQuad
-			{
-				Bounds = CollisionBounds,
-				WorldPos = WorldPos,
-				Transmit = TransmitType.Always
-			};
-
-			base.Spawn();
-		}
-
-		public override void OnActive()
-		{
-			Game.Instance.WhiteArea = this;
-
-			base.OnActive();
 		}
 
 		public override void StartTouch( Entity other )

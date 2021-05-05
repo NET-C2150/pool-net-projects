@@ -11,21 +11,19 @@ namespace PoolGame
 	public partial class WhiteAreaQuad : RenderEntity
 	{
 		[Net] public BBox Bounds { get; set; }
-		public Material Material = Material.Load( "materials/dev/dev_measuregeneric01.vmat" );
+		public Material Material = Material.Load( "materials/pool_white_area.vmat" );
+		public bool IsEnabled { get; set; }
 
-		public override void Spawn()
-		{
-			base.Spawn();
-		}
 
 		public override void DoRender( SceneObject sceneObject  )
 		{
-			var rect = new Rect( Bounds.Mins.x, Bounds.Mins.y, Bounds.Maxs.x - Bounds.Mins.x, Bounds.Maxs.y - Bounds.Mins.y );
+			if ( IsEnabled  )
+			{
+				var vb = Render.GetDynamicVB();
 
-			Render.Color = Color.White;
-			Render.Material = Material;
-			Render.CullMode = CullMode.None;
-			Render.DrawQuad( rect );
+				vb.AddCube( WorldPos + RenderBounds.Center, RenderBounds.Size.WithZ( 1f ), Rotation.Identity );
+				vb.Draw( Material );
+			}
 		}
 	}
 }

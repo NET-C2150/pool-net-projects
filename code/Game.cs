@@ -248,6 +248,16 @@ namespace PoolGame
 					_lastRound = Round;
 					_lastRound.Start();
 				}
+
+				if ( WhiteArea == null )
+				{
+					WhiteArea = All.OfType<TriggerWhiteArea>().FirstOrDefault();
+
+					if ( WhiteArea != null )
+						WhiteArea.MakeAreaQuad();
+					else
+						Log.Info( "null" );
+				}
 			}
 		}
 

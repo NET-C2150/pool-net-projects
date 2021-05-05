@@ -8,7 +8,7 @@ namespace PoolGame
 	public partial class Player : BasePlayer
 	{
 		[NetLocalPredicted] public BaseView View { get; set; }
-		[NetLocalPredicted] public bool IsFollowingBall { get; set; }
+		[Net] public bool IsFollowingBall { get; set; }
 		[Net] public PoolBallType BallType { get; set; }
 		[Net] public bool IsSpectator { get; private set;  }
 		[Net] public FoulReason FoulReason { get; private set; }

@@ -309,7 +309,7 @@ namespace PoolGame
 
 			foreach ( var ball in Game.Instance.AllBalls )
 			{
-				if ( ball.LastStriker == currentPlayer )
+				if ( ball.Type != PoolBallType.White && ball.LastStriker == currentPlayer )
 				{
 					didHitAnyBall = true;
 					break;
