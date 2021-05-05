@@ -255,8 +255,6 @@ namespace PoolGame
 
 					if ( WhiteArea != null )
 						WhiteArea.MakeAreaQuad();
-					else
-						Log.Info( "null" );
 				}
 			}
 		}
