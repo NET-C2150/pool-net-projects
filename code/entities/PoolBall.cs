@@ -1,6 +1,8 @@
 ﻿using Sandbox;
 using Sandbox.UI;
 using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace PoolGame
 {
@@ -8,6 +10,7 @@ namespace PoolGame
 	public partial class PoolBall : ModelEntity
 	{
 		public Player LastStriker { get; private set; }
+		public PoolBallNumber Number { get; set; }
 		public PoolBallType Type { get; set; }
 
 		public void ResetLastStriker()
@@ -31,8 +34,20 @@ namespace PoolGame
 		{
 			var worldOBB = CollisionBounds + worldPos;
 
+			foreach (var ball in All.OfType<PoolBall>())
+			{
+				if ( ball != this )
+				{
+					var ballOBB = ball.CollisionBounds + ball.WorldPos;
+
+					// We can't place on other balls.
+					if ( ballOBB.Overlaps( worldOBB ) )
+						return;
+				}
+			}
+
 			if ( within.ContainsXY( worldOBB ) )
-				WorldPos = worldPos;
+				WorldPos = worldPos.WithZ( WorldPos.z );
 		}
 
 		public override void Spawn()
@@ -42,21 +57,12 @@ namespace PoolGame
 			SetModel( "models/pool/pool_ball.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic, true );
 
-			// The World Pool-Billiard Association says so.
-		//	PhysicsBody.Mass = 170f;
-		//	PhysicsBody.LinearDamping = 0.5f;
-		//	PhysicsBody.AngularDamping = 0.5f;
-
-			// Make it harder to lift these balls off the table.
-		//	PhysicsBody.GravityScale = 5f;
-
-			//EnableTouch = true;
+			PhysicsBody.GravityScale = 10f;
 		}
 
 		public virtual void OnEnterPocket( TriggerBallPocket pocket )
 		{
 			Log.Info( "Ball Entered Pocket On: " + (Host.IsClient ? "Client" : "Server") );
-
 			Game.Instance.Round?.OnBallEnterPocket( this, pocket );
 		}
 

@@ -327,6 +327,8 @@ namespace PoolGame
 
 			var otherPlayer = Game.Instance.GetOtherPlayer( currentPlayer );
 
+			Log.Info( "Turn Over. Player Has Second Shot: " + currentPlayer.HasSecondShot );
+
 			if ( !currentPlayer.HasSecondShot )
 			{
 				currentPlayer.FinishTurn();

@@ -95,6 +95,8 @@ namespace PoolGame
 
 		public void StartTurn(bool hasSecondShot = false)
 		{
+			Log.Info( "Starting Turn: " + Name );
+
 			Game.Instance.CurrentPlayer = this;
 
 			IsFollowingBall = false;

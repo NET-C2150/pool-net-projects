@@ -10,5 +10,10 @@ namespace Sandbox.UI
 			var offset = value - min;
 			return (offset - (MathF.Floor( offset / width ) * width)) + min;
 		}
+
+		public static float AsPercentMinMax( this float value, float min, float max )
+		{
+			return ((value - min) * 100f) / (max - min);
+		}
 	}
 }

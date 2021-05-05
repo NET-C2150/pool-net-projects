@@ -1,19 +1,18 @@
 ﻿using Sandbox;
 using Sandbox.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PoolGame
 {
 	public class TopDownView : BaseView
 	{
-		public float CuePullBackOffset { get; set; }
 		public float CueRoll { get; set; }
 		public float CueYaw { get; set; }
+		public bool IsMakingShot { get; set; }
+		public float ShotPower { get; set; }
 
+		private float _cuePullBackOffset;
+		private float _lastPowerDistance;
 		private float _maxCueRoll = 35f;
 		private float _minCueRoll = 5f;
 
@@ -45,67 +44,117 @@ namespace PoolGame
 
 			if ( Viewer.IsPlacingWhiteBall )
 			{
-				if ( Host.IsServer )
-				{
-					var moveVector = new Vector3( -input.MouseDelta.y, -input.MouseDelta.x ) * Time.Delta * 30f;
-					var whiteArea = Game.Instance.WhiteArea;
-					var whiteAreaWorldOBB = whiteArea.CollisionBounds.ToWorldSpace( whiteArea );
-
-					whiteBall.Entity.TryMoveTo( whiteBall.Entity.WorldPos + moveVector, whiteAreaWorldOBB );
-
-					if ( input.Released( InputButton.Attack1 ) )
-						Viewer.StopPlacingWhiteBall();
-				}
-
+				HandleWhiteBallPlacement( input, whiteBall );
 				return;
 			}
 
 			if ( !input.Down( InputButton.Attack1 ) )
 			{
-				var direction = cue.Entity.DirectionTo( whiteBall );
-				var rollTrace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos - direction * 100f )
-					.Ignore( cue )
-					.Ignore( whiteBall )
-					.Run();
-
-				CuePullBackOffset = CuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
-				CueYaw = (CueYaw + (input.MouseDelta.x * Time.Delta * 20f)).Normalize( 0f, 360f );
-				CueRoll = CueRoll.LerpTo( _minCueRoll + ((_maxCueRoll - _minCueRoll) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
-
-				cue.Entity.WorldRot = Rotation.From(
-					cue.Entity.WorldRot.Angles()
-						.WithYaw( CueYaw )
-						.WithRoll( -CueRoll )
-				);
+				if ( !IsMakingShot )
+				{
+					RotateCueToCursor( input, whiteBall, cue );
+				}
+				else
+				{
+					TakeShot( cue, whiteBall );
+					return;
+				}
 			}
 			else
 			{
-				CuePullBackOffset = Math.Clamp( CuePullBackOffset + input.MouseDelta.y, -10f, 60f );
-
-				if ( CuePullBackOffset < -5f )
-				{
-					using ( Prediction.Off() )
-					{
-						var force = input.MouseDelta.y * -200f;
-						Viewer.StrikeWhiteBall( cue, whiteBall, force );
-						return;
-					}
-				}
+				HandlePowerSelection( input, cue );
 			}
 
-			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (250f + CuePullBackOffset + (CueRoll * 0.3f));
+			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (250f + _cuePullBackOffset + (CueRoll * 0.3f));
 
 			var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + cue.Entity.DirectionTo( whiteBall.Entity) * 1000f )
 				.Ignore( whiteBall.Entity )
 				.Ignore( cue.Entity )
 				.Run();
 
+			DebugOverlay.Sphere( trace.EndPos, 10f, Color.White );
 			DebugOverlay.Line( trace.StartPos, trace.EndPos, Color.White );
+		}
+
+		private void TakeShot( EntityHandle<PoolCue> cue, EntityHandle<PoolBall> whiteBall )
+		{
+			IsMakingShot = false;
+
+			if ( ShotPower >= 5f )
+			{
+				using ( Prediction.Off() )
+				{
+					Log.Info( "Shot Power: " + ShotPower );
+					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 50f );
+				}
+			}
+		}
+
+		private void HandleWhiteBallPlacement( UserInput input, EntityHandle<PoolBall> whiteBall )
+		{
+			if ( Host.IsClient ) return;
+
+			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
+				.WorldOnly()
+				.Run();
+
+			var whiteArea = Game.Instance.WhiteArea;
+			var whiteAreaWorldOBB = whiteArea.CollisionBounds.ToWorldSpace( whiteArea );
+
+			whiteBall.Entity.TryMoveTo( cursorTrace.EndPos, whiteAreaWorldOBB );
+
+			if ( input.Released( InputButton.Attack1 ) )
+				Viewer.StopPlacingWhiteBall();
+		}
+
+		private void HandlePowerSelection( UserInput input, EntityHandle<PoolCue> cue )
+		{
+			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
+				.Run();
+
+			var distanceToCue = cursorTrace.EndPos.Distance( cue.Entity.WorldPos );
+			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
+
+			if ( !IsMakingShot )
+				cuePullBackDelta = 0f;
+
+			_cuePullBackOffset = Math.Clamp( _cuePullBackOffset + cuePullBackDelta, 0f, 50f );
+			_lastPowerDistance = distanceToCue;
+
+			IsMakingShot = true;
+			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 50f );
+		}
+
+		private void RotateCueToCursor( UserInput input, EntityHandle<PoolBall> whiteBall, EntityHandle<PoolCue> cue )
+		{
+			var direction = cue.Entity.DirectionTo( whiteBall );
+			var rollTrace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos - direction * 100f )
+				.Ignore( cue )
+				.Ignore( whiteBall )
+				.Run();
+
+			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
+				.WorldOnly()
+				.Run();
+
+			var cursorDir = (whiteBall.Entity.WorldPos - cursorTrace.EndPos).Normal;
+			var cursorRot = Rotation.LookAt( cursorDir, Vector3.Up );
+
+			_cuePullBackOffset = _cuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
+
+			CueRoll = CueRoll.LerpTo( _minCueRoll + ((_maxCueRoll - _minCueRoll) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
+			CueYaw = cursorRot.Yaw() + 90f;
+
+			cue.Entity.WorldRot = Rotation.From(
+				cue.Entity.WorldRot.Angles()
+					.WithYaw( CueYaw )
+					.WithRoll( -CueRoll )
+			);
 		}
 
 		public override void OnWhiteBallStruck( PoolCue cue, PoolBall whiteBall, float force )
 		{
-			CuePullBackOffset = 0f;
+			_cuePullBackOffset = 0f;
 		}
 	}
 }

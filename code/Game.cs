@@ -143,6 +143,7 @@ namespace PoolGame
 					{
 						RenderColor = spawner.RenderColor,
 						WorldPos = spawner.WorldPos,
+						Number = spawner.Number,
 						Type = spawner.Type
 					};
 

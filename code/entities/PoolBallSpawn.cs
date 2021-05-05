@@ -12,5 +12,8 @@ namespace PoolGame
 	{
 		[HammerProp]
 		public PoolBallType Type { get; set; }
+
+		[HammerProp]
+		public PoolBallNumber Number { get; set; }
 	}
 }
