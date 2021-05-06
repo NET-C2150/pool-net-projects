@@ -297,10 +297,10 @@ namespace PoolGame
 			foreach ( var ball in Game.Instance.AllBalls )
 			{
 				// Is this a shit way of determining it?
-				if ( ball.PhysicsBody.Velocity.Length > 5f )
+				if ( ball.PhysicsBody.Velocity.Length > 0.1f )
 					return;
 
-				if ( ball.PhysicsBody.AngularVelocity.Length > 5f )
+				if ( ball.PhysicsBody.AngularVelocity.Length > 0.1f )
 					return;
 			}
 
