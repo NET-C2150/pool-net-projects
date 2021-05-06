@@ -15,7 +15,7 @@ Layer0
 	//---- Color ----
 	g_flModelTintAmount "1.000"
 	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
-	TextureColor "D:/Facepunch/Projects/sbox/game/addons/pool/textures/pool/pool_ball_15_color.tga"
+	TextureColor "textures/pool/pool_ball_15_color.tga"
 
 	//---- Fade ----
 	g_flFadeExponent "1.000"
