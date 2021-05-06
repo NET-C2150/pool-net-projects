@@ -30,9 +30,6 @@ namespace PoolGame
 
 			var zoomOutDistance = 100f;
 
-			if ( Viewer.Input.Down( InputButton.Attack1 ) )
-				zoomOutDistance = 80f;
-
 			Viewer.WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
 			Viewer.WorldRot = Rotation.LookAt( Vector3.Down );
 
@@ -48,8 +45,11 @@ namespace PoolGame
 
 			if ( Viewer.IsPlacingWhiteBall )
 			{
-				HandleWhiteBallPlacement( input, whiteBall );
+				if ( Host.IsServer )
+					HandleWhiteBallPlacement( input, whiteBall );
+
 				ShowWhiteArea( true );
+
 				return;
 			}
 			else
@@ -61,11 +61,17 @@ namespace PoolGame
 			{
 				if ( !IsMakingShot )
 				{
-					RotateCueToCursor( input, whiteBall, cue );
+					if ( Host.IsServer )
+						RotateCueToCursor( input, whiteBall, cue );
 				}
 				else
 				{
-					TakeShot( cue, whiteBall );
+					if ( Host.IsServer )
+						TakeShot( cue, whiteBall );
+
+					IsMakingShot = false;
+					ShotPower = 0f;
+
 					return;
 				}
 			}
@@ -74,8 +80,9 @@ namespace PoolGame
 				HandlePowerSelection( input, cue );
 			}
 
-			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (31f + _cuePullBackOffset + (CueRoll * 0.04f));
-			
+			if ( Host.IsServer )
+				cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (31f + _cuePullBackOffset + (CueRoll * 0.04f));
+
 			if ( Host.IsClient )
 			{
 				if ( ShotPowerLine == null )
@@ -106,13 +113,10 @@ namespace PoolGame
 
 		private void TakeShot( EntityHandle<PoolCue> cue, EntityHandle<PoolBall> whiteBall )
 		{
-			IsMakingShot = false;
-
 			if ( ShotPower >= 5f )
 			{
 				using ( Prediction.Off() )
 				{
-					Log.Info( "Shot Power: " + ShotPower );
 					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 6f );
 				}
 			}
@@ -120,8 +124,6 @@ namespace PoolGame
 
 		private void HandleWhiteBallPlacement( UserInput input, EntityHandle<PoolBall> whiteBall )
 		{
-			if ( Host.IsClient ) return;
-
 			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
 				.WorldOnly()
 				.Run();
@@ -181,8 +183,6 @@ namespace PoolGame
 		public override void OnWhiteBallStruck( PoolCue cue, PoolBall whiteBall, float force )
 		{
 			_cuePullBackOffset = 0f;
-			IsMakingShot = false;
-			ShotPower = 0f;
 		}
 	}
 }

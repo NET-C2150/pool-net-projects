@@ -119,6 +119,15 @@ namespace PoolGame
 
 		public void ShowPoolCue( bool shouldShow )
 		{
+			if ( shouldShow )
+			{
+				/*
+				 * Force the view to update positions first, this way it'll already be positioned
+				 * when the client receives the update to enable drawing.
+				 */
+				View?.Tick();
+			}
+
 			Cue.Entity.EnableDrawing = shouldShow;
 		}
 
