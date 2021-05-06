@@ -24,10 +24,10 @@ namespace PoolGame
 
 		public override void Tick()
 		{
-			var zoomOutDistance = 900f;
+			var zoomOutDistance = 100f;
 
 			if ( Viewer.Input.Down( InputButton.Attack1 ) )
-				zoomOutDistance = 750f;
+				zoomOutDistance = 80f;
 
 			Viewer.WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
 			Viewer.WorldRot = Rotation.LookAt( Vector3.Down );
@@ -70,14 +70,14 @@ namespace PoolGame
 				HandlePowerSelection( input, cue );
 			}
 
-			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (250f + _cuePullBackOffset + (CueRoll * 0.3f));
+			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (31f + _cuePullBackOffset + (CueRoll * 0.04f));
 
 			var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + cue.Entity.DirectionTo( whiteBall.Entity) * 1000f )
 				.Ignore( whiteBall.Entity )
 				.Ignore( cue.Entity )
 				.Run();
 
-			DebugOverlay.Sphere( trace.EndPos, 10f, Color.White );
+			DebugOverlay.Sphere( trace.EndPos, 1f, Color.White );
 			DebugOverlay.Line( trace.StartPos, trace.EndPos, Color.White );
 		}
 
@@ -100,7 +100,7 @@ namespace PoolGame
 				using ( Prediction.Off() )
 				{
 					Log.Info( "Shot Power: " + ShotPower );
-					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 50f );
+					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 8f );
 				}
 			}
 		}
@@ -124,20 +124,18 @@ namespace PoolGame
 
 		private void HandlePowerSelection( UserInput input, EntityHandle<PoolCue> cue )
 		{
-			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
-				.Run();
-
-			var distanceToCue = cursorTrace.EndPos.Distance( cue.Entity.WorldPos );
+			var cursorPlaneEndPos = Viewer.EyePos + input.CursorAim * 100f;
+			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.WorldPos );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
 
 			if ( !IsMakingShot )
 				cuePullBackDelta = 0f;
 
-			_cuePullBackOffset = Math.Clamp( _cuePullBackOffset + cuePullBackDelta, 0f, 50f );
+			_cuePullBackOffset = Math.Clamp( _cuePullBackOffset + cuePullBackDelta, 0f, 5f );
 			_lastPowerDistance = distanceToCue;
 
 			IsMakingShot = true;
-			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 50f );
+			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 5f );
 		}
 
 		private void RotateCueToCursor( UserInput input, EntityHandle<PoolBall> whiteBall, EntityHandle<PoolCue> cue )
