@@ -10,6 +10,7 @@ namespace PoolGame
 		public float CueYaw { get; set; }
 		public bool IsMakingShot { get; set; }
 		public float ShotPower { get; set; }
+		public ShotPowerLine ShotPowerLine { get; set; }
 
 		private float _cuePullBackOffset;
 		private float _lastPowerDistance;
@@ -24,6 +25,9 @@ namespace PoolGame
 
 		public override void Tick()
 		{
+			if ( Host.IsClient && ShotPowerLine != null )
+				ShotPowerLine.IsEnabled = false;
+
 			var zoomOutDistance = 100f;
 
 			if ( Viewer.Input.Down( InputButton.Attack1 ) )
@@ -71,14 +75,23 @@ namespace PoolGame
 			}
 
 			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (31f + _cuePullBackOffset + (CueRoll * 0.04f));
+			
+			if ( Host.IsClient )
+			{
+				if ( ShotPowerLine == null )
+					ShotPowerLine = new ShotPowerLine();
 
-			var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + cue.Entity.DirectionTo( whiteBall.Entity) * 1000f )
-				.Ignore( whiteBall.Entity )
-				.Ignore( cue.Entity )
-				.Run();
+				var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + cue.Entity.DirectionTo( whiteBall.Entity ) * 1000f )
+					.Ignore( whiteBall.Entity )
+					.Ignore( cue.Entity )
+					.Run();
 
-			DebugOverlay.Sphere( trace.EndPos, 1f, Color.White );
-			DebugOverlay.Line( trace.StartPos, trace.EndPos, Color.White );
+				ShotPowerLine.IsEnabled = true;
+				ShotPowerLine.WorldPos = trace.StartPos;
+				ShotPowerLine.ShotPower = ShotPower;
+				ShotPowerLine.EndPos = trace.EndPos;
+				ShotPowerLine.Width = 0.1f + ( ( 0.15f / 100f ) * ShotPower );
+			}
 		}
 
 		private void ShowWhiteArea( bool shouldShow )
@@ -131,11 +144,11 @@ namespace PoolGame
 			if ( !IsMakingShot )
 				cuePullBackDelta = 0f;
 
-			_cuePullBackOffset = Math.Clamp( _cuePullBackOffset + cuePullBackDelta, 0f, 5f );
+			_cuePullBackOffset = Math.Clamp( _cuePullBackOffset + cuePullBackDelta, 0f, 8f );
 			_lastPowerDistance = distanceToCue;
 
 			IsMakingShot = true;
-			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 5f );
+			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 8f );
 		}
 
 		private void RotateCueToCursor( UserInput input, EntityHandle<PoolBall> whiteBall, EntityHandle<PoolCue> cue )
@@ -168,6 +181,8 @@ namespace PoolGame
 		public override void OnWhiteBallStruck( PoolCue cue, PoolBall whiteBall, float force )
 		{
 			_cuePullBackOffset = 0f;
+			IsMakingShot = false;
+			ShotPower = 0f;
 		}
 	}
 }
