@@ -38,6 +38,8 @@ namespace PoolGame
 				Hud = new();
 			}
 
+			Global.PhysicsSubSteps = 10;
+
 			_ = StartTickTimer();
 		}
 
