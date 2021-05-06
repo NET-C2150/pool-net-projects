@@ -141,11 +141,11 @@ namespace PoolGame
 
 					var ball = new PoolBall
 					{
-						RenderColor = spawner.RenderColor,
 						WorldPos = spawner.WorldPos,
-						Number = spawner.Number,
-						Type = spawner.Type
+						WorldRot = Rotation.LookAt( Vector3.Random )
 					};
+
+					ball.SetType( spawner.Type, spawner.Number );
 
 					if ( ball.Type == PoolBallType.White )
 						WhiteBall = ball;

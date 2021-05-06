@@ -10,8 +10,8 @@ namespace PoolGame
 	public partial class PoolBall : ModelEntity
 	{
 		public Player LastStriker { get; private set; }
-		public PoolBallNumber Number { get; set; }
-		public PoolBallType Type { get; set; }
+		public PoolBallNumber Number { get; private set; }
+		public PoolBallType Type { get; private set; }
 
 		public void ResetLastStriker()
 		{
@@ -28,6 +28,25 @@ namespace PoolGame
 		{
 			EnableAllCollisions = true;
 			PhysicsEnabled = true;
+		}
+
+		public void SetType( PoolBallType type, PoolBallNumber number )
+		{
+			if ( type == PoolBallType.Black )
+			{
+				SetMaterialGroup( 8 );
+			}
+			else if ( type == PoolBallType.Red )
+			{
+				SetMaterialGroup( (int)number );
+			}
+			else if ( type == PoolBallType.Yellow )
+			{
+				SetMaterialGroup( (int)number + 8 );
+			}
+
+			Number = number;
+			Type = type;
 		}
 
 		public void TryMoveTo( Vector3 worldPos, BBox within )
@@ -57,7 +76,9 @@ namespace PoolGame
 			SetModel( "models/pool/pool_ball.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic, true );
 
-			PhysicsBody.GravityScale = 10f;
+			PhysicsBody.GravityScale = 5f;
+
+			Transmit = TransmitType.Always;
 		}
 
 		public virtual void OnEnterPocket( TriggerBallPocket pocket )
