@@ -100,7 +100,7 @@ namespace PoolGame
 				using ( Prediction.Off() )
 				{
 					Log.Info( "Shot Power: " + ShotPower );
-					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 8f );
+					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 6f );
 				}
 			}
 		}

@@ -76,8 +76,6 @@ namespace PoolGame
 			SetModel( "models/pool/pool_ball.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic, true );
 
-			PhysicsBody.GravityScale = 5f;
-
 			Transmit = TransmitType.Always;
 		}
 
@@ -96,6 +94,8 @@ namespace PoolGame
 
 				Game.Instance.Round?.OnBallHitOtherBall( this, other );
 			}
+
+			Velocity = eventData.PostVelocity.WithZ( 0f );
 
 			base.OnPhysicsCollision( eventData );
 		}

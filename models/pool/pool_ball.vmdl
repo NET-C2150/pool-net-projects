@@ -252,7 +252,7 @@
 						inertia_scale = 1.0
 						linear_damping = 0.0
 						angular_damping = 2.0
-						use_mass_center_override = false
+						use_mass_center_override = true
 						mass_center_override = [ 0.0, 0.0, 0.0 ]
 					},
 				]
