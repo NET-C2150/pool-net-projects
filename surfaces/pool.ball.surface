@@ -4,7 +4,7 @@
 	{
 		Base = "default"
 		Friction = 1.0
-		Elasticity = 0.7
+		Elasticity = 1.0
 		Density = 100.0
 		Thickness = -1.0
 		Dampening = 0.0

@@ -19,7 +19,7 @@ namespace PoolGame
 		{
 			base.Spawn();
 
-			SetModel( "models/pool/pool_cue.vmdl" );
+			SetModel( "models/pool/pool_cue_b.vmdl" );
 
 			EnableDrawing = false;
 		}
