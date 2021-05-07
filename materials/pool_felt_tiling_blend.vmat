@@ -2,7 +2,7 @@
 
 Layer0
 {
-	shader "simple_blendable.vfx"
+	shader "blend.vfx"
 
 	//---- Enable Ambient Occlusion ----
 	F_ENABLE_AMBIENT_OCCLUSION 1

@@ -69,6 +69,7 @@ namespace PoolGame
 					if ( Host.IsServer )
 						TakeShot( cue, whiteBall );
 
+					_cuePullBackOffset = 0f;
 					IsMakingShot = false;
 					ShotPower = 0f;
 
@@ -161,7 +162,7 @@ namespace PoolGame
 				.Ignore( whiteBall )
 				.Run();
 
-			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
+			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 300f )
 				.WorldOnly()
 				.Run();
 
@@ -178,11 +179,6 @@ namespace PoolGame
 					.WithYaw( CueYaw )
 					.WithPitch( CuePitch )
 			);
-		}
-
-		public override void OnWhiteBallStruck( PoolCue cue, PoolBall whiteBall, float force )
-		{
-			_cuePullBackOffset = 0f;
 		}
 	}
 }
