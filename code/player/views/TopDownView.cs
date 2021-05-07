@@ -10,6 +10,7 @@ namespace PoolGame
 		public float CueYaw { get; set; }
 		public bool IsMakingShot { get; set; }
 		public float ShotPower { get; set; }
+		public ShotPowerLine ShotPowerLine { get; set; }
 
 		private float _cuePullBackOffset;
 		private float _lastPowerDistance;
@@ -24,10 +25,10 @@ namespace PoolGame
 
 		public override void Tick()
 		{
-			var zoomOutDistance = 100f;
+			if ( Host.IsClient && ShotPowerLine != null )
+				ShotPowerLine.IsEnabled = false;
 
-			if ( Viewer.Input.Down( InputButton.Attack1 ) )
-				zoomOutDistance = 80f;
+			var zoomOutDistance = 100f;
 
 			Viewer.WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
 			Viewer.WorldRot = Rotation.LookAt( Vector3.Down );
@@ -44,8 +45,11 @@ namespace PoolGame
 
 			if ( Viewer.IsPlacingWhiteBall )
 			{
-				HandleWhiteBallPlacement( input, whiteBall );
+				if ( Host.IsServer )
+					HandleWhiteBallPlacement( input, whiteBall );
+
 				ShowWhiteArea( true );
+
 				return;
 			}
 			else
@@ -57,11 +61,17 @@ namespace PoolGame
 			{
 				if ( !IsMakingShot )
 				{
-					RotateCueToCursor( input, whiteBall, cue );
+					if ( Host.IsServer )
+						RotateCueToCursor( input, whiteBall, cue );
 				}
 				else
 				{
-					TakeShot( cue, whiteBall );
+					if ( Host.IsServer )
+						TakeShot( cue, whiteBall );
+
+					IsMakingShot = false;
+					ShotPower = 0f;
+
 					return;
 				}
 			}
@@ -70,15 +80,25 @@ namespace PoolGame
 				HandlePowerSelection( input, cue );
 			}
 
-			cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (31f + _cuePullBackOffset + (CueRoll * 0.04f));
+			if ( Host.IsServer )
+				cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (31f + _cuePullBackOffset + (CueRoll * 0.04f));
 
-			var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + cue.Entity.DirectionTo( whiteBall.Entity) * 1000f )
-				.Ignore( whiteBall.Entity )
-				.Ignore( cue.Entity )
-				.Run();
+			if ( Host.IsClient )
+			{
+				if ( ShotPowerLine == null )
+					ShotPowerLine = new ShotPowerLine();
 
-			DebugOverlay.Sphere( trace.EndPos, 1f, Color.White );
-			DebugOverlay.Line( trace.StartPos, trace.EndPos, Color.White );
+				var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + cue.Entity.DirectionTo( whiteBall.Entity ) * 1000f )
+					.Ignore( whiteBall.Entity )
+					.Ignore( cue.Entity )
+					.Run();
+
+				ShotPowerLine.IsEnabled = true;
+				ShotPowerLine.WorldPos = trace.StartPos;
+				ShotPowerLine.ShotPower = ShotPower;
+				ShotPowerLine.EndPos = trace.EndPos;
+				ShotPowerLine.Width = 0.1f + ( ( 0.15f / 100f ) * ShotPower );
+			}
 		}
 
 		private void ShowWhiteArea( bool shouldShow )
@@ -93,13 +113,10 @@ namespace PoolGame
 
 		private void TakeShot( EntityHandle<PoolCue> cue, EntityHandle<PoolBall> whiteBall )
 		{
-			IsMakingShot = false;
-
 			if ( ShotPower >= 5f )
 			{
 				using ( Prediction.Off() )
 				{
-					Log.Info( "Shot Power: " + ShotPower );
 					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 6f );
 				}
 			}
@@ -107,8 +124,6 @@ namespace PoolGame
 
 		private void HandleWhiteBallPlacement( UserInput input, EntityHandle<PoolBall> whiteBall )
 		{
-			if ( Host.IsClient ) return;
-
 			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
 				.WorldOnly()
 				.Run();
@@ -131,11 +146,11 @@ namespace PoolGame
 			if ( !IsMakingShot )
 				cuePullBackDelta = 0f;
 
-			_cuePullBackOffset = Math.Clamp( _cuePullBackOffset + cuePullBackDelta, 0f, 5f );
+			_cuePullBackOffset = Math.Clamp( _cuePullBackOffset + cuePullBackDelta, 0f, 8f );
 			_lastPowerDistance = distanceToCue;
 
 			IsMakingShot = true;
-			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 5f );
+			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 8f );
 		}
 
 		private void RotateCueToCursor( UserInput input, EntityHandle<PoolBall> whiteBall, EntityHandle<PoolCue> cue )
