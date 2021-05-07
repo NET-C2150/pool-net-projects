@@ -6,7 +6,7 @@ namespace PoolGame
 {
 	public class TopDownView : BaseView
 	{
-		public float CueRoll { get; set; }
+		public float CuePitch { get; set; }
 		public float CueYaw { get; set; }
 		public bool IsMakingShot { get; set; }
 		public float ShotPower { get; set; }
@@ -14,8 +14,8 @@ namespace PoolGame
 
 		private float _cuePullBackOffset;
 		private float _lastPowerDistance;
-		private float _maxCueRoll = 35f;
-		private float _minCueRoll = 5f;
+		private float _maxCuePitch = 35f;
+		private float _minCuePitch = 5f;
 
 		public override void UpdateCamera( PoolCamera camera )
 		{
@@ -81,7 +81,7 @@ namespace PoolGame
 			}
 
 			if ( Host.IsServer )
-				cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Left * (31f + _cuePullBackOffset + (CueRoll * 0.04f));
+				cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
 
 			if ( Host.IsClient )
 			{
@@ -140,7 +140,7 @@ namespace PoolGame
 		private void HandlePowerSelection( UserInput input, EntityHandle<PoolCue> cue )
 		{
 			var cursorPlaneEndPos = Viewer.EyePos + input.CursorAim * 100f;
-			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.WorldPos );
+			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.WorldPos - cue.Entity.WorldRot.Forward * 100f );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
 
 			if ( !IsMakingShot )
@@ -165,18 +165,18 @@ namespace PoolGame
 				.WorldOnly()
 				.Run();
 
-			var cursorDir = (whiteBall.Entity.WorldPos - cursorTrace.EndPos).TemporaryNormalFix();
+			var cursorDir = (cursorTrace.EndPos - whiteBall.Entity.WorldPos).TemporaryNormalFix();
 			var cursorRot = Rotation.LookAt( cursorDir, Vector3.Forward );
 
 			_cuePullBackOffset = _cuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
 
-			CueRoll = CueRoll.LerpTo( _minCueRoll + ((_maxCueRoll - _minCueRoll) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
-			CueYaw = ( cursorRot.Yaw() + 90f ).Normalize( 0f, 360f );
+			CuePitch = CuePitch.LerpTo( _minCuePitch + ((_maxCuePitch - _minCuePitch) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
+			CueYaw = cursorRot.Yaw().Normalize( 0f, 360f );
 
 			cue.Entity.WorldRot = Rotation.From(
 				cue.Entity.WorldRot.Angles()
 					.WithYaw( CueYaw )
-					.WithRoll( -CueRoll )
+					.WithPitch( CuePitch )
 			);
 		}
 
