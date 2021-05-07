@@ -7,9 +7,6 @@ Layer0
 	//---- Color ----
 	F_TINT_MASK 1
 
-	//---- Detail Texture ----
-	F_DETAIL_TEXTURE 4 // Overlay and Normals
-
 	//---- PBR ----
 	F_SPECULAR 1
 
@@ -21,19 +18,8 @@ Layer0
 	//---- Color ----
 	g_flModelTintAmount "1.000"
 	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
-	TextureColor "textures/pool/pool_felt_a_color.tga"
-	TextureTintMask "textures/pool/pool_felt_a_mask.tga"
-
-	//---- Detail Texture ----
-	g_flDetailBlendFactor "1.000"
-	g_flDetailBlendToFull "0.000"
-	g_flDetailNormalStrength "1.000"
-	g_flDetailTexCoordRotation "0.000"
-	g_vDetailTexCoordOffset "[0.000 0.000]"
-	g_vDetailTexCoordScale "[0.800 0.800]"
-	TextureDetail "textures/pool/pool_felt_a_color.tga"
-	TextureDetailMask "[1.000000 1.000000 1.000000 0.000000]"
-	TextureNormalDetail "textures/pool/pool_felt_a_normal.tga"
+	TextureColor "D:/Facepunch/Projects/sbox/game/addons/pool/textures/pool/pool_felt_a_color.tga"
+	TextureTintMask "d:/facepunch/projects/sbox/game/addons/pool/textures/pool/pool_felt_a_mask.tga"
 
 	//---- Fade ----
 	g_flFadeExponent "1.000"
@@ -58,13 +44,13 @@ Layer0
 	g_nScaleTexCoordUByModelScaleAxis "0"
 	g_nScaleTexCoordVByModelScaleAxis "0"
 	g_vTexCoordOffset "[0.000 0.000]"
-	g_vTexCoordScale "[1.000 1.000]"
+	g_vTexCoordScale "[3.000 3.000]"
 	g_vTexCoordScrollSpeed "[0.000 0.000]"
 
 	SystemAttributes
 	{
-		WorldMappingWidth "11"
-		WorldMappingHeight "11"
+		WorldMappingWidth "128"
+		WorldMappingHeight "128"
 		PhysicsSurfaceProperties "pool.table"
 	}
 }
