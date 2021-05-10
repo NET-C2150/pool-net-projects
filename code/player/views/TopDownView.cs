@@ -19,6 +19,7 @@ namespace PoolGame
 
 		public override void UpdateCamera( PoolCamera camera )
 		{
+			camera.FieldOfView = 10f;
 			camera.Pos = camera.Pos.LerpTo( Viewer.WorldPos, Time.Delta );
 			camera.Rot = Rotation.Lerp( camera.Rot, Viewer.WorldRot, Time.Delta );
 		}
@@ -28,7 +29,7 @@ namespace PoolGame
 			if ( Host.IsClient && ShotPowerLine != null )
 				ShotPowerLine.IsEnabled = false;
 
-			var zoomOutDistance = 100f;
+			var zoomOutDistance = 700f;
 
 			Viewer.WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
 			Viewer.WorldRot = Rotation.LookAt( Vector3.Down );
@@ -143,7 +144,7 @@ namespace PoolGame
 
 		private void HandlePowerSelection( UserInput input, EntityHandle<PoolCue> cue )
 		{
-			var cursorPlaneEndPos = Viewer.EyePos + input.CursorAim * 100f;
+			var cursorPlaneEndPos = Viewer.EyePos + input.CursorAim * 700f;
 			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.WorldPos - cue.Entity.WorldRot.Forward * 100f );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
 
