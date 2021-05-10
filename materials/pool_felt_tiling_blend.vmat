@@ -33,7 +33,7 @@ Layer0
 	TextureColorA "textures/pool/pool_felt_a_color.tga"
 	TextureNormalA "textures/pool/pool_felt_a_normal.tga"
 	TextureRoughnessA "textures/pool/pool_felt_a_rough.tga"
-	TextureTintMaskA "[1.000000 1.000000 1.000000 0.000000]"
+	TextureTintMaskA "textures/pool/pool_felt_a_mask.tga"
 
 	//---- Material B ----
 	g_flMetalnessB "0.000"
@@ -42,12 +42,12 @@ Layer0
 	TextureColorB "textures/pool/fabric_worn_color.tga"
 	TextureNormalB "textures/pool/fabric_worn_normal.tga"
 	TextureRoughnessB "textures/pool/fabric_worn_rough.tga"
-	TextureTintMaskB "[0.969000 0.969000 0.969000 0.000000]"
+	TextureTintMaskB "[0.975000 0.975000 0.975000 0.000000]"
 
 	//---- Texture Coordinates ----
 	g_nScaleTexCoordUByModelScaleAxis "0"
 	g_nScaleTexCoordVByModelScaleAxis "0"
-	g_vTexCoordOffset "[-0.500 1.000]"
+	g_vTexCoordOffset "[0.500 1.000]"
 	g_vTexCoordScale "[3.000 3.000]"
 	g_vTexCoordScrollSpeed "[0.000 0.000]"
 

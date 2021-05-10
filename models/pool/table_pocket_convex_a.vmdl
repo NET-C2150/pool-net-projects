@@ -54,9 +54,9 @@
 						parent_bone = ""
 						surface_prop = "pool.side"
 						collision_prop = "default"
-						origin = [ -0.49, 3.8, 0.9 ]
+						origin = [ -0.110021, 3.533936, 0.9 ]
 						angles = [ 0.0, 55.0, 0.0 ]
-						dimensions = [ 0.27, 3.45, 1.8 ]
+						dimensions = [ 0.27, 2.522263, 1.8 ]
 					},
 					{
 						_class = "PhysicsShapeBox"
@@ -72,9 +72,9 @@
 						parent_bone = ""
 						surface_prop = "pool.side"
 						collision_prop = "default"
-						origin = [ -3.8, 0.49, 0.9 ]
+						origin = [ -3.533818, 0.109853, 0.9 ]
 						angles = [ 0.0, 35.0, 0.0 ]
-						dimensions = [ 0.27, 3.45, 1.8 ]
+						dimensions = [ 0.27, 2.521851, 1.8 ]
 					},
 					{
 						_class = "PhysicsShapeBox"
