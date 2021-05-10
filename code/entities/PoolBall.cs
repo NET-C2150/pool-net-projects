@@ -116,8 +116,19 @@ namespace PoolGame
 			if ( eventData.Entity is PoolBall other )
 			{
 				LastStriker = Game.Instance.CurrentPlayer;
-
 				Game.Instance.Round?.OnBallHitOtherBall( this, other );
+
+				var sound = PlaySound( "ball-collide" );
+				sound.SetPitch( Rand.Float( 0.9f, 1f ) );
+				sound.SetVolume( (1f / 100f) * eventData.Speed );
+			}
+			else
+			{
+				// TODO: If this is the side entity (no way to determine it yet.)
+				/*
+				var sound = PlaySound( "ball-hit-side" );
+				sound.SetPitch( Rand.Float( 0.8f, 1f ) );
+				*/
 			}
 
 			Velocity = eventData.PostVelocity.WithZ( 0f );

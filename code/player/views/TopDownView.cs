@@ -120,10 +120,8 @@ namespace PoolGame
 				{
 					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 6f );
 
-					var powerSound = Convert.ToInt32( MathF.Round( (3f / 100f) * ShotPower ) );
-					whiteBall.Entity.PlaySound( $"shot-power-{powerSound}" );
-
-					Log.Info( "Shot Power Sound: " + powerSound );
+					var soundFileId = Convert.ToInt32( MathF.Round( (2f / 100f) * ShotPower ) );
+					var sound = whiteBall.Entity.PlaySound( $"shot-power-{soundFileId}" );
 				}
 			}
 		}
@@ -167,7 +165,7 @@ namespace PoolGame
 				.Ignore( whiteBall )
 				.Run();
 
-			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 300f )
+			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
 				.WorldOnly()
 				.Run();
 
