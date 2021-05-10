@@ -61,11 +61,11 @@ namespace PoolGame
 			{
 				SetMaterialGroup( 8 );
 			}
-			else if ( type == PoolBallType.Red )
+			else if ( type == PoolBallType.Spots )
 			{
 				SetMaterialGroup( (int)number );
 			}
-			else if ( type == PoolBallType.Yellow )
+			else if ( type == PoolBallType.Stripes )
 			{
 				SetMaterialGroup( (int)number + 8 );
 			}

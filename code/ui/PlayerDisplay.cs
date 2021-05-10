@@ -39,8 +39,8 @@ namespace PoolGame
 
 				Avatar.SetTexture( $"avatar:{player.Entity.SteamId}" );
 
-				BallType.SetClass( "red", player.Entity.BallType == PoolBallType.Red );
-				BallType.SetClass( "yellow", player.Entity.BallType == PoolBallType.Yellow );
+				BallType.SetClass( "red", player.Entity.BallType == PoolBallType.Spots );
+				BallType.SetClass( "yellow", player.Entity.BallType == PoolBallType.Stripes );
 
 				SetClass( "active", player.Entity.IsTurn );
 			}

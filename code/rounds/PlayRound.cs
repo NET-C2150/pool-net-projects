@@ -104,7 +104,7 @@ namespace PoolGame
 						ball.LastStriker.Score++;
 
 						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
-						otherPlayer.BallType = (ball.Type == PoolBallType.Red ? PoolBallType.Yellow : PoolBallType.Red);
+						otherPlayer.BallType = (ball.Type == PoolBallType.Spots ? PoolBallType.Stripes : PoolBallType.Spots);
 					}
 					else
 					{

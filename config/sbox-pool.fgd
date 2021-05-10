@@ -12,8 +12,8 @@
 
 	type(choices) : "Type" : 0 : "The type of ball" =
 	[
-		0 : "Red"
-		1 : "Yellow"
+		0 : "Spots"
+		1 : "Stripes"
 		2 : "White"
 		3 : "Black"
 	]

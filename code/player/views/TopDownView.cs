@@ -22,7 +22,7 @@ namespace PoolGame
 		{
 			camera.FieldOfView = 10f;
 			camera.Pos = camera.Pos.LerpTo( Viewer.WorldPos, Time.Delta );
-			camera.Rot = Rotation.Lerp( camera.Rot, Viewer.WorldRot, Time.Delta );
+			camera.Rot = Viewer.WorldRot;
 		}
 
 		public override void Tick()

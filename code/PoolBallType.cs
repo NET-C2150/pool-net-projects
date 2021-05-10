@@ -8,8 +8,8 @@ namespace PoolGame
 {
 	public enum PoolBallType
 	{
-		Red = 0,
-		Yellow = 1,
+		Spots = 0,
+		Stripes = 1,
 		White = 2,
 		Black = 3
 	}
