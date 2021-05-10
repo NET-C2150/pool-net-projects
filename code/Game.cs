@@ -43,34 +43,11 @@ namespace PoolGame
 			_ = StartTickTimer();
 		}
 
-		public void RespawnBlackBall()
-		{
-			var whiteBall = WhiteBall.Entity;
-			var entities = All.Where( ( e ) => e is PoolBallSpawn );
-
-			foreach ( var entity in entities )
-			{
-				if ( entity is PoolBallSpawn spawner )
-				{
-					if ( spawner.Type == PoolBallType.Black )
-					{
-						whiteBall.WorldPos = spawner.WorldPos;
-						whiteBall.PhysicsBody.AngularVelocity = Vector3.Zero;
-						whiteBall.PhysicsBody.Velocity = Vector3.Zero;
-						whiteBall.PhysicsBody.ClearForces();
-
-						return;
-					}
-				}
-			}
-		}
-
 		public async Task RespawnBallAsync( PoolBall ball, bool shouldAnimate = false )
 		{
 			if ( shouldAnimate )
 				await ball.AnimateIntoPocket();
 
-			var whiteBall = WhiteBall.Entity;
 			var entities = All.Where( ( e ) => e is PoolBallSpawn );
 
 			foreach ( var entity in entities )
@@ -79,10 +56,12 @@ namespace PoolGame
 				{
 					if ( spawner.Type == ball.Type && spawner.Number == ball.Number )
 					{
-						whiteBall.WorldPos = spawner.WorldPos;
-						whiteBall.PhysicsBody.AngularVelocity = Vector3.Zero;
-						whiteBall.PhysicsBody.Velocity = Vector3.Zero;
-						whiteBall.PhysicsBody.ClearForces();
+						ball.WorldPos = spawner.WorldPos;
+						ball.RenderAlpha = 1f;
+						ball.WorldScale = 1f;
+						ball.PhysicsBody.AngularVelocity = Vector3.Zero;
+						ball.PhysicsBody.Velocity = Vector3.Zero;
+						ball.PhysicsBody.ClearForces();
 
 						return;
 					}

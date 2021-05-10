@@ -119,6 +119,11 @@ namespace PoolGame
 				using ( Prediction.Off() )
 				{
 					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 6f );
+
+					var powerSound = Convert.ToInt32( MathF.Round( (3f / 100f) * ShotPower ) );
+					whiteBall.Entity.PlaySound( $"shot-power-{powerSound}" );
+
+					Log.Info( "Shot Power Sound: " + powerSound );
 				}
 			}
 		}

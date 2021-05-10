@@ -41,6 +41,8 @@ namespace PoolGame
 		{
 			if ( Host.IsServer )
 			{
+				ball.PlaySound( $"ball-pocket-{Rand.Int( 1, 2 )}" );
+
 				if ( ball.LastStriker == null || !ball.LastStriker.IsValid() )
 				{
 					if ( ball.Type == PoolBallType.White )
