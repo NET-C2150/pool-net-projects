@@ -10,6 +10,7 @@ namespace PoolGame
 		public float CueYaw { get; set; }
 		public bool IsMakingShot { get; set; }
 		public float ShotPower { get; set; }
+		public Vector3 AimDir { get; set; }
 		public ShotPowerLine ShotPowerLine { get; set; }
 
 		private float _cuePullBackOffset;
@@ -60,6 +61,8 @@ namespace PoolGame
 
 			if ( !input.Down( InputButton.Attack1 ) )
 			{
+				UpdateAimDir( input, whiteBall.Entity.WorldPos );
+
 				if ( !IsMakingShot )
 				{
 					if ( Host.IsServer )
@@ -90,7 +93,7 @@ namespace PoolGame
 				if ( ShotPowerLine == null )
 					ShotPowerLine = new ShotPowerLine();
 
-				var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + cue.Entity.DirectionTo( whiteBall.Entity ) * 1000f )
+				var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + AimDir * 1000f )
 					.Ignore( whiteBall.Entity )
 					.Ignore( cue.Entity )
 					.Run();
@@ -158,25 +161,34 @@ namespace PoolGame
 			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 8f );
 		}
 
+		private bool UpdateAimDir( UserInput input, Vector3 ballCenter )
+		{
+			if ( IsMakingShot )
+				return true;
+
+			var tablePlane = new Plane( ballCenter, Vector3.Up );
+			var hitPos = tablePlane.Trace( new Ray( Viewer.EyePos, input.CursorAim ), true );
+
+			if ( !hitPos.HasValue ) return false;
+
+			AimDir = (hitPos.Value - ballCenter).WithZ( 0 ).Normal;
+
+			return true;
+		}
+
 		private void RotateCueToCursor( UserInput input, EntityHandle<PoolBall> whiteBall, EntityHandle<PoolCue> cue )
 		{
-			var direction = cue.Entity.DirectionTo( whiteBall );
-			var rollTrace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos - direction * 100f )
+			var rollTrace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos - AimDir * 100f )
 				.Ignore( cue )
 				.Ignore( whiteBall )
 				.Run();
 
-			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
-				.WorldOnly()
-				.Run();
-
-			var cursorDir = (cursorTrace.EndPos - whiteBall.Entity.WorldPos).TemporaryNormalFix();
-			var cursorRot = Rotation.LookAt( cursorDir, Vector3.Forward );
+			var aimRotation = Rotation.LookAt( AimDir, Vector3.Forward );
 
 			_cuePullBackOffset = _cuePullBackOffset.LerpTo( 0f, Time.Delta * 10f );
 
 			CuePitch = CuePitch.LerpTo( _minCuePitch + ((_maxCuePitch - _minCuePitch) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
-			CueYaw = cursorRot.Yaw().Normalize( 0f, 360f );
+			CueYaw = aimRotation.Yaw().Normalize( 0f, 360f );
 
 			cue.Entity.WorldRot = Rotation.From(
 				cue.Entity.WorldRot.Angles()

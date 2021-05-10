@@ -1,0 +1,60 @@
+﻿toastlist {
+	position: absolute;
+	bottom: 200px;
+	left: 50%;
+	flex-direction: column;
+	width: 300px;
+	padding: 5px;
+	padding-bottom: 0px;
+
+	toastitem {
+		background-color: rgba( black, 0.8 );
+		flex-direction: row;
+		padding: 6px;
+		margin-bottom: 5px;
+		align-items: center;
+		align-content: center;
+		border-radius: 32px;
+		overflow: hidden;
+		transition: all 0.2s ease-out;
+
+		&:intro {
+			opacity: 0;
+			transform: scale( 0 );
+		}
+
+		&:outro {
+			opacity: 0;
+			transition: all 0.2s ease-out;
+		}
+
+		.text {
+		}
+
+		.circle {
+			.icon {
+				background-color: red;
+				width: 24px;
+				height: 24px;
+			}
+
+			&.hidden {
+				display: none;
+			}
+		}
+
+		.avatar {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+		}
+
+		.name {
+			font-size: 16px;
+			font-weight: 500;
+			margin-left: 10px;
+			flex-grow: 1;
+			color: #c0fb2e;
+		}
+	}
+}
