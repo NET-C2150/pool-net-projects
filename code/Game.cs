@@ -65,8 +65,11 @@ namespace PoolGame
 			}
 		}
 
-		public void RespawnWhiteBall()
+		public async Task RespawnBallAsync( PoolBall ball, bool shouldAnimate = false )
 		{
+			if ( shouldAnimate )
+				await ball.AnimateIntoPocket();
+
 			var whiteBall = WhiteBall.Entity;
 			var entities = All.Where( ( e ) => e is PoolBallSpawn );
 
@@ -74,7 +77,7 @@ namespace PoolGame
 			{
 				if ( entity is PoolBallSpawn spawner )
 				{
-					if ( spawner.Type == PoolBallType.White )
+					if ( spawner.Type == ball.Type && spawner.Number == ball.Number )
 					{
 						whiteBall.WorldPos = spawner.WorldPos;
 						whiteBall.PhysicsBody.AngularVelocity = Vector3.Zero;
@@ -87,8 +90,11 @@ namespace PoolGame
 			}
 		}
 
-		public void RemoveBall( PoolBall ball )
+		public async Task RemoveBallAsync( PoolBall ball, bool shouldAnimate = false )
 		{
+			if ( shouldAnimate )
+				await ball.AnimateIntoPocket();
+
 			AllBalls.Remove( ball );
 			ball.Delete();
 		}

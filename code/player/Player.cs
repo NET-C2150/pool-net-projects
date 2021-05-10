@@ -59,7 +59,7 @@ namespace PoolGame
 			if ( whiteBall.IsValid )
 				whiteBall.Entity.StartPlacing();
 
-			Game.Instance.RespawnWhiteBall();
+			_ = Game.Instance.RespawnBallAsync( whiteBall );
 
 			IsPlacingWhiteBall = true;
 

@@ -45,11 +45,11 @@ namespace PoolGame
 				{
 					if ( ball.Type == PoolBallType.White )
 					{
-						Game.Instance.RespawnWhiteBall();
+						_ = Game.Instance.RespawnBallAsync( ball, true );
 					}
 					else if ( ball.Type == PoolBallType.Black )
 					{
-						Game.Instance.RespawnBlackBall();
+						_ = Game.Instance.RespawnBallAsync( ball, true );
 					}
 					else
 					{
@@ -63,7 +63,7 @@ namespace PoolGame
 							player.Score++;
 						}
 
-						Game.Instance.RemoveBall( ball );
+						_ = Game.Instance.RemoveBallAsync( ball, true );
 					}
 
 					return;
@@ -72,7 +72,7 @@ namespace PoolGame
 				if ( ball.Type == PoolBallType.White )
 				{
 					ball.LastStriker.Foul( FoulReason.PotWhiteBall );
-					Game.Instance.RespawnWhiteBall();
+					_ = Game.Instance.RespawnBallAsync( ball, true );
 				}
 				else if ( ball.Type == ball.LastStriker.BallType )
 				{
@@ -81,11 +81,11 @@ namespace PoolGame
 
 					ball.LastStriker.Score++;
 
-					Game.Instance.RemoveBall( ball );
+					_ = Game.Instance.RemoveBallAsync( ball, true );
 				}
 				else if ( ball.Type == PoolBallType.Black )
 				{
-					Game.Instance.RemoveBall( ball );
+					_ = Game.Instance.RemoveBallAsync( ball, true );
 
 					if ( ball.LastStriker.BallsLeft == 0 )
 						DoPlayerWin( ball.LastStriker );
@@ -122,7 +122,7 @@ namespace PoolGame
 						}
 					}
 
-					Game.Instance.RemoveBall( ball );
+					_ = Game.Instance.RemoveBallAsync( ball, true );
 				}
 			}
 		}
@@ -301,6 +301,9 @@ namespace PoolGame
 					return;
 
 				if ( ball.PhysicsBody.AngularVelocity.Length > 0.1f )
+					return;
+
+				if ( ball.IsAnimating )
 					return;
 			}
 

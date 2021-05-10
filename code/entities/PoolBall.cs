@@ -2,7 +2,7 @@
 using Sandbox.UI;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace PoolGame
 {
@@ -12,6 +12,8 @@ namespace PoolGame
 		public Player LastStriker { get; private set; }
 		public PoolBallNumber Number { get; private set; }
 		public PoolBallType Type { get; private set; }
+		public bool IsAnimating { get; private set; }
+		public TriggerBallPocket LastPocket { get; set; }
 
 		public void ResetLastStriker()
 		{
@@ -22,6 +24,29 @@ namespace PoolGame
 		{
 			EnableAllCollisions = false;
 			PhysicsEnabled = false;
+		}
+
+		public async Task AnimateIntoPocket()
+		{
+			PhysicsEnabled = false;
+			IsAnimating = true;
+
+			while ( true )
+			{
+				await Task.NextPhysicsFrame();
+
+				WorldScale = WorldScale.LerpTo( 0.69f /* nice */, Time.Delta * 4f );
+				RenderAlpha = RenderAlpha.LerpTo( 0f, Time.Delta * 5f );
+
+				if ( LastPocket != null && LastPocket.IsValid() )
+					WorldPos = WorldPos.LerpTo( LastPocket.WorldPos + LastPocket.CollisionBounds.Center, Time.Delta * 16f );
+
+				if ( RenderAlpha.AlmostEqual( 0f ) )
+					break;
+			}
+
+			PhysicsEnabled = true;
+			IsAnimating = false;
 		}
 
 		public void StopPlacing()
@@ -81,7 +106,7 @@ namespace PoolGame
 
 		public virtual void OnEnterPocket( TriggerBallPocket pocket )
 		{
-			Log.Info( "Ball Entered Pocket On: " + (Host.IsClient ? "Client" : "Server") );
+			LastPocket = pocket;
 			Game.Instance.Round?.OnBallEnterPocket( this, pocket );
 		}
 
