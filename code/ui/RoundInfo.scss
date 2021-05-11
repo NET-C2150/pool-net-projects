@@ -9,7 +9,12 @@
     opacity: 1;
     transition: all 0.2s ease;
 
-    .container {
+    &.hidden {
+        display: none;
+    }
+
+    .container
+    {
         background-color: rgba(#1A202B,0.7);
         background-size: 100%;
         font-family: Roboto;
