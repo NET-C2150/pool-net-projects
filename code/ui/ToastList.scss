@@ -49,15 +49,29 @@
 			height: 60px;
 			position: absolute;
 			right: -68px;
+			transform: scale(1);
+			transition: all 1s ease-out;
+
+			&:intro {
+				opacity: 0;
+				transform: scale(0.8);
+				right: -50px;
+			}
 
 			.icon {
 				background-color: white;
 				background-size: 100%;
-				width: 24px;
-				height: 24px;
+				border-radius: 50%;
+				width: 60px;
+				height: 60px;
 
 				&.hello {
 					background-color: green;
+				}
+
+				&.foul {
+					background-image: url(/ui/pool/icon-shot-foul.png);
+					background-size: 100%;
 				}
 			}
 
