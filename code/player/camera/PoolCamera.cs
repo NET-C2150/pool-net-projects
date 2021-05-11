@@ -17,17 +17,11 @@ namespace PoolGame
 			if ( Sandbox.Player.Local is not Player player )
 				return;
 
-			player.View?.UpdateCamera( this );
+			FieldOfView = 10f;
+			Pos = Pos.LerpTo( player.WorldPos, Time.Delta );
+			Rot = player.WorldRot;
 
 			Viewer = null;
-		}
-
-		public override void BuildInput( ClientInput input )
-		{
-			if ( Sandbox.Player.Local is Player player )
-				player.View?.BuildInput( input );
-
-			base.BuildInput( input );
 		}
 	}
 }

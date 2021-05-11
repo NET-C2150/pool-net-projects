@@ -4,13 +4,13 @@ using System;
 
 namespace PoolGame
 {
-	public class TopDownView : BaseView
+	public partial class TopDownController : BaseGameController
 	{
+		[Net] public Vector3 AimDir { get; set; }
+		[Net] public float ShotPower { get; set; }
+		public bool IsMakingShot { get; set; }
 		public float CuePitch { get; set; }
 		public float CueYaw { get; set; }
-		public bool IsMakingShot { get; set; }
-		public float ShotPower { get; set; }
-		public Vector3 AimDir { get; set; }
 		public ShotPowerLine ShotPowerLine { get; set; }
 
 		private float _cuePullBackOffset;
@@ -18,37 +18,25 @@ namespace PoolGame
 		private float _maxCuePitch = 35f;
 		private float _minCuePitch = 5f;
 
-		public override void UpdateCamera( PoolCamera camera )
-		{
-			camera.FieldOfView = 10f;
-			camera.Pos = camera.Pos.LerpTo( Viewer.WorldPos, Time.Delta );
-			camera.Rot = Viewer.WorldRot;
-		}
-
-		public override void Tick()
+		public override void Tick( Player controller )
 		{
 			if ( Host.IsClient && ShotPowerLine != null )
 				ShotPowerLine.IsEnabled = false;
 
-			var zoomOutDistance = 700f;
-
-			Viewer.WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
-			Viewer.WorldRot = Rotation.LookAt( Vector3.Down );
-
-			if ( !Viewer.IsTurn || Viewer.IsFollowingBall )
+			if ( !controller.IsTurn || controller.IsFollowingBall )
 				return;
 
 			var whiteBall = Game.Instance.WhiteBall;
-			var input = Viewer.Input;
-			var cue = Viewer.Cue;
+			var input = controller.Input;
+			var cue = controller.Cue;
 
 			if ( !whiteBall.IsValid || !cue.IsValid )
 				return;
 
-			if ( Viewer.IsPlacingWhiteBall )
+			if ( controller.IsPlacingWhiteBall )
 			{
 				if ( Host.IsServer )
-					HandleWhiteBallPlacement( input, whiteBall );
+					HandleWhiteBallPlacement( controller, input, whiteBall );
 
 				ShowWhiteArea( true );
 
@@ -59,30 +47,29 @@ namespace PoolGame
 				ShowWhiteArea( false );
 			}
 
-			if ( !input.Down( InputButton.Attack1 ) )
+			if ( Host.IsServer )
 			{
-				UpdateAimDir( input, whiteBall.Entity.WorldPos );
-
-				if ( !IsMakingShot )
+				if ( !input.Down( InputButton.Attack1 ) )
 				{
-					if ( Host.IsServer )
+					UpdateAimDir( controller, input, whiteBall.Entity.WorldPos );
+
+					if ( !IsMakingShot )
+					{
 						RotateCueToCursor( input, whiteBall, cue );
+					}
+					else
+					{
+						TakeShot( controller, cue, whiteBall );
+
+						_cuePullBackOffset = 0f;
+						IsMakingShot = false;
+						ShotPower = 0f;
+					}
 				}
 				else
 				{
-					if ( Host.IsServer )
-						TakeShot( cue, whiteBall );
-
-					_cuePullBackOffset = 0f;
-					IsMakingShot = false;
-					ShotPower = 0f;
-
-					return;
+					HandlePowerSelection( controller, input, cue );
 				}
-			}
-			else
-			{
-				HandlePowerSelection( input, cue );
 			}
 
 			if ( Host.IsServer )
@@ -116,13 +103,15 @@ namespace PoolGame
 				whiteArea.Quad.IsEnabled = shouldShow;
 		}
 
-		private void TakeShot( EntityHandle<PoolCue> cue, EntityHandle<PoolBall> whiteBall )
+		private void TakeShot( Player controller, EntityHandle<PoolCue> cue, EntityHandle<PoolBall> whiteBall )
 		{
+			Host.AssertServer();
+
 			if ( ShotPower >= 5f )
 			{
 				using ( Prediction.Off() )
 				{
-					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 6f );
+					controller.StrikeWhiteBall( cue, whiteBall, ShotPower * 6f );
 
 					var soundFileId = Convert.ToInt32( MathF.Round( (2f / 100f) * ShotPower ) );
 					whiteBall.Entity.PlaySound( $"shot-power-{soundFileId}" );
@@ -130,9 +119,11 @@ namespace PoolGame
 			}
 		}
 
-		private void HandleWhiteBallPlacement( UserInput input, EntityHandle<PoolBall> whiteBall )
+		private void HandleWhiteBallPlacement( Player controller, UserInput input, EntityHandle<PoolBall> whiteBall )
 		{
-			var cursorTrace = Trace.Ray( Viewer.EyePos, Viewer.EyePos + input.CursorAim * 1000f )
+			Host.AssertServer();
+
+			var cursorTrace = Trace.Ray( controller.EyePos, controller.EyePos + input.CursorAim * 1000f )
 				.WorldOnly()
 				.Run();
 
@@ -142,17 +133,22 @@ namespace PoolGame
 			whiteBall.Entity.TryMoveTo( cursorTrace.EndPos, whiteAreaWorldOBB );
 
 			if ( input.Released( InputButton.Attack1 ) )
-				Viewer.StopPlacingWhiteBall();
+				controller.StopPlacingWhiteBall();
 		}
 
-		private void HandlePowerSelection( UserInput input, EntityHandle<PoolCue> cue )
+		private void HandlePowerSelection( Player controller, UserInput input, EntityHandle<PoolCue> cue )
 		{
-			var cursorPlaneEndPos = Viewer.EyePos + input.CursorAim * 700f;
+			Host.AssertServer();
+
+			var cursorPlaneEndPos = controller.EyePos + input.CursorAim * 700f;
 			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.WorldPos - cue.Entity.WorldRot.Forward * 100f );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
 
 			if ( !IsMakingShot )
+			{
+				_lastPowerDistance = 0f;
 				cuePullBackDelta = 0f;
+			}
 
 			_cuePullBackOffset = Math.Clamp( _cuePullBackOffset + cuePullBackDelta, 0f, 8f );
 			_lastPowerDistance = distanceToCue;
@@ -161,13 +157,14 @@ namespace PoolGame
 			ShotPower = _cuePullBackOffset.AsPercentMinMax( 0f, 8f );
 		}
 
-		private bool UpdateAimDir( UserInput input, Vector3 ballCenter )
+		private bool UpdateAimDir( Player controller, UserInput input, Vector3 ballCenter )
 		{
-			if ( IsMakingShot )
-				return true;
+			Host.AssertServer();
+
+			if ( IsMakingShot ) return true;
 
 			var tablePlane = new Plane( ballCenter, Vector3.Up );
-			var hitPos = tablePlane.Trace( new Ray( Viewer.EyePos, input.CursorAim ), true );
+			var hitPos = tablePlane.Trace( new Ray( controller.EyePos, input.CursorAim ), true );
 
 			if ( !hitPos.HasValue ) return false;
 
@@ -178,6 +175,8 @@ namespace PoolGame
 
 		private void RotateCueToCursor( UserInput input, EntityHandle<PoolBall> whiteBall, EntityHandle<PoolCue> cue )
 		{
+			Host.AssertServer();
+
 			var rollTrace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos - AimDir * 100f )
 				.Ignore( cue )
 				.Ignore( whiteBall )
