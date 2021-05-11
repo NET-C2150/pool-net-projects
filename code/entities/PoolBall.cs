@@ -33,7 +33,7 @@ namespace PoolGame
 			else if ( Type == PoolBallType.White )
 				return "white";
 
-			return $"{ Type.ToString().ToLower() }_{ Number }";
+			return $"{ Type.ToString().ToLower() }_{ (int)Number }";
 		}
 
 		public async Task AnimateIntoPocket()
