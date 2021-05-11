@@ -26,6 +26,16 @@ namespace PoolGame
 			PhysicsEnabled = false;
 		}
 
+		public string GetIconClass()
+		{
+			if ( Type == PoolBallType.Black )
+				return "black";
+			else if ( Type == PoolBallType.White )
+				return "white";
+
+			return $"{ Type.ToString().ToLower() }_{ Number }";
+		}
+
 		public async Task AnimateIntoPocket()
 		{
 			PhysicsEnabled = false;
