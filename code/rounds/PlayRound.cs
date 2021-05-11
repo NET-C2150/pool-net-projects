@@ -175,9 +175,8 @@ namespace PoolGame
 				}
 
 				var timeLeft = MathF.Max( PlayerTurnEndTime - Sandbox.Time.Now, 0f );
-
-				TimeLeftFormatted = TimeSpan.FromSeconds( timeLeft ).ToString( @"mm\:ss" );
-				NetworkDirty( "TimeLeftFormatted", NetVarGroup.Net );
+				TimeLeftSeconds = timeLeft.CeilToInt();
+				NetworkDirty( "TimeLeftSeconds", NetVarGroup.Net );
 			}
 		}
 
