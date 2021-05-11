@@ -34,9 +34,9 @@ namespace PoolGame
 
 			RoundName.Text = round.RoundName;
 
-			if ( round.ShowTimeLeft && !string.IsNullOrEmpty( round.TimeLeftFormatted ) )
+			if ( round.ShowTimeLeft && round.TimeLeftSeconds > 0 )
 			{
-				TimeLeft.Text = round.TimeLeftFormatted;
+				TimeLeft.Text = round.TimeLeftSeconds.ToString();
 				Container.SetClass( "roundNameOnly", false );
 			}
 			else

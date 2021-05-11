@@ -26,8 +26,7 @@ namespace PoolGame
 			}
 		}
 
-		// TODO: This can be done better by using a shared timestamp.
-		[Net] public string TimeLeftFormatted { get; set; }
+		[Net] public int TimeLeftSeconds { get; set; }
 
 		public void Start()
 		{
@@ -82,8 +81,8 @@ namespace PoolGame
 				}
 				else
 				{
-					TimeLeftFormatted = TimeSpan.FromSeconds( TimeLeft ).ToString( @"mm\:ss" );
-					NetworkDirty( "TimeLeftFormatted", NetVarGroup.Net );
+					TimeLeftSeconds = TimeLeft.CeilToInt();
+					NetworkDirty( "TimeLeftSeconds", NetVarGroup.Net );
 				}
 			}
 		}
