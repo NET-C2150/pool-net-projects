@@ -82,6 +82,9 @@ namespace PoolGame
 		public void Foul( FoulReason reason )
 		{
 			Log.Info( Name + " has fouled (reason: " + reason.ToString() + ")" );
+
+			Game.Instance.AddToast( this, reason.ToMessage( this ), "foul" );
+
 			HasSecondShot = false;
 			FoulReason = reason;
 		}
@@ -97,6 +100,7 @@ namespace PoolGame
 		{
 			Log.Info( "Starting Turn: " + Name );
 
+			Game.Instance.AddToast( this, $"{Name} has started their turn" );
 			Game.Instance.CurrentPlayer = this;
 
 			IsFollowingBall = false;

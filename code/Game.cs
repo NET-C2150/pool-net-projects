@@ -78,6 +78,12 @@ namespace PoolGame
 			ball.Delete();
 		}
 
+		[ClientRpc]
+		public void AddToast( Player player, string text, string iconClass = "" )
+		{
+			ToastList.Current.AddItem( player, text, iconClass );
+		}
+
 		public void RemoveAllBalls()
 		{
 			if ( AllBalls != null )

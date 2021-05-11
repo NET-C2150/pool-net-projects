@@ -62,6 +62,7 @@ namespace PoolGame
 							if ( Game.Instance.CurrentPlayer == player )
 								player.HasSecondShot = true;
 
+							Game.Instance.AddToast( player, $"{ player.Name} has potted a ball" );
 							player.Score++;
 						}
 
@@ -81,6 +82,7 @@ namespace PoolGame
 					if ( Game.Instance.CurrentPlayer == ball.LastStriker )
 						ball.LastStriker.HasSecondShot = true;
 
+					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball" );
 					ball.LastStriker.Score++;
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
@@ -98,6 +100,8 @@ namespace PoolGame
 				{
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
+						Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has claimed { ball.Type }" );
+
 						// This is our ball type now, we've claimed it.
 						ball.LastStriker.HasSecondShot = true;
 						ball.LastStriker.BallType = ball.Type;
@@ -120,6 +124,7 @@ namespace PoolGame
 							if ( Game.Instance.CurrentPlayer == otherPlayer )
 								otherPlayer.HasSecondShot = true;
 
+							Game.Instance.AddToast( otherPlayer, $"{ otherPlayer.Name} has potted a ball" );
 							otherPlayer.Score++;
 						}
 					}
@@ -288,7 +293,7 @@ namespace PoolGame
 
 		private void DoPlayerWin( Player player )
 		{
-			Log.Info( player.Name + " has won the game!" );
+			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "win" );
 
 			_ = LoadStatsRound( $"{player.Name} Wins" );
 		}

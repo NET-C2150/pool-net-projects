@@ -11,6 +11,7 @@ namespace PoolGame
 		public Label Text { get; set; }
 		public Image Avatar { get; set; }
 		public Panel Circle { get; set; }
+		public Panel Icon { get; set; }
 
 		private float _endTime;
 
@@ -19,6 +20,7 @@ namespace PoolGame
 			Avatar = Add.Image( $"", "avatar" );
 			Text = Add.Label( "", "text" );
 			Circle = Add.Panel( "circle" );
+			Icon = Circle.Add.Panel( "icon" );
 		}
 
 		public void Update( Player player, string text, string iconClass = "" )
@@ -27,11 +29,11 @@ namespace PoolGame
 			Text.Text = text;
 
 			if ( !string.IsNullOrEmpty( iconClass ) )
-				Circle.AddClass( iconClass );
+				Icon.AddClass( iconClass );
 			else
 				Circle.AddClass( "hidden" );
 
-			_endTime = Sandbox.Time.Now + 3f;
+			_endTime = Sandbox.Time.Now + 5f;
 		}
 
 		public override void Tick()

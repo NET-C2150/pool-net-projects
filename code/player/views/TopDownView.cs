@@ -125,7 +125,7 @@ namespace PoolGame
 					Viewer.StrikeWhiteBall( cue, whiteBall, ShotPower * 6f );
 
 					var soundFileId = Convert.ToInt32( MathF.Round( (2f / 100f) * ShotPower ) );
-					var sound = whiteBall.Entity.PlaySound( $"shot-power-{soundFileId}" );
+					whiteBall.Entity.PlaySound( $"shot-power-{soundFileId}" );
 				}
 			}
 		}
