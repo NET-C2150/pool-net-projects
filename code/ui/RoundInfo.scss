@@ -1,5 +1,4 @@
-﻿roundInfo
-{
+﻿roundInfo {
     align-items: center;
     display: flex;
     justify-content: center;
@@ -7,65 +6,32 @@
     min-height: 100%;
     padding: 0;
     width: 100%;
+    opacity: 1;
+    transition: all 0.2s ease;
 
-    .container
-    {
-        background-color: rgba(0, 0, 0, 0.75);
+    .container {
+        background-color: rgba(#1A202B,0.7);
         background-size: 100%;
         font-family: Roboto;
-        border-radius: 16px;
+        border-radius: 40px;
         display: flex;
         flex-direction: row;
         position: absolute;
+        padding: 0 30px;
         bottom: 48px;
-        width: 410px;
         height: 44px;
 
-        label
-        {
+        label {
             align-items: center;
             color: #ECECEC;
             font-size: 20px;
+            font-weight: bold;
             text-shadow: 0px 2px rgba(#000,0.5);
-
-            &.roundName
-            {
-                width: 50%;
-                padding-right: 50px;
-                text-align: right;
-                left: 0;
-            }
-
-            &.timeLeft
-            {
-                padding-left: 50px;
-                right: 0;
-                text-align: left;
-                width: 50%;
-            }
         }
 
-        &.roundNameOnly
-        {
+    }
 
-            .roundName
-            {
-                text-align: center;
-                margin-right: 0px;
-                left: auto;
-                padding: 0;
-                width: 100%;
-            }
-
-            .timeLeft
-            {
-                display: none;
-            }
-
-            .icon
-            {
-                display: none;
-            }
-        }
+    &.is-playing {
+        opacity: 0;
     }
 }

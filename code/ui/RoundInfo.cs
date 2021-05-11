@@ -10,7 +10,6 @@ namespace PoolGame
 	{
 		public Panel Container;
 		public Label RoundName;
-		public Label TimeLeft;
 
 		public RoundInfo()
 		{
@@ -18,7 +17,6 @@ namespace PoolGame
 
 			Container = Add.Panel( "container" );
 			RoundName = Container.Add.Label( "Round", "roundName" );
-			TimeLeft = Container.Add.Label( "00:00", "timeLeft" );
 		}
 
 		public override void Tick()
@@ -34,14 +32,13 @@ namespace PoolGame
 
 			RoundName.Text = round.RoundName;
 
-			if ( round.ShowTimeLeft && round.TimeLeftSeconds > 0 )
+			if ( round.RoundName == "PLAY" )
 			{
-				TimeLeft.Text = round.TimeLeftSeconds.ToString();
-				Container.SetClass( "roundNameOnly", false );
+				SetClass( "is-playing", true );
 			}
 			else
 			{
-				Container.SetClass( "roundNameOnly", true );
+				SetClass( "is-playing", false );
 			}
 		}
 	}
