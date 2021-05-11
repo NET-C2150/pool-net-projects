@@ -41,7 +41,6 @@
 		}
 
 		.circle {
-			background-color: #43AC4E;
 			border-radius: 50%;
 			align-items: center;
 			justify-content: center;
@@ -49,15 +48,87 @@
 			height: 60px;
 			position: absolute;
 			right: -68px;
+			transform: scale(1);
+			transition: all 1s ease-out;
+
+			&:intro {
+				opacity: 0;
+				transform: scale(0.8);
+				right: -50px;
+			}
 
 			.icon {
-				background-color: white;
 				background-size: 100%;
-				width: 24px;
-				height: 24px;
+				border-radius: 50%;
+				width: 60px;
+				height: 60px;
 
-				&.hello {
-					background-color: green;
+				&.wins {
+					background-image: url(/ui/pool/icon-wins.png);
+				}
+
+				&.foul {
+					background-image: url(/ui/pool/icon-foul-shot.png);
+				}
+
+				&.spots_1 {
+					background-image: url(/ui/pool/balls/ball-spots-1.png);
+				}
+
+				&.spots_2 {
+					background-image: url(/ui/pool/balls/ball-spots-2.png);
+				}
+
+				&.spots_3 {
+					background-image: url(/ui/pool/balls/ball-spots-3.png);
+				}
+
+				&.spots_4 {
+					background-image: url(/ui/pool/balls/ball-spots-4.png);
+				}
+
+				&.spots_5 {
+					background-image: url(/ui/pool/balls/ball-spots-5.png);
+				}
+
+				&.spots_6 {
+					background-image: url(/ui/pool/balls/ball-spots-6.png);
+				}
+
+				&.spots_7 {
+					background-image: url(/ui/pool/balls/ball-spots-7.png);
+				}
+
+				&.stripes_1 {
+					background-image: url(/ui/pool/balls/ball-stripes-1.png);
+				}
+
+				&.stripes_2 {
+					background-image: url(/ui/pool/balls/ball-stripes-2.png);
+				}
+
+				&.stripes_3 {
+					background-image: url(/ui/pool/balls/ball-stripes-3.png);
+				}
+
+				&.stripes_4 {
+					background-image: url(/ui/pool/balls/ball-stripes-4.png);
+				}
+
+				&.stripes_5 {
+					background-image: url(/ui/pool/balls/ball-stripes-5.png);
+				}
+
+				&.stripes_6 {
+					background-image: url(/ui/pool/balls/ball-stripes-6.png);
+				}
+
+				&.stripes_7 {
+					background-image: url(/ui/pool/balls/ball-stripes-7.png);
+				}
+
+				&.black {
+					background-image: url(/ui/pool/balls/ball-black.png);
 				}
 			}
 

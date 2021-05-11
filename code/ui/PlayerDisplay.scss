@@ -25,7 +25,7 @@
 
 
             .ball {
-                background-image: url(/ui/pool/ball-unset.png);
+                background-image: url(/ui/pool/balls/ball-unset.png);
                 background-size: 100%;
                 border-radius: 50%;
                 width: 32px;
@@ -42,12 +42,12 @@
             box-shadow: 0 10px 20px rgba(#000,0.3);
 
             &.stripes {
-                background-image: url(/ui/pool/ball-stripes.png);
+                background-image: url(/ui/pool/balls/ball-stripes.png);
                 background-size: 100%;
             }
 
             &.spots {
-                background-image: url(/ui/pool/ball-spots.png);
+                background-image: url(/ui/pool/balls/ball-spots.png);
                 background-size: 100%;
             }
         }

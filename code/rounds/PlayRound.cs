@@ -62,7 +62,6 @@ namespace PoolGame
 							if ( Game.Instance.CurrentPlayer == player )
 								player.HasSecondShot = true;
 
-							Game.Instance.AddToast( player, $"{ player.Name} has potted a ball" );
 							player.Score++;
 						}
 
@@ -82,13 +81,14 @@ namespace PoolGame
 					if ( Game.Instance.CurrentPlayer == ball.LastStriker )
 						ball.LastStriker.HasSecondShot = true;
 
-					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball" );
+					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
 					ball.LastStriker.Score++;
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 				}
 				else if ( ball.Type == PoolBallType.Black )
 				{
+					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 
 					if ( ball.LastStriker.BallsLeft == 0 )
@@ -100,7 +100,7 @@ namespace PoolGame
 				{
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
-						Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has claimed { ball.Type }" );
+						Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has claimed { ball.Type }", ball.GetIconClass() );
 
 						// This is our ball type now, we've claimed it.
 						ball.LastStriker.HasSecondShot = true;
@@ -124,7 +124,7 @@ namespace PoolGame
 							if ( Game.Instance.CurrentPlayer == otherPlayer )
 								otherPlayer.HasSecondShot = true;
 
-							Game.Instance.AddToast( otherPlayer, $"{ otherPlayer.Name} has potted a ball" );
+							Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
 							otherPlayer.Score++;
 						}
 					}
@@ -169,7 +169,7 @@ namespace PoolGame
 		{
 			if ( Host.IsServer )
 			{
-				if ( PlayerTurnEndTime > 0f && Sandbox.Time.Now >= PlayerTurnEndTime )
+				if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
 				{
 					var currentPlayer = Game.Instance.CurrentPlayer;
 
@@ -179,7 +179,7 @@ namespace PoolGame
 					return;
 				}
 
-				var timeLeft = MathF.Max( PlayerTurnEndTime - Sandbox.Time.Now, 0f );
+				var timeLeft = MathF.Max( PlayerTurnEndTime - Time.Now, 0f );
 				TimeLeftSeconds = timeLeft.CeilToInt();
 				NetworkDirty( "TimeLeftSeconds", NetVarGroup.Net );
 			}
@@ -293,7 +293,7 @@ namespace PoolGame
 
 		private void DoPlayerWin( Player player )
 		{
-			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "win" );
+			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "wins" );
 
 			_ = LoadStatsRound( $"{player.Name} Wins" );
 		}
@@ -335,8 +335,6 @@ namespace PoolGame
 				currentPlayer.StopPlacingWhiteBall();
 
 			var otherPlayer = Game.Instance.GetOtherPlayer( currentPlayer );
-
-			Log.Info( "Turn Over. Player Has Second Shot: " + currentPlayer.HasSecondShot );
 
 			if ( !currentPlayer.HasSecondShot )
 			{

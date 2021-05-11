@@ -26,6 +26,16 @@ namespace PoolGame
 			PhysicsEnabled = false;
 		}
 
+		public string GetIconClass()
+		{
+			if ( Type == PoolBallType.Black )
+				return "black";
+			else if ( Type == PoolBallType.White )
+				return "white";
+
+			return $"{ Type.ToString().ToLower() }_{ (int)Number }";
+		}
+
 		public async Task AnimateIntoPocket()
 		{
 			PhysicsEnabled = false;
@@ -92,7 +102,10 @@ namespace PoolGame
 			}
 
 			if ( within.ContainsXY( worldOBB ) )
+			{
 				WorldPos = worldPos.WithZ( WorldPos.z );
+				ResetInterpolation();
+			}
 		}
 
 		public override void Spawn()
