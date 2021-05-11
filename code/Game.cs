@@ -62,6 +62,7 @@ namespace PoolGame
 						ball.PhysicsBody.AngularVelocity = Vector3.Zero;
 						ball.PhysicsBody.Velocity = Vector3.Zero;
 						ball.PhysicsBody.ClearForces();
+						ball.ResetInterpolation();
 
 						return;
 					}

@@ -13,6 +13,7 @@ namespace PoolGame
 		public virtual string RoundName => "";
 		public virtual bool CanPlayerSuicide => false;
 		public virtual bool ShowTimeLeft => false;
+		public virtual bool ShowRoundInfo => false;
 
 		public List<Player> Players = new();
 

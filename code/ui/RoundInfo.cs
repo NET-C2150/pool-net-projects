@@ -32,6 +32,16 @@ namespace PoolGame
 			var round = game.Round;
 			if ( round == null ) return;
 
+			if ( !round.ShowRoundInfo )
+			{
+				SetClass( "hidden", true );
+				return;
+			}
+			else
+			{
+				SetClass( "hidden", false );
+			}
+
 			RoundName.Text = round.RoundName;
 
 			if ( round.ShowTimeLeft && round.TimeLeftSeconds > 0 )

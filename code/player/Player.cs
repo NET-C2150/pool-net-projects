@@ -81,12 +81,15 @@ namespace PoolGame
 
 		public void Foul( FoulReason reason )
 		{
-			Log.Info( Name + " has fouled (reason: " + reason.ToString() + ")" );
+			if ( FoulReason == FoulReason.None )
+			{
+				Log.Info( Name + " has fouled (reason: " + reason.ToString() + ")" );
 
-			Game.Instance.AddToast( this, reason.ToMessage( this ), "foul" );
+				Game.Instance.AddToast( this, reason.ToMessage( this ), "foul" );
 
-			HasSecondShot = false;
-			FoulReason = reason;
+				HasSecondShot = false;
+				FoulReason = reason;
+			}
 		}
 
 		public void StartPlaying()

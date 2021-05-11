@@ -53,6 +53,7 @@ namespace PoolGame
 		{
 			EnableAllCollisions = true;
 			PhysicsEnabled = true;
+			ResetInterpolation();
 		}
 
 		public void SetType( PoolBallType type, PoolBallNumber number )
