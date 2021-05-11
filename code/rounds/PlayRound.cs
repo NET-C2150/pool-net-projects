@@ -88,6 +88,7 @@ namespace PoolGame
 				}
 				else if ( ball.Type == PoolBallType.Black )
 				{
+					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 
 					if ( ball.LastStriker.BallsLeft == 0 )
@@ -292,7 +293,7 @@ namespace PoolGame
 
 		private void DoPlayerWin( Player player )
 		{
-			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "win" );
+			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "wins" );
 
 			_ = LoadStatsRound( $"{player.Name} Wins" );
 		}
