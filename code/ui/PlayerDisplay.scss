@@ -13,10 +13,33 @@
         font-size: 24px;
         height: 60px;
         padding: 10px;
-        top: 40px;
+        top: 50px;
         transition: all 0.2s ease;
 
+        .score-container {
+            align-items: center;
+            background-color: rgba(#040507,0.7);
+            border-radius: 50%;
+            height: 40px;
+            justify-content: center;
+
+
+            .ball {
+                background-image: url(/ui/pool/ball-unset.png);
+                background-size: 100%;
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+            }
+
+            .score {
+                color: #fff;
+                font-size: 20px;
+            }
+        }
+
         .ball {
+            box-shadow: 0 10px 20px rgba(#000,0.3);
 
             &.stripes {
                 background-image: url(/ui/pool/ball-stripes.png);
@@ -95,28 +118,6 @@
                 height: 32px;
             }
         }
-
-
-        .score-container {
-            align-items: center;
-            background-color: rgba(#040507,0.7);
-            border-radius: 50%;
-            height: 40px;
-            justify-content: center;
-
-
-            .ball {
-                box-shadow: 0 10px 20px rgba(#000,0.3);
-                width: 32px;
-                height: 32px;
-            }
-
-            .score {
-                color: #fff;
-                font-size: 20px;
-            }
-        }
-
 
         &.active {
             background-color: rgba(#1A202B,1);
