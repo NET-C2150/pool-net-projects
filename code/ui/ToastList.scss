@@ -41,7 +41,6 @@
 		}
 
 		.circle {
-			background-color: #43AC4E;
 			border-radius: 50%;
 			align-items: center;
 			justify-content: center;
@@ -65,12 +64,13 @@
 				width: 60px;
 				height: 60px;
 
-				&.hello {
-					background-color: green;
+				&.wins {
+					background-image: url(/ui/pool/icon-wins.png);
+					background-size: 100%;
 				}
 
 				&.foul {
-					background-image: url(/ui/pool/icon-shot-foul.png);
+					background-image: url(/ui/pool/icon-foul-shot.png);
 					background-size: 100%;
 				}
 			}
