@@ -19,6 +19,7 @@ namespace PoolGame
 			get => Current as Game;
 		}
 
+		[Net] public BaseGameController Controller { get; set; }
 		[Net] public BaseRound Round { get; private set; }
 		[Net] public EntityHandle<PoolBall> WhiteBall { get; set; }
 		[Net] public EntityHandle<PoolBall> BlackBall { get; set; }
@@ -37,6 +38,8 @@ namespace PoolGame
 			{
 				Hud = new();
 			}
+
+			Controller = new TopDownController();
 
 			Global.PhysicsSubSteps = 10;
 
@@ -231,6 +234,11 @@ namespace PoolGame
 
 		private void OnTick()
 		{
+			if ( CurrentPlayer.IsValid )
+				Controller?.Tick( CurrentPlayer.Entity );
+			else if ( IsClient && Sandbox.Player.Local is Player player )
+				Controller?.Tick( player );
+
 			Round?.OnTick();
 
 			if ( IsClient )

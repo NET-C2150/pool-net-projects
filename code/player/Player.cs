@@ -7,7 +7,6 @@ namespace PoolGame
 {
 	public partial class Player : BasePlayer
 	{
-		[NetLocalPredicted] public BaseView View { get; set; }
 		[Net] public bool IsFollowingBall { get; set; }
 		[Net] public PoolBallType BallType { get; set; }
 		[Net] public bool IsSpectator { get; private set;  }
@@ -35,10 +34,6 @@ namespace PoolGame
 		{
 			Controller = new PoolController();
 			Camera = new PoolCamera();
-			View = new TopDownView()
-			{
-				Viewer = this
-			};
 		}
 
 		public void MakeSpectator( bool isSpectator )
@@ -126,15 +121,6 @@ namespace PoolGame
 
 		public void ShowPoolCue( bool shouldShow )
 		{
-			if ( shouldShow )
-			{
-				/*
-				 * Force the view to update positions first, this way it'll already be positioned
-				 * when the client receives the update to enable drawing.
-				 */
-				View?.Tick();
-			}
-
 			Cue.Entity.EnableDrawing = shouldShow;
 		}
 
@@ -151,8 +137,6 @@ namespace PoolGame
 			IsFollowingBall = true;
 
 			ShowPoolCue( false );
-
-			View?.OnWhiteBallStruck( cue, whiteBall, force );
 		}
 
 		public override void Spawn()
@@ -177,7 +161,12 @@ namespace PoolGame
 
 		protected override void Tick()
 		{
-			View?.Tick();
+			var zoomOutDistance = 700f;
+
+			WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
+			WorldRot = Rotation.LookAt( Vector3.Down );
+
+			base.Tick();
 		}
 
 		protected override void UseFail()
