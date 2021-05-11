@@ -41,15 +41,6 @@ namespace PoolGame
 			}
 
 			RoundName.Text = round.RoundName;
-
-			if ( round.RoundName == "PLAY" )
-			{
-				SetClass( "is-playing", true );
-			}
-			else
-			{
-				SetClass( "is-playing", false );
-			}
 		}
 	}
 }
