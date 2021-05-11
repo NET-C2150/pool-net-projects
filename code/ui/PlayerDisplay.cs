@@ -15,7 +15,13 @@ namespace PoolGame
 		public Panel ScoreContainer;
 		public Label Score;
 		public Panel BallType;
-		
+
+		public Panel TimeBarWrapper;
+		public Panel TimeRemainingBar;
+		public Panel TimeRemainingProgress;
+
+		public Panel TimeRemainingNumber;
+		public Label TimeRemainingLabel;
 
 		public PlayerDisplayItem()
 		{
@@ -26,11 +32,26 @@ namespace PoolGame
 			ScoreContainer = Add.Panel("score-container");
 			Score = ScoreContainer.Add.Label("0", "score");
 			BallType = ScoreContainer.Add.Panel("ball");
+
+
+			TimeBarWrapper = Add.Panel( "time-bar-wrapper" );
+
+			TimeRemainingBar = TimeBarWrapper.Add.Panel( "time-remaining" );
+			TimeRemainingProgress = TimeRemainingBar.Add.Panel( "time-remaining-progress" );
+
+			TimeRemainingNumber = TimeBarWrapper.Add.Panel( "time-remaining-number" );
+			TimeRemainingLabel = TimeRemainingNumber.Add.Label( "30", "time-remaining-label" );
+
 		}
 
 		public void Update( EntityHandle<Player> player )
 		{
 			var isValid = player.IsValid;
+
+			var game = Game.Instance;
+			if ( game == null ) return;
+			var round = game.Round;
+			if ( round == null ) return;
 
 			if ( isValid )
 			{
@@ -43,6 +64,22 @@ namespace PoolGame
 				BallType.SetClass( "stripes", player.Entity.BallType == PoolBallType.Stripes );
 
 				SetClass( "active", player.Entity.IsTurn );
+
+
+				TimeRemainingProgress.Style.Width = Length.Percent( (100f / 30f) * round.TimeLeftSeconds );
+				TimeRemainingProgress.Style.Dirty();
+
+				if ( round.TimeLeftSeconds <= 5 )
+				{
+					TimeBarWrapper.SetClass( "low", true );
+				}
+				else
+				{
+					TimeBarWrapper.SetClass( "low", false );
+				}
+
+				TimeRemainingLabel.Text = round.TimeLeftSeconds.ToString();
+
 			}
 
 			SetClass( "hidden", !isValid );

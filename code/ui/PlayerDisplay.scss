@@ -13,7 +13,7 @@
         font-size: 24px;
         height: 60px;
         padding: 10px;
-        top: 50px;
+        top: 40px;
         transition: all 0.2s ease;
 
         .score-container {
@@ -56,6 +56,15 @@
             border-radius: 30px 0 0 30px;
             padding-left: 16px;
 
+            .time-bar-wrapper {
+                padding-right: 32px;
+                margin-left: 16px;
+
+                .time-remaining-number {
+                    right: -20px;
+                }
+            }
+
             .score-container {
                 padding: 16px;
                 padding-right: 8px;
@@ -80,6 +89,15 @@
             border-radius: 0 30px 30px 0;
             padding-right: 16px;
 
+
+            .time-bar-wrapper {
+                padding-left: 32px;
+                margin-right: 16px;
+
+                .time-remaining-number {
+                    left: -20px;
+                }
+            }
 
             .score-container {
                 padding: 16px;
@@ -119,6 +137,70 @@
             }
         }
 
+        .time-bar-wrapper {
+            align-items: center;
+            justify-content: center;
+            bottom: -16px;
+            left: 0;
+            right: 0;
+            position: absolute;
+            opacity: 0;
+            // Progress Bar
+            .time-remaining {
+                background-color: rgba(#1A202B,0.8);
+                border-radius: 8px;
+                height: 8px;
+                transition: all 0.2s ease;
+                width: 100%;
+
+                .time-remaining-progress {
+                    background-color: #43AC4E;
+                    border-radius: 8px;
+                    height: 8px;
+                    transition: all 0.2s ease;
+                    width: 100%;
+                }
+            }
+
+            .time-remaining-number {
+                background-color: rgba(#1A202B,0.8);
+                border: 2px solid rgba(#1A202B,1);
+                border-radius: 50%;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                min-width: 40px;
+                height: 40px;
+                position: absolute;
+
+                .time-remaining-label {
+                    color: #C6D4EE;
+                    font-weight: bold;
+                    font-size: 20px;
+                    transition: all 0.2s ease;
+                }
+            }
+
+            &.low {
+                .time-remaining-number {
+                    background-color: rgba(#AC4343,0.8);
+                    border: 2px solid rgba(#AC4343,1);
+
+                    .time-remaining-label {
+                        color: #fff;
+                    }
+                }
+
+                .time-remaining {
+                    .time-remaining-progress {
+                        background-color: #AC4343;
+                    }
+                }
+            }
+        }
+
+
+
         &.active {
             background-color: rgba(#1A202B,1);
 
@@ -127,6 +209,10 @@
             }
 
             .player-container {
+                opacity: 1;
+            }
+
+            .time-bar-wrapper {
                 opacity: 1;
             }
         }
