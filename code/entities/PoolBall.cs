@@ -92,7 +92,10 @@ namespace PoolGame
 			}
 
 			if ( within.ContainsXY( worldOBB ) )
+			{
 				WorldPos = worldPos.WithZ( WorldPos.z );
+				ResetInterpolation();
+			}
 		}
 
 		public override void Spawn()
