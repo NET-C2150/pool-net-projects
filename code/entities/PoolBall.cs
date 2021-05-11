@@ -33,7 +33,7 @@ namespace PoolGame
 
 			while ( true )
 			{
-				await Task.NextPhysicsFrame();
+				await Task.Delay( 30 );
 
 				WorldScale = WorldScale.LerpTo( 0.69f /* nice */, Time.Delta * 4f );
 				RenderAlpha = RenderAlpha.LerpTo( 0f, Time.Delta * 5f );
