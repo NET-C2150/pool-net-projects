@@ -13,6 +13,7 @@ namespace PoolGame
 		[Net] public FoulReason FoulReason { get; private set; }
 		[Net] public bool IsPlacingWhiteBall { get; private set; }
 		[Net] public bool HasSecondShot { get; set; }
+		[Net] public bool DidPotBall { get; set; }
 		[Net] public bool IsTurn { get; private set; }
 		[Net] public int Score { get; set; }
 		[Net] public EntityHandle<PoolCue> Cue { get; private set; }
@@ -104,6 +105,7 @@ namespace PoolGame
 			IsFollowingBall = false;
 			HasSecondShot = hasSecondShot;
 			FoulReason = FoulReason.None;
+			DidPotBall = false;
 			IsTurn = true;
 
 			if ( hasSecondShot )

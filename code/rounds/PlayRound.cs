@@ -118,14 +118,14 @@ namespace PoolGame
 				{
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
-						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Claim );
-
 						// This is our ball type now, we've claimed it.
 						ball.LastStriker.HasSecondShot = true;
 						ball.LastStriker.BallType = ball.Type;
 
 						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
 						otherPlayer.BallType = (ball.Type == PoolBallType.Spots ? PoolBallType.Stripes : PoolBallType.Spots);
+
+						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Claim );
 					}
 					else
 					{
@@ -304,6 +304,8 @@ namespace PoolGame
 
 		private void DoPlayerPotBall( Player player, PoolBall ball, BallPotType type )
 		{
+			player.DidPotBall = true;
+
 			PotHistory.Add( new PotHistoryItem
 			{
 				Type = ball.Type,
@@ -348,14 +350,17 @@ namespace PoolGame
 			}
 
 			var currentPlayer = Game.Instance.CurrentPlayer.Entity;
-			var didHitAnyBall = false;
+			var didHitAnyBall = currentPlayer.DidPotBall;
 
-			foreach ( var ball in Game.Instance.AllBalls )
+			if ( !didHitAnyBall )
 			{
-				if ( ball.Type != PoolBallType.White && ball.LastStriker == currentPlayer )
+				foreach ( var ball in Game.Instance.AllBalls )
 				{
-					didHitAnyBall = true;
-					break;
+					if ( ball.Type != PoolBallType.White && ball.LastStriker == currentPlayer )
+					{
+						didHitAnyBall = true;
+						break;
+					}
 				}
 			}
 
