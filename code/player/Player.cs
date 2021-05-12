@@ -24,9 +24,9 @@ namespace PoolGame
 		{
 			get
 			{
-				var balls = Entity.All.Where( ( e ) =>
+				var balls = Entity.All.OfType<PoolBall>().Where( ( e ) =>
 				{
-					return (e is PoolBall ball && ball.Type == BallType);
+					return e.Type == BallType;
 				} );
 
 				return balls.Count();
@@ -107,6 +107,7 @@ namespace PoolGame
 			IsFollowingBall = false;
 			HasSecondShot = hasSecondShot;
 			FoulReason = FoulReason.None;
+			DidHitOwnBall = false;
 			DidPotBall = false;
 			IsTurn = true;
 

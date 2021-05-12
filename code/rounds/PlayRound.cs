@@ -131,7 +131,7 @@ namespace PoolGame
 			{
 				if ( ball.LastStriker.BallType == PoolBallType.White )
 				{
-					if ( other.Type == PoolBallType.Black && !ball.LastStriker.DidHitOwnBall )
+					if ( other.Type == PoolBallType.Black )
 					{
 						// The player has somehow hit the black as their first strike.
 						ball.LastStriker.Foul( FoulReason.HitOtherBall );
@@ -146,11 +146,8 @@ namespace PoolGame
 				}
 				else if ( other.Type != ball.LastStriker.BallType )
 				{
-					// We get to hit another player's ball in our first shot after a foul.
-					if ( !ball.LastStriker.HasSecondShot && !ball.LastStriker.DidHitOwnBall )
-					{
+					if ( !ball.LastStriker.DidHitOwnBall )
 						ball.LastStriker.Foul( FoulReason.HitOtherBall );
-					}
 				}
 				else if ( ball.LastStriker.FoulReason == FoulReason.None )
 				{
