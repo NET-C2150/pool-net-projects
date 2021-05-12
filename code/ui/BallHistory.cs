@@ -57,8 +57,6 @@ namespace PoolGame
 		{
 			StyleSheet.Load( "/ui/BallHistory.scss" );
 
-			Log.Info( "LOADED IT" );
-
 			Current = this;
 			Index = 0;
 			Items = new List<BallHistoryItem>();
