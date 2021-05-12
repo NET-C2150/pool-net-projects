@@ -43,8 +43,6 @@ namespace PoolGame
 			{
 				ball.PlaySound( $"ball-pocket-{Rand.Int( 1, 2 )}" );
 
-				var owner = Game.Instance.GetBallPlayer( ball );
-
 				if ( ball.LastStriker == null || !ball.LastStriker.IsValid() )
 				{
 					if ( ball.Type == PoolBallType.White )
@@ -64,9 +62,7 @@ namespace PoolGame
 							if ( Game.Instance.CurrentPlayer == player )
 								player.HasSecondShot = true;
 
-							BallTray.Current?.AddBall( ball );
-
-							player.Score++;
+							DoPlayerPotBall( null, ball, BallPotType.Silent );
 						}
 
 						_ = Game.Instance.RemoveBallAsync( ball, true );
@@ -85,17 +81,13 @@ namespace PoolGame
 					if ( Game.Instance.CurrentPlayer == ball.LastStriker )
 						ball.LastStriker.HasSecondShot = true;
 
-					BallTray.Current?.AddBall( ball );
-					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
-
-					ball.LastStriker.Score++;
+					DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 				}
 				else if ( ball.Type == PoolBallType.Black )
 				{
-					BallTray.Current?.AddBall( ball );
-					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
+					DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 
@@ -108,13 +100,11 @@ namespace PoolGame
 				{
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
-						BallTray.Current?.AddBall( ball );
-						Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has claimed { ball.Type }", ball.GetIconClass() );
+						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Claim );
 
 						// This is our ball type now, we've claimed it.
 						ball.LastStriker.HasSecondShot = true;
 						ball.LastStriker.BallType = ball.Type;
-						ball.LastStriker.Score++;
 
 						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
 						otherPlayer.BallType = (ball.Type == PoolBallType.Spots ? PoolBallType.Stripes : PoolBallType.Spots);
@@ -125,10 +115,7 @@ namespace PoolGame
 						if ( !ball.LastStriker.HasSecondShot )
 							ball.LastStriker.Foul( FoulReason.PotOtherBall );
 
-						BallTray.Current?.AddBall( ball );
-						Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
-
-						owner.Score++;
+						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 					}
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
@@ -297,6 +284,21 @@ namespace PoolGame
 			Game.Instance.ChangeRound( new StatsRound() );
 		}
 
+		private void DoPlayerPotBall( Player player, PoolBall ball, BallPotType type )
+		{
+			BallTray.Current?.AddBall( ball );
+
+			if ( type == BallPotType.Normal )
+				Game.Instance.AddToast( player, $"{ player.Name } has potted a ball", ball.GetIconClass() );
+			else if ( type == BallPotType.Claim )
+				Game.Instance.AddToast( player, $"{ player.Name } has claimed { ball.Type }", ball.GetIconClass() );
+
+			var owner = Game.Instance.GetBallPlayer( ball );
+
+			if ( owner != null && owner.IsValid() )
+				owner.Score++;
+		}
+
 		private void DoPlayerWin( Player player )
 		{
 			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "wins" );
@@ -308,7 +310,7 @@ namespace PoolGame
 		{
 			foreach ( var ball in Game.Instance.AllBalls )
 			{
-				if ( !ball.PhysicsBody.Velocity.IsNearZeroLength )
+				if ( !ball.PhysicsBody.Velocity.IsNearlyZero( 0.01f ) )
 					return;
 
 				if ( ball.IsAnimating )
