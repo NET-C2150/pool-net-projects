@@ -17,6 +17,7 @@ namespace PoolGame
 		[Net] public bool IsTurn { get; private set; }
 		[Net] public int Score { get; set; }
 		[Net] public EntityHandle<PoolCue> Cue { get; private set; }
+		[Net] public EloScore Elo { get; private set; }
 
 		public int BallsLeft
 		{

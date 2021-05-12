@@ -327,6 +327,9 @@ namespace PoolGame
 		{
 			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "wins" );
 
+			var otherPlayer = Game.Instance.GetOtherPlayer( player );
+			player.Elo.Update( otherPlayer.Elo, EloOutcome.Win );
+
 			_ = LoadStatsRound( $"{player.Name} Wins" );
 		}
 
