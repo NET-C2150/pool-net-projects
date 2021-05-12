@@ -7,12 +7,12 @@ using System.Collections.Generic;
 
 namespace PoolGame
 {
-	public class BallTrayItem : Panel
+	public class BallHistoryItem : Panel
 	{
 		public string IconClass { get; private set; }
 		public Panel Icon { get; private set; }
 
-		public BallTrayItem()
+		public BallHistoryItem()
 		{
 			Icon = Add.Panel( "icon" );
 		}
@@ -28,44 +28,63 @@ namespace PoolGame
 			SetIconClass( ball.GetIconClass() );
 		}
 
+		public void UpdateFrom( PoolBallType type, PoolBallNumber number )
+		{
+			if ( type == PoolBallType.Black )
+				SetIconClass( "black" );
+			else
+				SetIconClass( $"{ type.ToString().ToLower() }_{ (int)number }" );
+		}
+
 		public void SetIconClass( string iconClass )
 		{
 			if ( !string.IsNullOrEmpty( IconClass ) )
 				Icon.RemoveClass( IconClass );
 
 			Icon.AddClass( iconClass );
+			IconClass = iconClass;
 		}
 	}
 
-	public class BallTray : Panel
+	public class BallHistory : Panel
 	{
-		public static BallTray Current { get; set; }
+		public static BallHistory Current { get; set; }
 
-		public List<BallTrayItem> Items { get; private set; }
+		public List<BallHistoryItem> Items { get; private set; }
 		public int Index { get; private set; }
 
-		public BallTray()
+		public BallHistory()
 		{
-			StyleSheet.Load( "/ui/BallTray.scss" );
+			StyleSheet.Load( "/ui/BallHistory.scss" );
+
+			Log.Info( "LOADED IT" );
 
 			Current = this;
 			Index = 0;
-			Items = new List<BallTrayItem>();
+			Items = new List<BallHistoryItem>();
 
 			for ( var i = 0; i < 15; i++ )
 			{
-				var item = AddChild<BallTrayItem>();
+				var item = AddChild<BallHistoryItem>();
 				item.Update( null );
 				Items.Add( item );
 			}
 		}
 
-		[Event("ball.potted")]
 		public void AddBall( PoolBall ball )
 		{
 			if ( Index < Items.Count )
 			{
 				Items[Index].Update( ball );
+				Index++;
+			}
+		}
+
+		public void AddByType( PoolBallType type, PoolBallNumber number )
+		{
+			if ( Index < Items.Count )
+			{
+				Items[Index].UpdateFrom( type, number );
 				Index++;
 			}
 		}
