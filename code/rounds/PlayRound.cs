@@ -43,6 +43,8 @@ namespace PoolGame
 			{
 				ball.PlaySound( $"ball-pocket-{Rand.Int( 1, 2 )}" );
 
+				var owner = Game.Instance.GetBallPlayer( ball );
+
 				if ( ball.LastStriker == null || !ball.LastStriker.IsValid() )
 				{
 					if ( ball.Type == PoolBallType.White )
@@ -61,6 +63,8 @@ namespace PoolGame
 						{
 							if ( Game.Instance.CurrentPlayer == player )
 								player.HasSecondShot = true;
+
+							BallTray.Current?.AddBall( ball );
 
 							player.Score++;
 						}
@@ -81,14 +85,18 @@ namespace PoolGame
 					if ( Game.Instance.CurrentPlayer == ball.LastStriker )
 						ball.LastStriker.HasSecondShot = true;
 
+					BallTray.Current?.AddBall( ball );
 					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
+
 					ball.LastStriker.Score++;
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 				}
 				else if ( ball.Type == PoolBallType.Black )
 				{
+					BallTray.Current?.AddBall( ball );
 					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
+
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 
 					if ( ball.LastStriker.BallsLeft == 0 )
@@ -100,6 +108,7 @@ namespace PoolGame
 				{
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
+						BallTray.Current?.AddBall( ball );
 						Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has claimed { ball.Type }", ball.GetIconClass() );
 
 						// This is our ball type now, we've claimed it.
@@ -116,17 +125,10 @@ namespace PoolGame
 						if ( !ball.LastStriker.HasSecondShot )
 							ball.LastStriker.Foul( FoulReason.PotOtherBall );
 
-						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
+						BallTray.Current?.AddBall( ball );
+						Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
 
-						// Let's be sure it's the other player's ball type before we give them score.
-						if ( otherPlayer.BallType == ball.Type )
-						{
-							if ( Game.Instance.CurrentPlayer == otherPlayer )
-								otherPlayer.HasSecondShot = true;
-
-							Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
-							otherPlayer.Score++;
-						}
+						owner.Score++;
 					}
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
@@ -279,6 +281,10 @@ namespace PoolGame
 
 				Spectators.Clear();
 			}
+			else
+			{
+				BallTray.Current.Clear();
+			}
 		}
 
 		private async Task LoadStatsRound(string title = "", int delay = 3)
@@ -302,11 +308,7 @@ namespace PoolGame
 		{
 			foreach ( var ball in Game.Instance.AllBalls )
 			{
-				// Is this a shit way of determining it?
-				if ( ball.PhysicsBody.Velocity.Length > 0.1f )
-					return;
-
-				if ( ball.PhysicsBody.AngularVelocity.Length > 0.1f )
+				if ( !ball.PhysicsBody.Velocity.IsNearZeroLength )
 					return;
 
 				if ( ball.IsAnimating )
