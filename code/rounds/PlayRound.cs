@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace PoolGame
 {
-    public class PlayRound : BaseRound
+    public partial class PlayRound : BaseRound
 	{
+		public struct PotHistoryItem
+		{
+			public PoolBallNumber Number;
+			public PoolBallType Type;
+		}
+
 		public override string RoundName => "PLAY";
 		public override int RoundDuration => 0;
 		public override bool CanPlayerSuicide => false;
@@ -16,6 +22,18 @@ namespace PoolGame
 
 		public List<Player> Spectators = new();
 		public float PlayerTurnEndTime { get; set; }
+
+		[Net] public NetworkList<PotHistoryItem> PotHistory { get; set; }
+
+		public PlayRound()
+		{
+			PotHistory = new();
+
+			if ( Host.IsClient )
+			{
+				PotHistory.OnListUpdated += OnPotHistoryUpdated;
+			}
+		}
 
 		public override void OnPlayerLeave( Player player )
 		{
@@ -62,7 +80,7 @@ namespace PoolGame
 							if ( Game.Instance.CurrentPlayer == player )
 								player.HasSecondShot = true;
 
-							player.Score++;
+							DoPlayerPotBall( null, ball, BallPotType.Silent );
 						}
 
 						_ = Game.Instance.RemoveBallAsync( ball, true );
@@ -81,14 +99,14 @@ namespace PoolGame
 					if ( Game.Instance.CurrentPlayer == ball.LastStriker )
 						ball.LastStriker.HasSecondShot = true;
 
-					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
-					ball.LastStriker.Score++;
+					DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 				}
 				else if ( ball.Type == PoolBallType.Black )
 				{
-					Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
+					DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
+
 					_ = Game.Instance.RemoveBallAsync( ball, true );
 
 					if ( ball.LastStriker.BallsLeft == 0 )
@@ -100,12 +118,11 @@ namespace PoolGame
 				{
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
-						Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has claimed { ball.Type }", ball.GetIconClass() );
+						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Claim );
 
 						// This is our ball type now, we've claimed it.
 						ball.LastStriker.HasSecondShot = true;
 						ball.LastStriker.BallType = ball.Type;
-						ball.LastStriker.Score++;
 
 						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
 						otherPlayer.BallType = (ball.Type == PoolBallType.Spots ? PoolBallType.Stripes : PoolBallType.Spots);
@@ -116,17 +133,7 @@ namespace PoolGame
 						if ( !ball.LastStriker.HasSecondShot )
 							ball.LastStriker.Foul( FoulReason.PotOtherBall );
 
-						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
-
-						// Let's be sure it's the other player's ball type before we give them score.
-						if ( otherPlayer.BallType == ball.Type )
-						{
-							if ( Game.Instance.CurrentPlayer == otherPlayer )
-								otherPlayer.HasSecondShot = true;
-
-							Game.Instance.AddToast( ball.LastStriker, $"{ ball.LastStriker.Name} has potted a ball", ball.GetIconClass() );
-							otherPlayer.Score++;
-						}
+						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 					}
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
@@ -279,6 +286,10 @@ namespace PoolGame
 
 				Spectators.Clear();
 			}
+			else
+			{
+				BallHistory.Current.Clear();
+			}
 		}
 
 		private async Task LoadStatsRound(string title = "", int delay = 3)
@@ -291,6 +302,25 @@ namespace PoolGame
 			Game.Instance.ChangeRound( new StatsRound() );
 		}
 
+		private void DoPlayerPotBall( Player player, PoolBall ball, BallPotType type )
+		{
+			PotHistory.Add( new PotHistoryItem
+			{
+				Type = ball.Type,
+				Number = ball.Number
+			} );
+
+			if ( type == BallPotType.Normal )
+				Game.Instance.AddToast( player, $"{ player.Name } has potted a ball", ball.GetIconClass() );
+			else if ( type == BallPotType.Claim )
+				Game.Instance.AddToast( player, $"{ player.Name } has claimed { ball.Type }", ball.GetIconClass() );
+
+			var owner = Game.Instance.GetBallPlayer( ball );
+
+			if ( owner != null && owner.IsValid() )
+				owner.Score++;
+		}
+
 		private void DoPlayerWin( Player player )
 		{
 			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "wins" );
@@ -298,15 +328,19 @@ namespace PoolGame
 			_ = LoadStatsRound( $"{player.Name} Wins" );
 		}
 
+		private void OnPotHistoryUpdated()
+		{
+			BallHistory.Current.Clear();
+
+			foreach ( var item in PotHistory.Values )
+				BallHistory.Current.AddByType( item.Type, item.Number );
+		}
+
 		private void CheckForStoppedBalls()
 		{
 			foreach ( var ball in Game.Instance.AllBalls )
 			{
-				// Is this a shit way of determining it?
-				if ( ball.PhysicsBody.Velocity.Length > 0.1f )
-					return;
-
-				if ( ball.PhysicsBody.AngularVelocity.Length > 0.1f )
+				if ( !ball.PhysicsBody.Velocity.IsNearlyZero( 0.01f ) )
 					return;
 
 				if ( ball.IsAnimating )

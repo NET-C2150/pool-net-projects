@@ -22,6 +22,7 @@ namespace PoolGame
 			RootPanel.AddChild<ChatBox>();
 			RootPanel.AddChild<PlayerDisplay>();
 			RootPanel.AddChild<ToastList>();
+			RootPanel.AddChild<BallHistory>();
 			RootPanel.AddChild<LoadingScreen>();
 			RootPanel.AddChild<CursorController>();
 		}
