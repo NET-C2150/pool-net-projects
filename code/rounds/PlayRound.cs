@@ -9,12 +9,6 @@ namespace PoolGame
 {
     public partial class PlayRound : BaseRound
 	{
-		public struct PotHistoryItem
-		{
-			public PoolBallNumber Number;
-			public PoolBallType Type;
-		}
-
 		public override string RoundName => "PLAY";
 		public override int RoundDuration => 0;
 		public override bool CanPlayerSuicide => false;
@@ -22,18 +16,6 @@ namespace PoolGame
 
 		public List<Player> Spectators = new();
 		public float PlayerTurnEndTime { get; set; }
-
-		[Net] public NetworkList<PotHistoryItem> PotHistory { get; set; }
-
-		public PlayRound()
-		{
-			PotHistory = new();
-
-			if ( Host.IsClient )
-			{
-				PotHistory.OnListUpdated += OnPotHistoryUpdated;
-			}
-		}
 
 		public override void OnPlayerLeave( Player player )
 		{
@@ -306,7 +288,7 @@ namespace PoolGame
 		{
 			player.DidPotBall = true;
 
-			PotHistory.Add( new PotHistoryItem
+			Game.Instance.PotHistory.Add( new PotHistoryItem
 			{
 				Type = ball.Type,
 				Number = ball.Number
@@ -331,14 +313,6 @@ namespace PoolGame
 			player.Elo.Update( otherPlayer.Elo, EloOutcome.Win );
 
 			_ = LoadStatsRound( $"{player.Name} Wins" );
-		}
-
-		private void OnPotHistoryUpdated()
-		{
-			BallHistory.Current.Clear();
-
-			foreach ( var item in PotHistory.Values )
-				BallHistory.Current.AddByType( item.Type, item.Number );
 		}
 
 		private void CheckForStoppedBalls()

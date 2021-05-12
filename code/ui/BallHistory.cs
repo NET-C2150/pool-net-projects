@@ -67,6 +67,11 @@ namespace PoolGame
 				item.Update( null );
 				Items.Add( item );
 			}
+
+			var game = Game.Instance;
+
+			if ( game != null )
+				game.UpdatePotHistory();
 		}
 
 		public void AddBall( PoolBall ball )

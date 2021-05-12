@@ -5,6 +5,12 @@ using System.Threading.Tasks;
 
 namespace PoolGame
 {
+	public struct PotHistoryItem
+	{
+		public PoolBallNumber Number;
+		public PoolBallType Type;
+	}
+
 	[Library( "pool", Title = "Pool" )]
 	partial class Game : Sandbox.Game
 	{
@@ -26,6 +32,7 @@ namespace PoolGame
 		[Net] public EntityHandle<Player> CurrentPlayer { get; set; }
 		[Net] public EntityHandle<Player> PlayerOne { get; set; }
 		[Net] public EntityHandle<Player> PlayerTwo { get; set; }
+		[Net] public NetworkList<PotHistoryItem> PotHistory { get; set; }
 
 		private BaseRound _lastRound;
 
@@ -37,6 +44,13 @@ namespace PoolGame
 			if ( IsServer )
 			{
 				Hud = new();
+			}
+
+			PotHistory = new();
+
+			if ( IsClient )
+			{
+				PotHistory.OnListUpdated += UpdatePotHistory;
 			}
 
 			Controller = new TopDownController();
@@ -117,6 +131,17 @@ namespace PoolGame
 				return PlayerTwo;
 			else
 				return PlayerOne;
+		}
+
+		public void UpdatePotHistory()
+		{
+			if ( BallHistory.Current != null )
+			{
+				BallHistory.Current.Clear();
+
+				foreach ( var item in PotHistory.Values )
+					BallHistory.Current.AddByType( item.Type, item.Number );
+			}
 		}
 
 		public void RespawnAllBalls()

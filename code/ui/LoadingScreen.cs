@@ -19,6 +19,8 @@ namespace PoolGame
 
 		public override void Tick()
 		{
+			if ( Game.Instance == null ) return;
+
 			var isHidden = false;
 
 			if ( Sandbox.Player.Local is Player player )
