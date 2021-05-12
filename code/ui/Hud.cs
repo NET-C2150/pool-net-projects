@@ -10,6 +10,9 @@ namespace PoolGame
 	[Library]
 	public partial class Hud : Sandbox.Hud
 	{
+		public Panel Header { get; private set; }
+		public Panel Footer { get; private set; }
+
 		public Hud()
 		{
 			if ( !IsClient )
@@ -20,9 +23,14 @@ namespace PoolGame
 			RootPanel.AddChild<RoundInfo>();
 			RootPanel.AddChild<VoiceList>();
 			RootPanel.AddChild<ChatBox>();
-			RootPanel.AddChild<PlayerDisplay>();
-			RootPanel.AddChild<ToastList>();
-			RootPanel.AddChild<BallHistory>();
+
+			Header = RootPanel.Add.Panel( "header" );
+			Header.AddChild<PlayerDisplay>();
+
+			Footer = RootPanel.Add.Panel( "footer" );
+			Footer.AddChild<ToastList>();
+			Footer.AddChild<BallHistory>();
+
 			RootPanel.AddChild<LoadingScreen>();
 			RootPanel.AddChild<CursorController>();
 		}
