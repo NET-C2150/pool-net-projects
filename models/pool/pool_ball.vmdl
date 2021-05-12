@@ -51,7 +51,7 @@
 						game_keys = 
 						{
 							bonename = ""
-							radius = 1.125
+							radius = 1.15
 							point0 = [ 0.0, 0.0, 0.0 ]
 							point1 = [ 0.0, 0.0, 0.0 ]
 						}
