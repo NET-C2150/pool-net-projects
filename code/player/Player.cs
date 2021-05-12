@@ -13,11 +13,12 @@ namespace PoolGame
 		[Net] public FoulReason FoulReason { get; private set; }
 		[Net] public bool IsPlacingWhiteBall { get; private set; }
 		[Net] public bool HasSecondShot { get; set; }
-		[Net] public bool DidPotBall { get; set; }
 		[Net] public bool IsTurn { get; private set; }
 		[Net] public int Score { get; set; }
 		[Net] public EntityHandle<PoolCue> Cue { get; private set; }
 		[Net] public EloScore Elo { get; private set; }
+		public bool DidHitOwnBall { get; set; }
+		public bool DidPotBall { get; set; }
 
 		public int BallsLeft
 		{

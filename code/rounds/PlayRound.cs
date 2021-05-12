@@ -79,7 +79,10 @@ namespace PoolGame
 				else if ( ball.Type == ball.LastStriker.BallType )
 				{
 					if ( Game.Instance.CurrentPlayer == ball.LastStriker )
+					{
 						ball.LastStriker.HasSecondShot = true;
+						ball.LastStriker.DidHitOwnBall = true;
+					}
 
 					DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 
@@ -101,6 +104,7 @@ namespace PoolGame
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
 						// This is our ball type now, we've claimed it.
+						ball.LastStriker.DidHitOwnBall = true;
 						ball.LastStriker.HasSecondShot = true;
 						ball.LastStriker.BallType = ball.Type;
 
@@ -111,10 +115,7 @@ namespace PoolGame
 					}
 					else
 					{
-						// We get to pot another player's ball in our first shot after a foul.
-						if ( !ball.LastStriker.HasSecondShot )
-							ball.LastStriker.Foul( FoulReason.PotOtherBall );
-
+						ball.LastStriker.Foul( FoulReason.PotOtherBall );
 						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 					}
 
@@ -130,7 +131,7 @@ namespace PoolGame
 			{
 				if ( ball.LastStriker.BallType == PoolBallType.White )
 				{
-					if ( other.Type == PoolBallType.Black )
+					if ( other.Type == PoolBallType.Black && !ball.LastStriker.DidHitOwnBall )
 					{
 						// The player has somehow hit the black as their first strike.
 						ball.LastStriker.Foul( FoulReason.HitOtherBall );
@@ -138,7 +139,7 @@ namespace PoolGame
 				}
 				else if ( other.Type == PoolBallType.Black )
 				{
-					if ( ball.LastStriker.BallsLeft > 0 )
+					if ( ball.LastStriker.BallsLeft > 0 && !ball.LastStriker.DidHitOwnBall )
 					{
 						ball.LastStriker.Foul( FoulReason.HitOtherBall );
 					}
@@ -146,10 +147,14 @@ namespace PoolGame
 				else if ( other.Type != ball.LastStriker.BallType )
 				{
 					// We get to hit another player's ball in our first shot after a foul.
-					if ( !ball.LastStriker.HasSecondShot )
+					if ( !ball.LastStriker.HasSecondShot && !ball.LastStriker.DidHitOwnBall )
 					{
 						ball.LastStriker.Foul( FoulReason.HitOtherBall );
 					}
+				}
+				else if ( ball.LastStriker.FoulReason == FoulReason.None )
+				{
+					ball.LastStriker.DidHitOwnBall = true;
 				}
 			}
 		}
@@ -158,15 +163,16 @@ namespace PoolGame
 		{
 			if ( Host.IsServer )
 			{
-				if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
-				{
-					var currentPlayer = Game.Instance.CurrentPlayer;
+				var currentPlayer = Game.Instance.CurrentPlayer;
 
-					if ( currentPlayer.IsValid )
-						currentPlayer.Entity.IsFollowingBall = true;
-
+				if ( !currentPlayer.IsValid )
 					return;
-				}
+
+				if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
+					currentPlayer.Entity.IsFollowingBall = true;
+
+				if ( currentPlayer.Entity.IsFollowingBall )
+					return;
 
 				var timeLeft = MathF.Max( PlayerTurnEndTime - Time.Now, 0f );
 				TimeLeftSeconds = timeLeft.CeilToInt();
@@ -260,6 +266,8 @@ namespace PoolGame
 
 			if ( Host.IsServer )
 			{
+				Game.Instance.PotHistory.Clear();
+
 				var playerOne = Game.Instance.PlayerOne.Entity;
 				var playerTwo = Game.Instance.PlayerTwo.Entity;
 
@@ -267,10 +275,6 @@ namespace PoolGame
 				playerTwo?.MakeSpectator( true );
 
 				Spectators.Clear();
-			}
-			else
-			{
-				BallHistory.Current.Clear();
 			}
 		}
 
@@ -319,7 +323,7 @@ namespace PoolGame
 		{
 			foreach ( var ball in Game.Instance.AllBalls )
 			{
-				if ( !ball.PhysicsBody.Velocity.IsNearlyZero( 0.01f ) )
+				if ( !ball.PhysicsBody.Velocity.IsNearlyZero( 0.07f ) )
 					return;
 
 				if ( ball.IsAnimating )
