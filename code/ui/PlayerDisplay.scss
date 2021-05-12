@@ -1,11 +1,6 @@
 ﻿playerdisplay {
     flex-direction: row;
     justify-content: center;
-    position: absolute;
-    height: 100%;
-    left: 0;
-    top: 0;
-    width: 100%;
 
     playerdisplayitem {
         background-color: rgba(#1A202B,0.2);
@@ -13,7 +8,6 @@
         font-size: 24px;
         height: 60px;
         padding: 10px;
-        top: 40px;
         transition: all 0.2s ease;
 
         .score-container {
