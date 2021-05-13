@@ -35,7 +35,7 @@ namespace PoolGame
 
 		public Player()
 		{
-			Controller = new PoolController();
+			Controller = new PoolPlayerController();
 			Camera = new PoolCamera();
 		}
 
@@ -166,7 +166,7 @@ namespace PoolGame
 
 		protected override void Tick()
 		{
-			var zoomOutDistance = 700f;
+			var zoomOutDistance = 350f;
 
 			WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
 			WorldRot = Rotation.LookAt( Vector3.Down );

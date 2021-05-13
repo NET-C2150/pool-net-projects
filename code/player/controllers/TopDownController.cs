@@ -15,7 +15,7 @@ namespace PoolGame
 
 		private float _cuePullBackOffset;
 		private float _lastPowerDistance;
-		private float _maxCuePitch = 35f;
+		private float _maxCuePitch = 17f;
 		private float _minCuePitch = 5f;
 
 		public override void Reset()
@@ -145,7 +145,7 @@ namespace PoolGame
 		{
 			Host.AssertServer();
 
-			var cursorPlaneEndPos = controller.EyePos + input.CursorAim * 700f;
+			var cursorPlaneEndPos = controller.EyePos + input.CursorAim * 350f;
 			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.WorldPos - cue.Entity.WorldRot.Forward * 100f );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
 

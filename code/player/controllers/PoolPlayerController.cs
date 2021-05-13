@@ -2,7 +2,7 @@
 
 namespace PoolGame
 {
-	public partial class PoolController : PlayerController
+	public partial class PoolPlayerController : PlayerController
 	{
 		public override BBox GetHull()
 		{
