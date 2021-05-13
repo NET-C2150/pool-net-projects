@@ -56,8 +56,6 @@ namespace PoolGame
 			Controller = new TopDownController();
 
 			Global.PhysicsSubSteps = 10;
-
-			_ = StartTickTimer();
 		}
 
 		public async Task RespawnBallAsync( PoolBall ball, bool shouldAnimate = false )
@@ -201,15 +199,6 @@ namespace PoolGame
 			}
 		}
 
-		public async Task StartTickTimer()
-		{
-			while (true)
-			{
-				await Task.NextPhysicsFrame();
-				OnTick();
-			}
-		}
-
 		public override void DoPlayerNoclip( Sandbox.Player player )
 		{
 			// Do nothing. The player can't noclip in this mode.
@@ -257,6 +246,7 @@ namespace PoolGame
 			Round?.OnSecond();
 		}
 
+		[Event( EventType.Tick )]
 		private void OnTick()
 		{
 			// We need to run the controller tick for all clients that aren't us.
