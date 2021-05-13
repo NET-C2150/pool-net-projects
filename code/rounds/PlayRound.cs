@@ -327,6 +327,8 @@ namespace PoolGame
 					return;
 			}
 
+			Game.Instance.Controller.Reset();
+
 			var currentPlayer = Game.Instance.CurrentPlayer.Entity;
 			var didHitAnyBall = currentPlayer.DidPotBall;
 

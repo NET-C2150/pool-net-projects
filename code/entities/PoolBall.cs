@@ -38,6 +38,8 @@ namespace PoolGame
 
 		public async Task AnimateIntoPocket()
 		{
+			Assert.True( !IsAnimating );
+
 			PhysicsEnabled = false;
 			IsAnimating = true;
 

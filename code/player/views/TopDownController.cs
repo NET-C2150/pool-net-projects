@@ -18,6 +18,11 @@ namespace PoolGame
 		private float _maxCuePitch = 35f;
 		private float _minCuePitch = 5f;
 
+		public override void Reset()
+		{
+			IsMakingShot = false;
+		}
+
 		public override void Tick( Player controller )
 		{
 			if ( Host.IsClient && ShotPowerLine != null )

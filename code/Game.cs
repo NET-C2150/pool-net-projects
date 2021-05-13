@@ -259,10 +259,9 @@ namespace PoolGame
 
 		private void OnTick()
 		{
-			if ( CurrentPlayer.IsValid )
+			// We need to run the controller tick for all clients that aren't us.
+			if ( CurrentPlayer.IsValid && !CurrentPlayer.Entity.IsLocalPlayer)
 				Controller?.Tick( CurrentPlayer.Entity );
-			else if ( IsClient && Sandbox.Player.Local is Player player )
-				Controller?.Tick( player );
 
 			Round?.OnTick();
 

@@ -9,6 +9,8 @@ namespace PoolGame
 {
 	public abstract class BaseGameController : NetworkClass
 	{
+		public virtual void Reset() { }
+
 		public virtual void Tick( Player controller ) { }
 	}
 }
