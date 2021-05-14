@@ -101,9 +101,9 @@
             justify-content: center;
 
             .ball {
-                background-image: url(/ui/pool/balls/ball-unset.png);
+                background-image: url(/ui/pool/balls/small/ball-unset.png);
                 background-size: 100%;
-                border-radius: 50%;
+                background-repeat: no-repeat;
                 width: 32px;
                 height: 32px;
             }
@@ -115,15 +115,15 @@
         }
 
         .ball {
-            box-shadow: 0 10px 20px rgba(#000,0.3);
+            
 
             &.stripes {
-                background-image: url(/ui/pool/balls/ball-stripes.png);
+                background-image: url(/ui/pool/balls/small/ball-stripes.png);
                 background-size: 100%;
             }
 
             &.spots {
-                background-image: url(/ui/pool/balls/ball-spots.png);
+                background-image: url(/ui/pool/balls/small/ball-spots.png);
                 background-size: 100%;
             }
         }

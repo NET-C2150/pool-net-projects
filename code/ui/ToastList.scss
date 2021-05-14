@@ -43,10 +43,10 @@
 			border-radius: 50%;
 			align-items: center;
 			justify-content: center;
-			width: 60px;
-			height: 60px;
+			width: 64px;
+			height: 64px;
 			position: absolute;
-			right: -68px;
+			right: -74px;
 			transform: scale(1);
 			transition: all 1s ease-out;
 
@@ -59,8 +59,8 @@
 			.icon {
 				background-size: 100%;
 				border-radius: 50%;
-				width: 60px;
-				height: 60px;
+				width: 64px;
+				height: 64px;
 
 				&.wins {
 					background-image: url(/ui/pool/icon-wins.png);
