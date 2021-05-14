@@ -33,7 +33,7 @@ namespace PoolGame
 			else
 				Circle.AddClass( "hidden" );
 
-			_endTime = Sandbox.Time.Now + 4f;
+			_endTime = Sandbox.Time.Now + 3f;
 		}
 
 		public override void Tick()

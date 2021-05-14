@@ -115,7 +115,7 @@
         }
 
         .ball {
-            
+
 
             &.stripes {
                 background-image: url(/ui/pool/balls/small/ball-stripes.png);
@@ -184,7 +184,15 @@
         }
 
         &.active {
-            background-color: rgba(#1A202B,1);
+            background-repeat: no-repeat;
+
+            &.one {
+                background: linear-gradient(to left,rgba(#3273EB,0.5),rgba(#3273EB,0));
+            }
+
+            &.two {
+                background: linear-gradient(to right,rgba(#3273EB,0.5),rgba(#3273EB,0));
+            }
 
             .player-container {
                 opacity: 1;
@@ -203,6 +211,8 @@
             display: none;
         }
     }
+
+
 
     &.hidden {
         display: none;
