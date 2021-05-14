@@ -327,12 +327,19 @@ namespace PoolGame
 		{
 			foreach ( var ball in Game.Instance.AllBalls )
 			{
-				if ( !ball.PhysicsBody.Velocity.IsNearlyZero( 0.07f ) )
+				if ( !ball.PhysicsBody.Velocity.IsNearlyZero( 0.2f ) )
 					return;
 
 				if ( ball.IsAnimating )
 					return;
 			}
+
+			Game.Instance.AllBalls.ForEach( ( ball ) =>
+			{
+				ball.PhysicsBody.AngularVelocity = Vector3.Zero;
+				ball.PhysicsBody.Velocity = Vector3.Zero;
+				ball.PhysicsBody.ClearForces();
+			} );
 
 			Game.Instance.Controller.Reset();
 
@@ -369,7 +376,7 @@ namespace PoolGame
 			}
 			else
 			{
-				currentPlayer.StartTurn();
+				currentPlayer.StartTurn( false, false );
 			}
 
 			PlayerTurnEndTime = Sandbox.Time.Now + 30f;

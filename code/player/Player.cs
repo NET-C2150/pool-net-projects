@@ -97,11 +97,13 @@ namespace PoolGame
 			Score = 0;
 		}
 
-		public void StartTurn(bool hasSecondShot = false)
+		public void StartTurn(bool hasSecondShot = false, bool showMessage = true)
 		{
 			Log.Info( "Starting Turn: " + Name );
 
-			Game.Instance.AddToast( this, $"{Name} has started their turn" );
+			if ( showMessage )
+				Game.Instance.AddToast( this, $"{Name} has started their turn" );
+
 			Game.Instance.CurrentPlayer = this;
 
 			IsFollowingBall = false;
