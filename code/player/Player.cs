@@ -15,7 +15,6 @@ namespace PoolGame
 		[Net] public bool HasSecondShot { get; set; }
 		[Net] public bool IsTurn { get; private set; }
 		[Net] public int Score { get; set; }
-		[Net] public EntityHandle<PoolCue> Cue { get; private set; }
 		[Net] public EloScore Elo { get; private set; }
 		public bool DidHitOwnBall { get; set; }
 		public bool DidPotBall { get; set; }
@@ -41,9 +40,6 @@ namespace PoolGame
 
 		public void MakeSpectator( bool isSpectator )
 		{
-			if ( isSpectator )
-				ShowPoolCue( false );
-
 			IsFollowingBall = false;
 			IsSpectator = isSpectator;
 			IsTurn = false;
@@ -60,8 +56,6 @@ namespace PoolGame
 			_ = Game.Instance.RespawnBallAsync( whiteBall );
 
 			IsPlacingWhiteBall = true;
-
-			ShowPoolCue( false );
 		}
 
 		public void StopPlacingWhiteBall()
@@ -72,9 +66,6 @@ namespace PoolGame
 				whiteBall.Entity.StopPlacing();
 
 			IsPlacingWhiteBall = false;
-
-			if ( IsTurn )
-				ShowPoolCue( true );
 		}
 
 		public void Foul( FoulReason reason )
@@ -115,20 +106,12 @@ namespace PoolGame
 
 			if ( hasSecondShot )
 				StartPlacingWhiteBall();
-			else
-				ShowPoolCue( true );
 		}
 
 		public void FinishTurn()
 		{
 			IsFollowingBall = false;
-			ShowPoolCue( false );
 			IsTurn = false;
-		}
-
-		public void ShowPoolCue( bool shouldShow )
-		{
-			Cue.Entity.EnableDrawing = shouldShow;
 		}
 
 		public void StrikeWhiteBall( PoolCue cue, PoolBall whiteBall, float force )
@@ -138,16 +121,6 @@ namespace PoolGame
 			whiteBall.PhysicsBody.ApplyImpulse( direction * force * whiteBall.PhysicsBody.Mass );
 
 			IsFollowingBall = true;
-
-			ShowPoolCue( false );
-		}
-
-		public override void Spawn()
-		{
-			if ( IsServer )
-				Cue = new PoolCue();
-
-			base.Spawn();
 		}
 
 		public override void Respawn()

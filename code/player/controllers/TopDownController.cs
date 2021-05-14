@@ -26,6 +26,8 @@ namespace PoolGame
 
 		public override void Tick( Player controller )
 		{
+			var cue = Game.Instance.Cue;
+
 			if ( Host.IsClient )
 			{
 				if ( ShotPowerLine != null )
@@ -35,12 +37,14 @@ namespace PoolGame
 					GhostBall.EnableDrawing = false;
 			}
 
+			if ( Host.IsServer )
+				cue.Entity.EnableDrawing = false;
+
 			if ( !controller.IsTurn || controller.IsFollowingBall )
 				return;
 
 			var whiteBall = Game.Instance.WhiteBall;
 			var input = controller.Input;
-			var cue = controller.Cue;
 
 			if ( !whiteBall.IsValid || !cue.IsValid )
 				return;
@@ -85,7 +89,10 @@ namespace PoolGame
 			}
 
 			if ( Host.IsServer )
+			{
+				cue.Entity.EnableDrawing = true;
 				cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
+			}
 
 			if ( Host.IsClient )
 			{

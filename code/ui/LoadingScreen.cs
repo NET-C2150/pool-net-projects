@@ -21,16 +21,7 @@ namespace PoolGame
 		{
 			if ( Game.Instance == null ) return;
 
-			var isHidden = false;
-
-			if ( Sandbox.Player.Local is Player player )
-			{
-				var whiteBall = Game.Instance.WhiteBall;
-				var cue = player.Cue;
-
-				isHidden = (whiteBall != null && cue != null);
-			}
-
+			var isHidden = true;
 			var round = Game.Instance.Round;
 
 			if ( round is PlayRound )
@@ -38,8 +29,11 @@ namespace PoolGame
 				var playerOne = Game.Instance.PlayerOne;
 				var playerTwo = Game.Instance.PlayerTwo;
 
-				if ( playerOne == null || playerTwo == null )
-					isHidden = true;
+				if ( !playerOne.IsValid || !playerTwo.IsValid )
+					isHidden = false;
+
+				if ( !Game.Instance.Cue.IsValid )
+					isHidden = false;
 			}
 
 			SetClass( "hidden", isHidden );

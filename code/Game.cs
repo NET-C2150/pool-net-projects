@@ -25,6 +25,7 @@ namespace PoolGame
 			get => Current as Game;
 		}
 
+		[Net] public EntityHandle<PoolCue> Cue { get; private set; }
 		[Net] public BaseGameController Controller { get; set; }
 		[Net] public BaseRound Round { get; private set; }
 		[Net] public EntityHandle<PoolBall> WhiteBall { get; set; }
@@ -218,6 +219,13 @@ namespace PoolGame
 		public override void PostLevelLoaded()
 		{
 			_ = StartSecondTimer();
+
+			if ( IsServer )
+			{
+				// Can't do Cue = new() for some reason.
+				var cue = new PoolCue();
+				Cue = cue;
+			}
 
 			base.PostLevelLoaded();
 		}
