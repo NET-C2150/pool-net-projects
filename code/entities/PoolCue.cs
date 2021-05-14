@@ -22,6 +22,7 @@ namespace PoolGame
 			SetModel( "models/pool/pool_cue_b.vmdl" );
 
 			EnableDrawing = false;
+			Transmit = TransmitType.Always;
 		}
 	}
 }

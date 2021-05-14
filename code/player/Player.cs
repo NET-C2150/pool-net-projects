@@ -147,12 +147,7 @@ namespace PoolGame
 		public override void Spawn()
 		{
 			if ( IsServer )
-			{
-				Cue = new PoolCue
-				{
-					Owner = this
-				};
-			}
+				Cue = new PoolCue();
 
 			base.Spawn();
 		}

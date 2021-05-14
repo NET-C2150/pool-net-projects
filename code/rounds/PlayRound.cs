@@ -16,6 +16,7 @@ namespace PoolGame
 
 		public List<Player> Spectators = new();
 		public float PlayerTurnEndTime { get; set; }
+		public bool DidClaimThisTurn { get; private set; }
 
 		public override void OnPlayerLeave( Player player )
 		{
@@ -112,10 +113,14 @@ namespace PoolGame
 						otherPlayer.BallType = (ball.Type == PoolBallType.Spots ? PoolBallType.Stripes : PoolBallType.Spots);
 
 						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Claim );
+
+						DidClaimThisTurn = true;
 					}
 					else
 					{
-						ball.LastStriker.Foul( FoulReason.PotOtherBall );
+						if ( !DidClaimThisTurn )
+							ball.LastStriker.Foul( FoulReason.PotOtherBall );
+
 						DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 					}
 
@@ -366,6 +371,7 @@ namespace PoolGame
 			}
 
 			PlayerTurnEndTime = Sandbox.Time.Now + 30f;
+			DidClaimThisTurn = false;
 		}
 	}
 }
