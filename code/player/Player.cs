@@ -134,12 +134,8 @@ namespace PoolGame
 		public void StrikeWhiteBall( PoolCue cue, PoolBall whiteBall, float force )
 		{
 			var direction = cue.DirectionTo( whiteBall );
-			var tipPos = cue.GetAttachment( "tip", true ).Pos;
 
-			whiteBall.PhysicsBody.ApplyImpulseAt(
-				whiteBall.PhysicsBody.Transform.PointToLocal(tipPos),
-				direction * force * whiteBall.PhysicsBody.Mass
-			);
+			whiteBall.PhysicsBody.ApplyImpulse( direction * force * whiteBall.PhysicsBody.Mass );
 
 			IsFollowingBall = true;
 

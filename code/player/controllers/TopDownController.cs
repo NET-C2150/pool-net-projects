@@ -12,6 +12,7 @@ namespace PoolGame
 		public float CuePitch { get; set; }
 		public float CueYaw { get; set; }
 		public ShotPowerLine ShotPowerLine { get; set; }
+		public ModelEntity GhostBall { get; private set; }
 
 		private float _cuePullBackOffset;
 		private float _lastPowerDistance;
@@ -25,8 +26,14 @@ namespace PoolGame
 
 		public override void Tick( Player controller )
 		{
-			if ( Host.IsClient && ShotPowerLine != null )
-				ShotPowerLine.IsEnabled = false;
+			if ( Host.IsClient )
+			{
+				if ( ShotPowerLine != null )
+					ShotPowerLine.IsEnabled = false;
+
+				if ( GhostBall != null )
+					GhostBall.EnableDrawing = false;
+			}
 
 			if ( !controller.IsTurn || controller.IsFollowingBall )
 				return;
@@ -95,6 +102,27 @@ namespace PoolGame
 				ShotPowerLine.ShotPower = ShotPower;
 				ShotPowerLine.EndPos = trace.EndPos;
 				ShotPowerLine.Width = 0.1f + ( ( 0.15f / 100f ) * ShotPower );
+
+				var fromTransform = whiteBall.Entity.PhysicsBody.Transform;
+				var toTransform = whiteBall.Entity.PhysicsBody.Transform;
+				toTransform.Pos = trace.EndPos;
+
+				var sweep = Trace.Sweep( whiteBall.Entity.PhysicsBody, fromTransform, toTransform )
+					.Ignore( whiteBall )
+					.Run();
+
+				if ( sweep.Hit )
+				{
+					if ( GhostBall == null )
+					{
+						GhostBall = new ModelEntity();
+						GhostBall.SetModel( "models/pool/pool_ball.vmdl" );
+						GhostBall.RenderAlpha = 0.4f;
+					}
+
+					GhostBall.EnableDrawing = true;
+					GhostBall.WorldPos = sweep.EndPos;
+				}
 			}
 		}
 
