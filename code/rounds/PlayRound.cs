@@ -60,10 +60,12 @@ namespace PoolGame
 
 						if ( player != null && player.IsValid() )
 						{
-							if ( Game.Instance.CurrentPlayer == player )
+							var currentPlayer = Game.Instance.CurrentPlayer;
+
+							if ( currentPlayer == player )
 								player.HasSecondShot = true;
 
-							DoPlayerPotBall( null, ball, BallPotType.Silent );
+							DoPlayerPotBall( currentPlayer, ball, BallPotType.Silent );
 						}
 
 						_ = Game.Instance.RemoveBallAsync( ball, true );
