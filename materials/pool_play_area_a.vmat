@@ -12,7 +12,7 @@ Layer0
 
 	//---- Ambient Occlusion ----
 	g_flAmbientOcclusionDirectDiffuse "0.300"
-	g_flAmbientOcclusionDirectSpecular "1.000"
+	g_flAmbientOcclusionDirectSpecular "0.300"
 	TextureAmbientOcclusion "textures/pool/pool_play_area_a_ao.tga"
 
 	//---- Color ----
