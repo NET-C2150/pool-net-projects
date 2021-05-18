@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PoolGame
 {
-	public partial class Player : BasePlayer
+	public partial class Player : Entity
 	{
 		[Net] public bool IsFollowingBall { get; set; }
 		[Net] public PoolBallType BallType { get; set; }
@@ -23,7 +23,7 @@ namespace PoolGame
 		{
 			get
 			{
-				var balls = Entity.All.OfType<PoolBall>().Where( ( e ) =>
+				var balls = All.OfType<PoolBall>().Where( ( e ) =>
 				{
 					return e.Type == BallType;
 				} );
@@ -34,8 +34,8 @@ namespace PoolGame
 
 		public Player()
 		{
-			Controller = new PoolPlayerController();
 			Camera = new PoolCamera();
+			Transmit = TransmitType.Always;
 		}
 
 		public void MakeSpectator( bool isSpectator )
@@ -72,9 +72,9 @@ namespace PoolGame
 		{
 			if ( FoulReason == FoulReason.None )
 			{
-				Log.Info( Name + " has fouled (reason: " + reason.ToString() + ")" );
+				Log.Info( GetClientOwner().Name + " has fouled (reason: " + reason.ToString() + ")" );
 
-				Game.Instance.AddToast( this, reason.ToMessage( this ), "foul" );
+				Game.Instance.AddToast( To.Everyone, this, reason.ToMessage( this ), "foul" );
 
 				HasSecondShot = false;
 				FoulReason = reason;
@@ -90,10 +90,12 @@ namespace PoolGame
 
 		public void StartTurn(bool hasSecondShot = false, bool showMessage = true)
 		{
-			Log.Info( "Starting Turn: " + Name );
+			var client = GetClientOwner();
+
+			Log.Info( "Starting Turn: " + client.Name );
 
 			if ( showMessage )
-				Game.Instance.AddToast( this, $"{Name} has started their turn" );
+				Game.Instance.AddToast( To.Everyone, this, $"{ client.Name } has started their turn" );
 
 			Game.Instance.CurrentPlayer = this;
 
@@ -123,26 +125,14 @@ namespace PoolGame
 			IsFollowingBall = true;
 		}
 
-		public override void Respawn()
-		{
-			Game.Instance?.Round?.OnPlayerSpawn( this );
-
-			base.Respawn();
-		}
-
-		protected override void Tick()
+		public override void Simulate( Client client )
 		{
 			var zoomOutDistance = 350f;
 
-			WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
-			WorldRot = Rotation.LookAt( Vector3.Down );
+			Position = new Vector3( 0f, 0f, zoomOutDistance );
+			Rotation = Rotation.LookAt( Vector3.Down );
 
-			base.Tick();
-		}
-
-		protected override void UseFail()
-		{
-			// Do nothing. By default this plays a sound that we don't want.
+			base.Simulate( client );
 		}
 	}
 }

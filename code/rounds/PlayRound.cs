@@ -27,15 +27,15 @@ namespace PoolGame
 
 			if ( player == playerOne || player == playerTwo )
 			{
-				_ = LoadStatsRound( "Game Over" );
+				Game.Instance.ChangeRound( new StatsRound() );
 			}
 		}
 
-		public override void OnPlayerSpawn( Player player )
+		public override void OnPlayerJoin( Player player )
 		{
 			Spectators.Add( player );
 
-			base.OnPlayerSpawn( player );
+			base.OnPlayerJoin( player );
 		}
 
 		public override void OnBallEnterPocket( PoolBall ball, TriggerBallPocket pocket )
@@ -96,11 +96,6 @@ namespace PoolGame
 					DoPlayerPotBall( ball.LastStriker, ball, BallPotType.Normal );
 
 					_ = Game.Instance.RemoveBallAsync( ball, true );
-
-					if ( ball.LastStriker.BallsLeft == 0 )
-						DoPlayerWin( ball.LastStriker );
-					else
-						DoPlayerWin( Game.Instance.GetOtherPlayer( ball.LastStriker ) );
 				}
 				else
 				{
@@ -206,12 +201,10 @@ namespace PoolGame
 				Game.Instance.RespawnAllBalls();
 
 				var potentials = new List<Player>();
+				var players = Client.All.Select( ( client ) => client.Pawn as Player );
 
-				Sandbox.Player.All.ForEach( ( v ) =>
-				{
-					if ( v is Player player )
-						potentials.Add( player );
-				} );
+				foreach ( var player in players )
+					potentials.Add( player );
 
 				var previousWinner = Game.Instance.PreviousWinner;
 				var previousLoser = Game.Instance.PreviousLoser;
@@ -282,16 +275,6 @@ namespace PoolGame
 			}
 		}
 
-		private async Task LoadStatsRound(string title = "", int delay = 3)
-		{
-			await Task.Delay( delay * 1000 );
-
-			if ( Game.Instance.Round != this )
-				return;
-
-			Game.Instance.ChangeRound( new StatsRound() );
-		}
-
 		private void DoPlayerPotBall( Player player, PoolBall ball, BallPotType type )
 		{
 			player.DidPotBall = true;
@@ -302,10 +285,12 @@ namespace PoolGame
 				Number = ball.Number
 			} );
 
+			var client = player.GetClientOwner();
+
 			if ( type == BallPotType.Normal )
-				Game.Instance.AddToast( player, $"{ player.Name } has potted a ball", ball.GetIconClass() );
+				Game.Instance.AddToast( To.Everyone, player, $"{ client.Name } has potted a ball", ball.GetIconClass() );
 			else if ( type == BallPotType.Claim )
-				Game.Instance.AddToast( player, $"{ player.Name } has claimed { ball.Type }", ball.GetIconClass() );
+				Game.Instance.AddToast( To.Everyone, player, $"{ client.Name } has claimed { ball.Type }", ball.GetIconClass() );
 
 			var owner = Game.Instance.GetBallPlayer( ball );
 
@@ -315,12 +300,14 @@ namespace PoolGame
 
 		private void DoPlayerWin( Player player )
 		{
-			Game.Instance.AddToast( player, $"{ player.Name} has won the game", "wins" );
+			var client = player.GetClientOwner();
+
+			Game.Instance.AddToast( To.Everyone, player, $"{ client.Name } has won the game", "wins" );
 
 			var otherPlayer = Game.Instance.GetOtherPlayer( player );
 			player.Elo.Update( otherPlayer.Elo, EloOutcome.Win );
 
-			_ = LoadStatsRound( $"{player.Name} Wins" );
+			Game.Instance.ChangeRound( new StatsRound() );
 		}
 
 		private void CheckForStoppedBalls()
@@ -369,14 +356,31 @@ namespace PoolGame
 
 			var otherPlayer = Game.Instance.GetOtherPlayer( currentPlayer );
 
-			if ( !currentPlayer.HasSecondShot )
+			if ( !Game.Instance.BlackBall.IsValid )
 			{
-				currentPlayer.FinishTurn();
-				otherPlayer.StartTurn( currentPlayer.FoulReason != FoulReason.None );
+				if ( currentPlayer.FoulReason == FoulReason.None )
+				{
+					if ( currentPlayer.BallsLeft == 0 )
+						DoPlayerWin( currentPlayer );
+					else
+						DoPlayerWin( otherPlayer );
+				}
+				else
+				{
+					DoPlayerWin( otherPlayer );
+				}
 			}
 			else
 			{
-				currentPlayer.StartTurn( false, false );
+				if ( !currentPlayer.HasSecondShot )
+				{
+					currentPlayer.FinishTurn();
+					otherPlayer.StartTurn( currentPlayer.FoulReason != FoulReason.None );
+				}
+				else
+				{
+					currentPlayer.StartTurn( false, false );
+				}
 			}
 
 			PlayerTurnEndTime = Sandbox.Time.Now + 30f;

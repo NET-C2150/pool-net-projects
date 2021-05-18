@@ -31,13 +31,13 @@ namespace PoolGame
 			base.OnTimeUp();
 		}
 
-		public override void OnPlayerSpawn( Player player )
+		public override void OnPlayerJoin( Player player )
 		{
 			if ( Players.Contains( player ) ) return;
 
 			AddPlayer( player );
 
-			base.OnPlayerSpawn( player );
+			base.OnPlayerJoin( player );
 		}
 	}
 }

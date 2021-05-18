@@ -24,11 +24,11 @@ namespace PoolGame
 				Render.SetLighting( sceneObject );
 
 				var vertexBuffer = Render.GetDynamicVB( true );
-				var widthOffset = Vector3.Cross( ( EndPos - WorldPos).Normal, Vector3.Up ) * Width;
+				var widthOffset = Vector3.Cross( ( EndPos - Position).Normal, Vector3.Up ) * Width;
 				var powerFraction = (ShotPower / 100f);
 
-				var a = new Vertex( WorldPos - widthOffset, Vector3.Up, Vector3.Right, new Vector4( 0, 1, 0, 0 ) );
-				var b = new Vertex( WorldPos + widthOffset, Vector3.Up, Vector3.Right, new Vector4( 1, 1, 0, 0 ) );
+				var a = new Vertex( Position - widthOffset, Vector3.Up, Vector3.Right, new Vector4( 0, 1, 0, 0 ) );
+				var b = new Vertex( Position + widthOffset, Vector3.Up, Vector3.Right, new Vector4( 1, 1, 0, 0 ) );
 				var c = new Vertex( EndPos + widthOffset, Vector3.Up, Vector3.Right, new Vector4( 1, 0, 0, 0 ) );
 				var d = new Vertex( EndPos - widthOffset, Vector3.Up, Vector3.Right, new Vector4( 0, 0, 0, 0 ) );
 
@@ -43,10 +43,10 @@ namespace PoolGame
 
 				var circleSize = 1f + (5f * powerFraction);
 
-				a = new Vertex( WorldPos + new Vector3( -circleSize, -circleSize, 0f ), Vector3.Up, Vector3.Right, new Vector4( 0, 1, 0, 0 ) );
-				b = new Vertex( WorldPos + new Vector3( circleSize, -circleSize, 0f ), Vector3.Up, Vector3.Right, new Vector4( 1, 1, 0, 0 ) );
-				c = new Vertex( WorldPos + new Vector3( circleSize, circleSize, 0f ), Vector3.Up, Vector3.Right, new Vector4( 1, 0, 0, 0 ) );
-				d = new Vertex( WorldPos + new Vector3( -circleSize, circleSize, 0f ), Vector3.Up, Vector3.Right, new Vector4( 0, 0, 0, 0 ) );
+				a = new Vertex( Position + new Vector3( -circleSize, -circleSize, 0f ), Vector3.Up, Vector3.Right, new Vector4( 0, 1, 0, 0 ) );
+				b = new Vertex( Position + new Vector3( circleSize, -circleSize, 0f ), Vector3.Up, Vector3.Right, new Vector4( 1, 1, 0, 0 ) );
+				c = new Vertex( Position + new Vector3( circleSize, circleSize, 0f ), Vector3.Up, Vector3.Right, new Vector4( 1, 0, 0, 0 ) );
+				d = new Vertex( Position + new Vector3( -circleSize, circleSize, 0f ), Vector3.Up, Vector3.Right, new Vector4( 0, 0, 0, 0 ) );
 
 				vertexBuffer.AddQuad( a, b, c, d );
 

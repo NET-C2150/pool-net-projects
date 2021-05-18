@@ -20,7 +20,7 @@ namespace PoolGame
 		public override void Tick()
 		{
 			if ( Game.Instance == null ) return;
-
+			
 			var isHidden = true;
 			var round = Game.Instance.Round;
 

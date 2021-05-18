@@ -17,7 +17,7 @@ namespace PoolGame
 			Quad = new WhiteAreaQuad
 			{
 				RenderBounds = CollisionBounds,
-				WorldPos = WorldPos
+				Position = Position
 			};
 		}
 

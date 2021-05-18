@@ -21,20 +21,22 @@ namespace PoolGame
 	{
 		public static string ToMessage( this FoulReason reason, Player player )
 		{
+			var client = player.GetClientOwner();
+
 			switch ( reason )
 			{
 				case FoulReason.PotWhiteBall:
-					return $"{player.Name} potted the white ball";
+					return $"{ client.Name } potted the white ball";
 				case FoulReason.BallLeftTable:
-					return $"{player.Name} shot a ball off the table";
+					return $"{ client.Name } shot a ball off the table";
 				case FoulReason.PotBlackTooEarly:
-					return $"{player.Name} potted the black too early";
+					return $"{ client.Name } potted the black too early";
 				case FoulReason.HitOtherBall:
-					return $"{player.Name} hit the wrong ball";
+					return $"{ client.Name } hit the wrong ball";
 				case FoulReason.PotOtherBall:
-					return $"{player.Name} potted the wrong ball";
+					return $"{ client.Name } potted the wrong ball";
 				case FoulReason.HitNothing:
-					return $"{player.Name} didn't hit anything";
+					return $"{ client.Name } didn't hit anything";
 				case FoulReason.None:
 					break;
 			}

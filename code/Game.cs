@@ -72,9 +72,9 @@ namespace PoolGame
 				{
 					if ( spawner.Type == ball.Type && spawner.Number == ball.Number )
 					{
-						ball.WorldPos = spawner.WorldPos;
+						ball.Scale = 1f;
+						ball.Position = spawner.Position;
 						ball.RenderAlpha = 1f;
-						ball.WorldScale = 1f;
 						ball.PhysicsBody.AngularVelocity = Vector3.Zero;
 						ball.PhysicsBody.Velocity = Vector3.Zero;
 						ball.PhysicsBody.ClearForces();
@@ -98,6 +98,12 @@ namespace PoolGame
 		[ClientRpc]
 		public void AddToast( Player player, string text, string iconClass = "" )
 		{
+			if ( player == null )
+			{
+				Log.Warning( "Player was NULL in Game.AddToast!" );
+				return;
+			}
+
 			ToastList.Current.AddItem( player, text, iconClass );
 		}
 
@@ -162,8 +168,8 @@ namespace PoolGame
 
 					var ball = new PoolBall
 					{
-						WorldPos = spawner.WorldPos,
-						WorldRot = Rotation.LookAt( Vector3.Random )
+						Position = spawner.Position,
+						Rotation = Rotation.LookAt( Vector3.Random )
 					};
 
 					ball.SetType( spawner.Type, spawner.Number );
@@ -200,19 +206,19 @@ namespace PoolGame
 			}
 		}
 
-		public override void DoPlayerNoclip( Sandbox.Player player )
+		public override void DoPlayerNoclip( Client client )
 		{
 			// Do nothing. The player can't noclip in this mode.
 		}
 
-		public override void DoPlayerSuicide( Sandbox.Player player )
+		public override void DoPlayerSuicide( Client client )
 		{
-			if ( player.LifeState == LifeState.Alive && Round?.CanPlayerSuicide == true )
+			if ( client.Pawn.LifeState == LifeState.Alive && Round?.CanPlayerSuicide == true )
 			{
 				// This simulates the player being killed.
-				player.LifeState = LifeState.Dead;
-				player.OnKilled();
-				PlayerKilled( player );
+				client.Pawn.LifeState = LifeState.Dead;
+				client.Pawn.OnKilled();
+				OnKilled( client.Pawn );
 			}
 		}
 
@@ -230,23 +236,33 @@ namespace PoolGame
 			base.PostLevelLoaded();
 		}
 
-		public override void PlayerKilled( Sandbox.Player player )
+		public override void OnKilled( Entity entity )
 		{
-			Round?.OnPlayerKilled( player as Player );
+			if ( entity is Player player )
+				Round?.OnPlayerKilled( player );
 
-			base.PlayerKilled( player );
+			base.OnKilled( entity );
 		}
 
-		public override void PlayerDisconnected( Sandbox.Player player, NetworkDisconnectionReason reason )
+		public override void ClientDisconnect( Client client, NetworkDisconnectionReason reason )
 		{
-			Log.Info( player.Name + " left, checking minimum player count..." );
+			Log.Info( client.Name + " left, checking minimum player count..." );
 
-			Round?.OnPlayerLeave( player as Player );
+			Round?.OnPlayerLeave( client.Pawn as Player );
 
-			base.PlayerDisconnected( player, reason );
+			base.ClientDisconnect( client, reason );
 		}
 
-		public override Player CreatePlayer() => new();
+		public override void ClientJoined( Client client )
+		{
+			var player = new Player();
+
+			client.Pawn = player;
+
+			Round?.OnPlayerJoin( player );
+
+			base.ClientJoined( client );
+		}
 
 		private void OnSecond()
 		{
@@ -285,7 +301,7 @@ namespace PoolGame
 
 		private void CheckMinimumPlayers()
 		{
-			if ( Sandbox.Player.All.Count >= MinPlayers)
+			if ( Client.All.Count >= MinPlayers)
 			{
 				if ( Round is LobbyRound || Round == null )
 				{

@@ -21,7 +21,7 @@ namespace PoolGame
 			{
 				var vb = Render.GetDynamicVB();
 
-				vb.AddCube( WorldPos + RenderBounds.Center, RenderBounds.Size.WithZ( 1f ), Rotation.Identity );
+				vb.AddCube( Position + RenderBounds.Center, RenderBounds.Size.WithZ( 1f ), Rotation.Identity );
 				vb.Draw( Material );
 			}
 		}

@@ -21,7 +21,7 @@ namespace PoolGame
 
 		public override void Tick()
 		{
-			var player = Sandbox.Player.Local;
+			var player = Local.Pawn as Player;
 			if ( player == null ) return;
 
 			var game = Game.Instance;

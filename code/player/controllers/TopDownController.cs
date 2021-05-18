@@ -44,7 +44,8 @@ namespace PoolGame
 				return;
 
 			var whiteBall = Game.Instance.WhiteBall;
-			var input = controller.Input;
+			var client = controller.GetClientOwner();
+			var input = client.Input;
 
 			if ( !whiteBall.IsValid || !cue.IsValid )
 				return;
@@ -67,7 +68,7 @@ namespace PoolGame
 			{
 				if ( !input.Down( InputButton.Attack1 ) )
 				{
-					UpdateAimDir( controller, input, whiteBall.Entity.WorldPos );
+					UpdateAimDir( controller, input, whiteBall.Entity.Position );
 
 					if ( !IsMakingShot )
 					{
@@ -91,7 +92,7 @@ namespace PoolGame
 			if ( Host.IsServer )
 			{
 				cue.Entity.EnableDrawing = true;
-				cue.Entity.WorldPos = whiteBall.Entity.WorldPos - cue.Entity.WorldRot.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
+				cue.Entity.Position = whiteBall.Entity.Position - cue.Entity.Rotation.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
 			}
 
 			if ( Host.IsClient )
@@ -99,20 +100,20 @@ namespace PoolGame
 				if ( ShotPowerLine == null )
 					ShotPowerLine = new ShotPowerLine();
 
-				var trace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos + AimDir * 1000f )
+				var trace = Trace.Ray( whiteBall.Entity.Position, whiteBall.Entity.Position + AimDir * 1000f )
 					.Ignore( whiteBall.Entity )
 					.Ignore( cue.Entity )
 					.Run();
 
 				ShotPowerLine.IsEnabled = true;
-				ShotPowerLine.WorldPos = trace.StartPos;
+				ShotPowerLine.Position = trace.StartPos;
 				ShotPowerLine.ShotPower = ShotPower;
 				ShotPowerLine.EndPos = trace.EndPos;
 				ShotPowerLine.Width = 0.1f + ( ( 0.15f / 100f ) * ShotPower );
 
 				var fromTransform = whiteBall.Entity.PhysicsBody.Transform;
 				var toTransform = whiteBall.Entity.PhysicsBody.Transform;
-				toTransform.Pos = trace.EndPos;
+				toTransform.Position = trace.EndPos;
 
 				var sweep = Trace.Sweep( whiteBall.Entity.PhysicsBody, fromTransform, toTransform )
 					.Ignore( whiteBall )
@@ -128,7 +129,7 @@ namespace PoolGame
 					}
 
 					GhostBall.EnableDrawing = true;
-					GhostBall.WorldPos = sweep.EndPos;
+					GhostBall.Position = sweep.EndPos;
 				}
 			}
 		}
@@ -181,7 +182,7 @@ namespace PoolGame
 			Host.AssertServer();
 
 			var cursorPlaneEndPos = controller.EyePos + input.CursorAim * 350f;
-			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.WorldPos - cue.Entity.WorldRot.Forward * 100f );
+			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.Position - cue.Entity.Rotation.Forward * 100f );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
 
 			if ( !IsMakingShot )
@@ -217,7 +218,7 @@ namespace PoolGame
 		{
 			Host.AssertServer();
 
-			var rollTrace = Trace.Ray( whiteBall.Entity.WorldPos, whiteBall.Entity.WorldPos - AimDir * 100f )
+			var rollTrace = Trace.Ray( whiteBall.Entity.Position, whiteBall.Entity.Position - AimDir * 100f )
 				.Ignore( cue )
 				.Ignore( whiteBall )
 				.Run();
@@ -229,8 +230,8 @@ namespace PoolGame
 			CuePitch = CuePitch.LerpTo( _minCuePitch + ((_maxCuePitch - _minCuePitch) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
 			CueYaw = aimRotation.Yaw().Normalize( 0f, 360f );
 
-			cue.Entity.WorldRot = Rotation.From(
-				cue.Entity.WorldRot.Angles()
+			cue.Entity.Rotation = Rotation.From(
+				cue.Entity.Rotation.Angles()
 					.WithYaw( CueYaw )
 					.WithPitch( CuePitch )
 			);

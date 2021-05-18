@@ -17,7 +17,10 @@ namespace PoolGame
 
 			if ( Host.IsServer )
 			{
-				Sandbox.Player.All.ForEach( ( player ) => (player as Player).Respawn() );
+				var players = Client.All.Select( ( client ) => client.Pawn as Player );
+
+				foreach ( var player in players )
+					OnPlayerJoin( player );
 
 				Game.Instance.RemoveAllBalls();
 			}
@@ -28,7 +31,7 @@ namespace PoolGame
 			Log.Info( "Finished Lobby Round" );
 		}
 
-		public override void OnPlayerSpawn( Player player )
+		public override void OnPlayerJoin( Player player )
 		{
 			if ( Players.Contains( player ) )
 			{
@@ -39,7 +42,7 @@ namespace PoolGame
 
 			AddPlayer( player );
 
-			base.OnPlayerSpawn( player );
+			base.OnPlayerJoin( player );
 		}
 	}
 }

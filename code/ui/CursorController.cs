@@ -12,10 +12,5 @@ namespace PoolGame
 		{
 			StyleSheet.Load( "/ui/CursorController.scss" );
 		}
-
-		public override void Tick()
-		{
-			base.Tick();
-		}
 	}
 }

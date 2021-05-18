@@ -37,9 +37,11 @@ namespace PoolGame
 
 			if ( isValid )
 			{
-				Name.Text = player.Entity.Name;
+				var owner = player.Entity.GetClientOwner();
 
-				Avatar.SetTexture( $"avatar:{player.Entity.SteamId}" );
+				Name.Text = owner.Name;
+
+				Avatar.SetTexture( $"avatar:{ owner.SteamId }" );
 
 				BallType.SetClass( "spots", player.Entity.BallType == PoolBallType.Spots );
 				BallType.SetClass( "stripes", player.Entity.BallType == PoolBallType.Stripes );
@@ -81,7 +83,7 @@ namespace PoolGame
 
 		public override void Tick()
 		{
-			var player = Sandbox.Player.Local;
+			var player = Local.Pawn as Player;
 			if ( player == null ) return;
 
 			var game = Game.Instance;

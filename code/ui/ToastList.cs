@@ -25,7 +25,9 @@ namespace PoolGame
 
 		public void Update( Player player, string text, string iconClass = "" )
 		{
-			Avatar.SetTexture( $"avatar:{player.SteamId}" );
+			var client = player.GetClientOwner();
+
+			Avatar.SetTexture( $"avatar:{ client.SteamId }" );
 			Text.Text = text;
 
 			if ( !string.IsNullOrEmpty( iconClass ) )
@@ -33,12 +35,12 @@ namespace PoolGame
 			else
 				Circle.AddClass( "hidden" );
 
-			_endTime = Sandbox.Time.Now + 3f;
+			_endTime = Time.Now + 3f;
 		}
 
 		public override void Tick()
 		{
-			if ( !IsDeleting && Sandbox.Time.Now >= _endTime )
+			if ( !IsDeleting && Time.Now >= _endTime )
 				Delete();
 		}
 	}

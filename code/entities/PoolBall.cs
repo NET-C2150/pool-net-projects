@@ -47,11 +47,11 @@ namespace PoolGame
 			{
 				await Task.Delay( 30 );
 
-				WorldScale = WorldScale.LerpTo( 0.69f /* nice */, Time.Delta * 4f );
+				Scale = Scale.LerpTo( 0.69f /* nice */, Time.Delta * 4f );
 				RenderAlpha = RenderAlpha.LerpTo( 0f, Time.Delta * 5f );
 
 				if ( LastPocket != null && LastPocket.IsValid() )
-					WorldPos = WorldPos.LerpTo( LastPocket.WorldPos + LastPocket.CollisionBounds.Center, Time.Delta * 16f );
+					Position = Position.LerpTo( LastPocket.Position + LastPocket.CollisionBounds.Center, Time.Delta * 16f );
 
 				if ( RenderAlpha.AlmostEqual( 0f ) )
 					break;
@@ -95,7 +95,7 @@ namespace PoolGame
 			{
 				if ( ball != this )
 				{
-					var ballOBB = ball.CollisionBounds + ball.WorldPos;
+					var ballOBB = ball.CollisionBounds + ball.Position;
 
 					// We can't place on other balls.
 					if ( ballOBB.Overlaps( worldOBB ) )
@@ -105,7 +105,7 @@ namespace PoolGame
 
 			if ( within.ContainsXY( worldOBB ) )
 			{
-				WorldPos = worldPos.WithZ( WorldPos.z );
+				Position = worldPos.WithZ( Position.z );
 				ResetInterpolation();
 			}
 		}

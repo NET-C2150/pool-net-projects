@@ -60,7 +60,7 @@ namespace PoolGame
 
 		public virtual void OnBallHitOtherBall( PoolBall ball, PoolBall other ) { }
 
-		public virtual void OnPlayerSpawn( Player player ) { }
+		public virtual void OnPlayerJoin( Player player ) { }
 
 		public virtual void OnPlayerKilled( Player player ) { }
 

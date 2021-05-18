@@ -12,7 +12,7 @@ namespace PoolGame
 	{
 		public Vector3 DirectionTo( PoolBall ball )
 		{
-			return (ball.WorldPos - WorldPos.WithZ( ball.WorldPos.z )).Normal;
+			return (ball.Position - Position.WithZ( ball.Position.z )).Normal;
 		}
 
 		public override void Spawn()

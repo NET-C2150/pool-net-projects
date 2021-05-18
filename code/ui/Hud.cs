@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace PoolGame
 {
 	[Library]
-	public partial class Hud : Sandbox.Hud
+	public partial class Hud : HudEntity<RootPanel>
 	{
 		public Panel Header { get; private set; }
 		public Panel Footer { get; private set; }
