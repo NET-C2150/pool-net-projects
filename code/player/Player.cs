@@ -137,11 +137,6 @@ namespace PoolGame
 			WorldPos = new Vector3( 0f, 0f, zoomOutDistance );
 			WorldRot = Rotation.LookAt( Vector3.Down );
 
-			var currentPlayer = Game.Instance.CurrentPlayer;
-
-			if ( currentPlayer == this )
-				Game.Instance.Controller.Tick( this );
-
 			base.Tick();
 		}
 
