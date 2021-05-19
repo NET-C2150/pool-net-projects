@@ -52,7 +52,7 @@ namespace PoolGame
 
 			if ( controller.IsPlacingWhiteBall )
 			{
-				if ( Host.IsServer )
+				if ( whiteBall.Entity.IsAuthority )
 					HandleWhiteBallPlacement( controller, input, whiteBall );
 
 				ShowWhiteArea( true );
@@ -163,8 +163,6 @@ namespace PoolGame
 
 		private void HandleWhiteBallPlacement( Player controller, UserInput input, EntityHandle<PoolBall> whiteBall )
 		{
-			Host.AssertServer();
-
 			var cursorTrace = Trace.Ray( controller.EyePos, controller.EyePos + input.CursorAim * 1000f )
 				.WorldOnly()
 				.Run();

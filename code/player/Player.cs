@@ -51,7 +51,10 @@ namespace PoolGame
 			var whiteBall = Game.Instance.WhiteBall;
 
 			if ( whiteBall.IsValid )
+			{
 				whiteBall.Entity.StartPlacing();
+				whiteBall.Entity.Owner = this;
+			}
 
 			_ = Game.Instance.RespawnBallAsync( whiteBall );
 
@@ -63,7 +66,10 @@ namespace PoolGame
 			var whiteBall = Game.Instance.WhiteBall;
 
 			if ( whiteBall.IsValid )
+			{
 				whiteBall.Entity.StopPlacing();
+				whiteBall.Entity.Owner = null;
+			}
 
 			IsPlacingWhiteBall = false;
 		}
@@ -97,10 +103,9 @@ namespace PoolGame
 			if ( showMessage )
 				Game.Instance.AddToast( To.Everyone, this, $"{ client.Name } has started their turn" );
 
-			Game.Instance.CurrentPlayer = this;
-
 			// This player will be predicting the pool cue now.
-			Game.Instance.Cue.Entity.Owner = (Entity)GetClientOwner();
+			Game.Instance.CurrentPlayer = this;
+			Game.Instance.Cue.Entity.Owner = this;
 
 			IsFollowingBall = false;
 			HasSecondShot = hasSecondShot;
