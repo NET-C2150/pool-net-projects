@@ -99,6 +99,9 @@ namespace PoolGame
 
 			Game.Instance.CurrentPlayer = this;
 
+			// This player will be predicting the pool cue now.
+			Game.Instance.Cue.Entity.Owner = (Entity)GetClientOwner();
+
 			IsFollowingBall = false;
 			HasSecondShot = hasSecondShot;
 			FoulReason = FoulReason.None;

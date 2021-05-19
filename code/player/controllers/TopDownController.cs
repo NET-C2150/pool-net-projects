@@ -37,7 +37,7 @@ namespace PoolGame
 					GhostBall.EnableDrawing = false;
 			}
 
-			if ( Host.IsServer )
+			if ( cue.Entity.IsAuthority )
 				cue.Entity.EnableDrawing = false;
 
 			if ( !controller.IsTurn || controller.IsFollowingBall )
@@ -64,7 +64,7 @@ namespace PoolGame
 				ShowWhiteArea( false );
 			}
 
-			if ( Host.IsServer )
+			if ( cue.Entity.IsAuthority )
 			{
 				if ( !input.Down( InputButton.Attack1 ) )
 				{
@@ -72,11 +72,12 @@ namespace PoolGame
 
 					if ( !IsMakingShot )
 					{
-						RotateCueToCursor( input, whiteBall, cue );
+						RotateCue( input, whiteBall, cue );
 					}
 					else
 					{
-						TakeShot( controller, cue, whiteBall );
+						if ( Host.IsServer )
+							TakeShot( controller, cue, whiteBall );
 
 						_cuePullBackOffset = 0f;
 						IsMakingShot = false;
@@ -89,7 +90,7 @@ namespace PoolGame
 				}
 			}
 
-			if ( Host.IsServer )
+			if ( cue.Entity.IsAuthority )
 			{
 				cue.Entity.EnableDrawing = true;
 				cue.Entity.Position = whiteBall.Entity.Position - cue.Entity.Rotation.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
@@ -179,8 +180,6 @@ namespace PoolGame
 
 		private void HandlePowerSelection( Player controller, UserInput input, EntityHandle<PoolCue> cue )
 		{
-			Host.AssertServer();
-
 			var cursorPlaneEndPos = controller.EyePos + input.CursorAim * 350f;
 			var distanceToCue = cursorPlaneEndPos.Distance( cue.Entity.Position - cue.Entity.Rotation.Forward * 100f );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
@@ -200,8 +199,6 @@ namespace PoolGame
 
 		private bool UpdateAimDir( Player controller, UserInput input, Vector3 ballCenter )
 		{
-			Host.AssertServer();
-
 			if ( IsMakingShot ) return true;
 
 			var tablePlane = new Plane( ballCenter, Vector3.Up );
@@ -214,10 +211,8 @@ namespace PoolGame
 			return true;
 		}
 
-		private void RotateCueToCursor( UserInput input, EntityHandle<PoolBall> whiteBall, EntityHandle<PoolCue> cue )
+		private void RotateCue( UserInput input, EntityHandle<PoolBall> whiteBall, EntityHandle<PoolCue> cue )
 		{
-			Host.AssertServer();
-
 			var rollTrace = Trace.Ray( whiteBall.Entity.Position, whiteBall.Entity.Position - AimDir * 100f )
 				.Ignore( cue )
 				.Ignore( whiteBall )
@@ -230,11 +225,14 @@ namespace PoolGame
 			CuePitch = CuePitch.LerpTo( _minCuePitch + ((_maxCuePitch - _minCuePitch) * (1f - rollTrace.Fraction)), Time.Delta * 10f );
 			CueYaw = aimRotation.Yaw().Normalize( 0f, 360f );
 
-			cue.Entity.Rotation = Rotation.From(
-				cue.Entity.Rotation.Angles()
-					.WithYaw( CueYaw )
-					.WithPitch( CuePitch )
-			);
+			if ( cue.Entity.IsAuthority )
+			{
+				cue.Entity.Rotation = Rotation.From(
+					cue.Entity.Rotation.Angles()
+						.WithYaw( CueYaw )
+						.WithPitch( CuePitch )
+				);
+			}
 		}
 	}
 }
