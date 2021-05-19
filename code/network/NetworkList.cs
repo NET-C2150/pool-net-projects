@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PoolGame
 {
-	public class NetworkList<T> : NetworkClass
+	public class NetworkList<T> : NetworkClass where T : unmanaged
 	{
 		public event Action OnListUpdated;
 
