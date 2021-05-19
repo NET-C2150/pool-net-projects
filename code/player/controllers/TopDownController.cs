@@ -94,6 +94,7 @@ namespace PoolGame
 			{
 				cue.Entity.EnableDrawing = true;
 				cue.Entity.Position = whiteBall.Entity.Position - cue.Entity.Rotation.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
+				cue.Entity.ResetInterpolation();
 			}
 
 			if ( Host.IsClient )
@@ -230,6 +231,8 @@ namespace PoolGame
 						.WithYaw( CueYaw )
 						.WithPitch( CuePitch )
 				);
+
+				cue.Entity.ResetInterpolation();
 			}
 		}
 	}
