@@ -34,6 +34,7 @@ namespace PoolGame
 
 		public Player()
 		{
+			Elo = new();
 			Camera = new PoolCamera();
 			Transmit = TransmitType.Always;
 		}

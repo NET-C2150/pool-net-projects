@@ -307,6 +307,10 @@ namespace PoolGame
 			var otherPlayer = Game.Instance.GetOtherPlayer( player );
 			player.Elo.Update( otherPlayer.Elo, EloOutcome.Win );
 
+			Game.Instance.UpdateRating( player );
+			Game.Instance.UpdateRating( otherPlayer );
+			Game.Instance.SaveRatings();
+
 			Game.Instance.ChangeRound( new StatsRound() );
 		}
 

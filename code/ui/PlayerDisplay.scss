@@ -182,6 +182,37 @@
                 width: 32px;
                 height: 32px;
             }
+
+            .rank {
+                &.bronze {
+                    background-image: url(/ui/pool/ranks/player-bronze.png);
+                    background-size: 100%;
+                }
+
+                &.silver {
+                    background-image: url(/ui/pool/ranks/player-silver.png);
+                    background-size: 100%;
+                }
+
+                &.gold {
+                    background-image: url(/ui/pool/ranks/player-gold.png);
+                    background-size: 100%;
+                }
+
+                &.platinum {
+                    background-image: url(/ui/pool/ranks/player-platinum.png);
+                    background-size: 100%;
+                }
+
+                &.diamond {
+                    background-image: url(/ui/pool/ranks/player-diamond.png);
+                    background-size: 100%;
+                }
+            }
+
+            .level {
+                color: white;
+            }
         }
 
         &.active {

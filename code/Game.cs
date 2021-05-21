@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PoolGame
@@ -34,6 +35,7 @@ namespace PoolGame
 		[Net] public EntityHandle<Player> PlayerTwo { get; set; }
 		[Net] public NetworkList<PotHistoryItem> PotHistory { get; set; }
 
+		private Dictionary<ulong, int> _ratings;
 		private BaseRound _lastRound;
 
 		[ServerVar( "pool_min_players", Help = "The minimum players required to start." )]
@@ -43,6 +45,7 @@ namespace PoolGame
 		{
 			if ( IsServer )
 			{
+				LoadRatings();
 				Hud = new();
 			}
 
@@ -185,6 +188,17 @@ namespace PoolGame
 			}
 		}
 
+		public void UpdateRating( Player player )
+		{
+			var client = player.GetClientOwner();
+			_ratings[client.SteamId] = player.Elo.Rating;
+		}
+
+		public void SaveRatings()
+		{
+			//FileSystem.Mounted.WriteAllText( "data/pool/ratings.json", JsonSerializer.Serialize( _ratings ) );
+		}
+
 		public void ChangeRound(BaseRound round)
 		{
 			Assert.NotNull( round );
@@ -225,7 +239,6 @@ namespace PoolGame
 
 			if ( IsServer )
 			{
-				// Can't do Cue = new() for some reason.
 				var cue = new PoolCue();
 				Cue = cue;
 			}
@@ -253,6 +266,9 @@ namespace PoolGame
 		public override void ClientJoined( Client client )
 		{
 			var player = new Player();
+
+			if ( _ratings.TryGetValue( client.SteamId, out var rating ) )
+				player.Elo.Rating = rating;
 
 			client.Pawn = player;
 
@@ -298,6 +314,12 @@ namespace PoolGame
 						WhiteArea.MakeAreaQuad();
 				}
 			}
+		}
+
+		private void LoadRatings()
+		{
+			_ratings = new();
+			//_ratings = FileSystem.Mounted.ReadJsonOrDefault<Dictionary<ulong, int>>( "data/pool/ratings.json" );
 		}
 
 		private void CheckMinimumPlayers()
