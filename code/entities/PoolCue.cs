@@ -49,13 +49,7 @@ namespace PoolGame
 			
 			EnableDrawing = false;
 
-			if ( Owner is not Player controller )
-				return;
-
-			if ( !controller.IsTurn || controller.IsFollowingBall )
-				return;
-
-			if ( !whiteBall.IsValid )
+			if ( !IsOwnerInPlay( whiteBall, out var controller ) )
 				return;
 
 			var input = controller.Input;
@@ -112,13 +106,7 @@ namespace PoolGame
 					GhostBall.EnableDrawing = false;
 			}
 
-			if ( Owner is not Player controller )
-				return;
-
-			if ( !controller.IsTurn || controller.IsFollowingBall )
-				return;
-
-			if ( !whiteBall.IsValid )
+			if ( !IsOwnerInPlay( whiteBall, out var controller ) )
 				return;
 
 			if ( controller.IsPlacingWhiteBall )
@@ -165,6 +153,22 @@ namespace PoolGame
 				GhostBall.EnableDrawing = true;
 				GhostBall.Position = sweep.EndPos;
 			}
+		}
+
+		private bool IsOwnerInPlay( PoolBall whiteBall, out Player controller )
+		{
+			controller = Owner as Player;
+
+			if ( controller == null )
+				return false;
+
+			if ( !controller.IsTurn || controller.IsFollowingBall )
+				return false;
+
+			if ( whiteBall == null || !whiteBall.IsValid() )
+				return false;
+
+			return true;
 		}
 
 		private void ShowWhiteArea( bool shouldShow )
