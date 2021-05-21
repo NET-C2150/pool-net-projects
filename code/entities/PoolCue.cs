@@ -46,7 +46,6 @@ namespace PoolGame
 		public override void Simulate( Client client )
 		{
 			var whiteBall = Game.Instance.WhiteBall;
-			var input = client.Input;
 			
 			EnableDrawing = false;
 
@@ -58,6 +57,8 @@ namespace PoolGame
 
 			if ( !whiteBall.IsValid )
 				return;
+
+			var input = controller.Input;
 
 			if ( controller.IsPlacingWhiteBall )
 			{
@@ -91,6 +92,9 @@ namespace PoolGame
 			EnableDrawing = true;
 			Position = whiteBall.Entity.Position - Rotation.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
 
+			// Never interpolate just update its position immediately for everybody.
+			ResetInterpolation();
+
 			base.Simulate( client );
 		}
 
@@ -117,7 +121,15 @@ namespace PoolGame
 			if ( !whiteBall.IsValid )
 				return;
 
-			ShowWhiteArea( controller.IsPlacingWhiteBall );
+			if ( controller.IsPlacingWhiteBall )
+			{
+				ShowWhiteArea( true );
+				return;
+			}	
+			else
+			{
+				ShowWhiteArea( false );
+			}
 
 			if ( ShotPowerLine == null )
 				ShotPowerLine = new ShotPowerLine();

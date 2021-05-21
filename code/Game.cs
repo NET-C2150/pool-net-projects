@@ -263,7 +263,7 @@ namespace PoolGame
 
 		public override void Simulate( Client client )
 		{
-			if ( Cue.IsValid && Cue.Entity.IsAuthority )
+			if ( Cue.IsValid && Cue.Entity.IsClientOwner( client ) )
 				Cue.Entity.Simulate( client );
 
 			base.Simulate( client );
