@@ -1,4 +1,7 @@
-﻿namespace Sandbox.UI
+﻿using Sandbox.UI;
+using Sandbox;
+
+namespace PoolGame
 {
 	public static class PanelExtension
 	{

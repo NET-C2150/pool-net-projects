@@ -26,7 +26,6 @@ namespace PoolGame
 		}
 
 		[Net] public EntityHandle<PoolCue> Cue { get; private set; }
-		[Net] public BaseGameController Controller { get; set; }
 		[Net] public BaseRound Round { get; private set; }
 		[Net] public EntityHandle<PoolBall> WhiteBall { get; set; }
 		[Net] public EntityHandle<PoolBall> BlackBall { get; set; }
@@ -53,8 +52,6 @@ namespace PoolGame
 			{
 				PotHistory.OnListUpdated += UpdatePotHistory;
 			}
-
-			Controller = new TopDownController();
 
 			Global.PhysicsSubSteps = 10;
 		}
@@ -264,6 +261,14 @@ namespace PoolGame
 			base.ClientJoined( client );
 		}
 
+		public override void Simulate( Client client )
+		{
+			if ( Cue.IsValid && Cue.Entity.IsAuthority )
+				Cue.Entity.Simulate( client );
+
+			base.Simulate( client );
+		}
+
 		private void OnSecond()
 		{
 			CheckMinimumPlayers();
@@ -271,12 +276,8 @@ namespace PoolGame
 		}
 
 		[Event( EventType.Tick )]
-		private void OnTick()
+		private void Tick()
 		{
-			// We need to run the controller tick for all clients that aren't us.
-			if ( CurrentPlayer.IsValid )
-				Controller?.Tick( CurrentPlayer.Entity );
-
 			Round?.OnTick();
 
 			if ( IsClient )

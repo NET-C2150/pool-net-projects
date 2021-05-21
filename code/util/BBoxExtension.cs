@@ -1,6 +1,7 @@
 ﻿using System;
+using Sandbox;
 
-namespace Sandbox.UI
+namespace PoolGame
 {
 	public static class BBoxExtension
 	{

@@ -122,8 +122,12 @@ namespace PoolGame
 
 		public virtual void OnEnterPocket( TriggerBallPocket pocket )
 		{
-			LastPocket = pocket;
-			Game.Instance.Round?.OnBallEnterPocket( this, pocket );
+			// We may already be animating into a pocket... if we are, don't continue.
+			if ( !IsAnimating )
+			{
+				LastPocket = pocket;
+				Game.Instance.Round?.OnBallEnterPocket( this, pocket );
+			}
 		}
 
 		protected override void OnPhysicsCollision( CollisionEventData eventData )

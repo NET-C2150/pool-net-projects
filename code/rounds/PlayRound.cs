@@ -328,7 +328,7 @@ namespace PoolGame
 				ball.PhysicsBody.ClearForces();
 			} );
 
-			Game.Instance.Controller.Reset();
+			Game.Instance.Cue.Entity.Reset();
 
 			var currentPlayer = Game.Instance.CurrentPlayer.Entity;
 			var didHitAnyBall = currentPlayer.DidPotBall;
@@ -383,7 +383,7 @@ namespace PoolGame
 				}
 			}
 
-			PlayerTurnEndTime = Sandbox.Time.Now + 30f;
+			PlayerTurnEndTime = Time.Now + 30f;
 			DidClaimThisTurn = false;
 		}
 	}

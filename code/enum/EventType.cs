@@ -8,6 +8,7 @@ namespace PoolGame
 {
 	public static class EventType
 	{
+		public const string ClientTick = "client.tick";
 		public const string Tick = "tick";
 	}
 }
