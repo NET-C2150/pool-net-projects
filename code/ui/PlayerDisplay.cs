@@ -27,13 +27,12 @@ namespace PoolGame
 			Avatar = PlayerContainer.Add.Image( "", "avatar" );
 			Name = PlayerContainer.Add.Label( "Name", "name" );
 
-			Rank = PlayerContainer.Add.Panel( "division" );
-			Rank.AddClass( _lastRank.ToString().ToLower() );
-
-			Level = Rank.Add.Label( "0", "rank" );
-
 			ScoreContainer = Add.Panel( "score-container" );
 			BallType = ScoreContainer.Add.Panel( "ball" );
+
+			Rank = PlayerContainer.Add.Panel( "division" );
+			Rank.AddClass( _lastRank.ToString().ToLower() );
+			Level = Rank.Add.Label( "0", "rank" );
 		}
 
 		public void Update( Player player )
