@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PoolGame
 {
-    public abstract partial class BaseRound : NetworkClass
+    public abstract partial class BaseRound : NetworkComponent
 	{
 		public virtual int RoundDuration => 0;
 		public virtual string RoundName => "";
@@ -83,7 +83,6 @@ namespace PoolGame
 				else
 				{
 					TimeLeftSeconds = TimeLeft.CeilToInt();
-					NetworkDirty( "TimeLeftSeconds", NetVarGroup.Net );
 				}
 			}
 		}

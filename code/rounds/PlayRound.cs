@@ -164,18 +164,17 @@ namespace PoolGame
 			{
 				var currentPlayer = Game.Instance.CurrentPlayer;
 
-				if ( !currentPlayer.IsValid )
+				if ( currentPlayer == null || !currentPlayer.IsValid() )
 					return;
 
 				if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
-					currentPlayer.Entity.IsFollowingBall = true;
+					currentPlayer.IsFollowingBall = true;
 
-				if ( currentPlayer.Entity.IsFollowingBall )
+				if ( currentPlayer.IsFollowingBall )
 					return;
 
 				var timeLeft = MathF.Max( PlayerTurnEndTime - Time.Now, 0f );
 				TimeLeftSeconds = timeLeft.CeilToInt();
-				NetworkDirty( "TimeLeftSeconds", NetVarGroup.Net );
 			}
 		}
 
@@ -185,7 +184,7 @@ namespace PoolGame
 			{
 				var currentPlayer = Game.Instance.CurrentPlayer;
 
-				if ( currentPlayer.IsValid && currentPlayer.Entity.IsFollowingBall )
+				if ( currentPlayer != null && currentPlayer.IsValid() && currentPlayer.IsFollowingBall )
 					CheckForStoppedBalls();
 			}
 
@@ -265,8 +264,8 @@ namespace PoolGame
 			{
 				Game.Instance.PotHistory.Clear();
 
-				var playerOne = Game.Instance.PlayerOne.Entity;
-				var playerTwo = Game.Instance.PlayerTwo.Entity;
+				var playerOne = Game.Instance.PlayerOne;
+				var playerTwo = Game.Instance.PlayerTwo;
 
 				playerOne?.MakeSpectator( true );
 				playerTwo?.MakeSpectator( true );
@@ -332,9 +331,9 @@ namespace PoolGame
 				ball.PhysicsBody.ClearForces();
 			} );
 
-			Game.Instance.Cue.Entity.Reset();
+			Game.Instance.Cue.Reset();
 
-			var currentPlayer = Game.Instance.CurrentPlayer.Entity;
+			var currentPlayer = Game.Instance.CurrentPlayer;
 			var didHitAnyBall = currentPlayer.DidPotBall;
 
 			if ( !didHitAnyBall )
@@ -359,8 +358,9 @@ namespace PoolGame
 				currentPlayer.StopPlacingWhiteBall();
 
 			var otherPlayer = Game.Instance.GetOtherPlayer( currentPlayer );
+			var blackBall = Game.Instance.BlackBall;
 
-			if ( !Game.Instance.BlackBall.IsValid )
+			if ( blackBall == null || !blackBall.IsValid() )
 			{
 				if ( currentPlayer.FoulReason == FoulReason.None )
 				{

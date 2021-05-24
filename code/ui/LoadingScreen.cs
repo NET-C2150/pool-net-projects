@@ -28,11 +28,15 @@ namespace PoolGame
 			{
 				var playerOne = Game.Instance.PlayerOne;
 				var playerTwo = Game.Instance.PlayerTwo;
+				var cue = Game.Instance.Cue;
 
-				if ( !playerOne.IsValid || !playerTwo.IsValid )
+				if ( playerOne == null || !playerOne.IsValid() )
 					isHidden = false;
 
-				if ( !Game.Instance.Cue.IsValid )
+				if ( playerTwo == null || !playerTwo.IsValid() )
+					isHidden = false;
+
+				if ( cue == null || !cue.IsValid() )
 					isHidden = false;
 			}
 

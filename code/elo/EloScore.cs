@@ -13,7 +13,7 @@ namespace PoolGame
 		Win = 1
 	}
 
-	public partial class EloScore : NetworkClass
+	public partial class EloScore : NetworkComponent
 	{
 		[Net] public int Rating { get; set; }
 

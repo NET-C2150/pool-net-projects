@@ -36,9 +36,9 @@ namespace PoolGame
 			BallType = ScoreContainer.Add.Panel( "ball" );
 		}
 
-		public void Update( EntityHandle<Player> player )
+		public void Update( Player player )
 		{
-			var isValid = player.IsValid;
+			var isValid = (player != null && player.IsValid());
 
 			var game = Game.Instance;
 			if ( game == null ) return;
@@ -48,14 +48,14 @@ namespace PoolGame
 
 			if ( isValid )
 			{
-				var owner = player.Entity.GetClientOwner();
+				var owner = player.GetClientOwner();
 
 				Name.Text = owner.Name;
 
 				Avatar.SetTexture( $"avatar:{ owner.SteamId }" );
 
-				var rank = player.Entity.Elo.GetRank();
-				var level = player.Entity.Elo.GetLevel();
+				var rank = player.Elo.GetRank();
+				var level = player.Elo.GetLevel();
 
 				if ( _lastRank != rank )
 				{
@@ -66,10 +66,10 @@ namespace PoolGame
 
 				Level.Text = level.ToString();
 
-				BallType.SetClass( "spots", player.Entity.BallType == PoolBallType.Spots );
-				BallType.SetClass( "stripes", player.Entity.BallType == PoolBallType.Stripes );
+				BallType.SetClass( "spots", player.BallType == PoolBallType.Spots );
+				BallType.SetClass( "stripes", player.BallType == PoolBallType.Stripes );
 
-				SetClass( "active", player.Entity.IsTurn );	
+				SetClass( "active", player.IsTurn );	
 			}
 
 			SetClass( "hidden", !isValid );

@@ -26,14 +26,14 @@ namespace PoolGame
 			get => Current as Game;
 		}
 
-		[Net] public EntityHandle<PoolCue> Cue { get; private set; }
+		[Net] public PoolCue Cue { get; private set; }
 		[Net] public BaseRound Round { get; private set; }
-		[Net] public EntityHandle<PoolBall> WhiteBall { get; set; }
-		[Net] public EntityHandle<PoolBall> BlackBall { get; set; }
-		[Net] public EntityHandle<Player> CurrentPlayer { get; set; }
-		[Net] public EntityHandle<Player> PlayerOne { get; set; }
-		[Net] public EntityHandle<Player> PlayerTwo { get; set; }
-		[Net] public NetworkList<PotHistoryItem> PotHistory { get; set; }
+		[Net] public PoolBall WhiteBall { get; set; }
+		[Net] public PoolBall BlackBall { get; set; }
+		[Net] public Player CurrentPlayer { get; set; }
+		[Net] public Player PlayerOne { get; set; }
+		[Net] public Player PlayerTwo { get; set; }
+		[Net] public List<PotHistoryItem> PotHistory { get; set; } = new();
 
 		private Dictionary<ulong, int> _ratings;
 		private BaseRound _lastRound;
@@ -47,13 +47,6 @@ namespace PoolGame
 			{
 				LoadRatings();
 				Hud = new();
-			}
-
-			PotHistory = new();
-
-			if ( IsClient )
-			{
-				PotHistory.OnListUpdated += UpdatePotHistory;
 			}
 
 			Global.PhysicsSubSteps = 10;
@@ -122,9 +115,9 @@ namespace PoolGame
 
 		public Player GetBallPlayer( PoolBall ball )
 		{
-			if ( PlayerOne.Entity.BallType == ball.Type )
+			if ( PlayerOne.BallType == ball.Type )
 				return PlayerOne;
-			else if ( PlayerTwo.Entity.BallType == ball.Type )
+			else if ( PlayerTwo.BallType == ball.Type )
 				return PlayerTwo;
 			else
 				return null;
@@ -144,7 +137,7 @@ namespace PoolGame
 			{
 				BallHistory.Current.Clear();
 
-				foreach ( var item in PotHistory.Values )
+				foreach ( var item in PotHistory )
 					BallHistory.Current.AddByType( item.Type, item.Number );
 			}
 		}
@@ -279,14 +272,17 @@ namespace PoolGame
 
 		public override void Simulate( Client client )
 		{
-			if ( Cue.IsValid && Cue.Entity.IsClientOwner( client ) )
-				Cue.Entity.Simulate( client );
+			if ( Cue != null && Cue.IsValid() && Cue.IsClientOwner( client ) )
+				Cue.Simulate( client );
 
 			base.Simulate( client );
 		}
 
 		private void OnSecond()
 		{
+			// TODO: This is temporary, only update history when the list changes.
+			if ( IsClient ) UpdatePotHistory();
+
 			CheckMinimumPlayers();
 			Round?.OnSecond();
 		}

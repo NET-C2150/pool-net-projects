@@ -62,7 +62,7 @@ namespace PoolGame
 
 			if ( !input.Down( InputButton.Attack1 ) )
 			{
-				UpdateAimDir( controller, input, whiteBall.Entity.Position );
+				UpdateAimDir( controller, input, whiteBall.Position );
 
 				if ( !IsMakingShot )
 				{
@@ -84,7 +84,7 @@ namespace PoolGame
 			}
 
 			EnableDrawing = true;
-			Position = whiteBall.Entity.Position - Rotation.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
+			Position = whiteBall.Position - Rotation.Forward * (1f + _cuePullBackOffset + (CuePitch * 0.04f));
 
 			// Never interpolate just update its position immediately for everybody.
 			ResetInterpolation();
@@ -122,8 +122,8 @@ namespace PoolGame
 			if ( ShotPowerLine == null )
 				ShotPowerLine = new ShotPowerLine();
 
-			var trace = Trace.Ray( whiteBall.Entity.Position, whiteBall.Entity.Position + AimDir * 1000f )
-				.Ignore( whiteBall.Entity )
+			var trace = Trace.Ray( whiteBall.Position, whiteBall.Position + AimDir * 1000f )
+				.Ignore( whiteBall )
 				.Ignore( this )
 				.Run();
 
@@ -133,11 +133,11 @@ namespace PoolGame
 			ShotPowerLine.EndPos = trace.EndPos;
 			ShotPowerLine.Width = 0.1f + ((0.15f / 100f) * ShotPower);
 
-			var fromTransform = whiteBall.Entity.PhysicsBody.Transform;
-			var toTransform = whiteBall.Entity.PhysicsBody.Transform;
+			var fromTransform = whiteBall.PhysicsBody.Transform;
+			var toTransform = whiteBall.PhysicsBody.Transform;
 			toTransform.Position = trace.EndPos;
 
-			var sweep = Trace.Sweep( whiteBall.Entity.PhysicsBody, fromTransform, toTransform )
+			var sweep = Trace.Sweep( whiteBall.PhysicsBody, fromTransform, toTransform )
 				.Ignore( whiteBall )
 				.Run();
 
@@ -181,7 +181,7 @@ namespace PoolGame
 				whiteArea.Quad.IsEnabled = shouldShow;
 		}
 
-		private void TakeShot( Player controller, EntityHandle<PoolBall> whiteBall )
+		private void TakeShot( Player controller, PoolBall whiteBall )
 		{
 			Host.AssertServer();
 
@@ -192,12 +192,12 @@ namespace PoolGame
 					controller.StrikeWhiteBall( this, whiteBall, ShotPower * 6f );
 
 					var soundFileId = Convert.ToInt32( MathF.Round( (2f / 100f) * ShotPower ) );
-					whiteBall.Entity.PlaySound( $"shot-power-{soundFileId}" );
+					whiteBall.PlaySound( $"shot-power-{soundFileId}" );
 				}
 			}
 		}
 
-		private void HandleWhiteBallPlacement( Player controller, UserInput input, EntityHandle<PoolBall> whiteBall )
+		private void HandleWhiteBallPlacement( Player controller, UserInput input, PoolBall whiteBall )
 		{
 			var cursorTrace = Trace.Ray( controller.EyePos, controller.EyePos + input.CursorAim * 1000f )
 				.WorldOnly()
@@ -206,7 +206,7 @@ namespace PoolGame
 			var whiteArea = Game.Instance.WhiteArea;
 			var whiteAreaWorldOBB = whiteArea.CollisionBounds.ToWorldSpace( whiteArea );
 
-			whiteBall.Entity.TryMoveTo( cursorTrace.EndPos, whiteAreaWorldOBB );
+			whiteBall.TryMoveTo( cursorTrace.EndPos, whiteAreaWorldOBB );
 
 			if ( input.Released( InputButton.Attack1 ) )
 				controller.StopPlacingWhiteBall();
@@ -245,9 +245,9 @@ namespace PoolGame
 			return true;
 		}
 
-		private void RotateCue( UserInput input, EntityHandle<PoolBall> whiteBall )
+		private void RotateCue( UserInput input, PoolBall whiteBall )
 		{
-			var rollTrace = Trace.Ray( whiteBall.Entity.Position, whiteBall.Entity.Position - AimDir * 100f )
+			var rollTrace = Trace.Ray( whiteBall.Position, whiteBall.Position - AimDir * 100f )
 				.Ignore( this )
 				.Ignore( whiteBall )
 				.Run();
