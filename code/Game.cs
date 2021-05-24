@@ -280,9 +280,6 @@ namespace PoolGame
 
 		private void OnSecond()
 		{
-			// TODO: This is temporary, only update history when the list changes.
-			if ( IsClient ) UpdatePotHistory();
-
 			CheckMinimumPlayers();
 			Round?.OnSecond();
 		}
@@ -308,6 +305,12 @@ namespace PoolGame
 
 					if ( WhiteArea != null )
 						WhiteArea.MakeAreaQuad();
+				}
+
+				if ( Time.Tick % 30 == 0 )
+				{
+					// TODO: This is temporary, only update history when the list changes.
+					UpdatePotHistory();
 				}
 			}
 		}
