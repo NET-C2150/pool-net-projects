@@ -347,7 +347,7 @@ namespace PoolGame
 		private PoolBall FindBallLikelyToPot()
 		{
 			var currentPlayer = Game.Instance.CurrentPlayer;
-			var potentials = Game.Instance.AllBalls.Where( b => b.Type != PoolBallType.White );
+			var potentials = Game.Instance.AllBalls;
 			var pockets = Entity.All.OfType<TriggerBallPocket>();
 
 			foreach ( var ball in potentials )
