@@ -61,6 +61,12 @@ namespace PoolGame
 			{
 				ball.PlaySound( $"ball-pocket-{Rand.Int( 1, 2 )}" );
 
+				if ( BallLikelyToPot == ball )
+				{
+					// We don't wanna follow this ball anymore.
+					BallLikelyToPot = null;
+				}
+
 				if ( ball.LastStriker == null || !ball.LastStriker.IsValid() )
 				{
 					if ( ball.Type == PoolBallType.White )
@@ -352,7 +358,7 @@ namespace PoolGame
 
 			foreach ( var ball in potentials )
 			{
-				if ( ball.PhysicsBody.Velocity.Length < 2f )
+				if ( ball.PhysicsBody.Velocity.Length < 2f || ball.IsAnimating )
 					continue;
 
 				var fromTransform = ball.PhysicsBody.Transform;
@@ -379,6 +385,19 @@ namespace PoolGame
 			return null;
 		}
 
+		private bool ShouldIncreaseTimeScale()
+		{
+			var currentPlayer = Game.Instance.CurrentPlayer;
+
+			if ( currentPlayer.TimeSinceWhiteStruck >= 7f )
+				return true;
+
+			if ( currentPlayer.TimeSinceWhiteStruck >= 4f && !BallLikelyToPot.IsValid() )
+				return true;
+
+			return false;
+		}
+
 		private void CheckForStoppedBalls()
 		{
 			var currentPlayer = Game.Instance.CurrentPlayer;
@@ -391,8 +410,11 @@ namespace PoolGame
 					currentPlayer.PlaySound( $"gasp-{Rand.Int( 1, 2 )}" );
 			}
 
-			if ( currentPlayer.TimeSinceWhiteStruck >= 3f && !BallLikelyToPot.IsValid() )
-				Global.PhysicsTimeScale = 5f;
+			if ( ShouldIncreaseTimeScale() && !Game.Instance.IsFastForwarding )
+			{
+				currentPlayer.PlaySound( "fast-forward" ).SetVolume( 0.05f );
+				Game.Instance.IsFastForwarding = true;
+			}
 
 			// Now check if all balls are essentially still.
 			foreach ( var ball in Game.Instance.AllBalls )
@@ -472,7 +494,7 @@ namespace PoolGame
 				ClockTickingSound = null;
 			}
 
-			Global.PhysicsTimeScale = 1f;
+			Game.Instance.IsFastForwarding = false;
 
 			PlayerTurnEndTime = Time.Now + 30f;
 			DidClaimThisTurn = false;

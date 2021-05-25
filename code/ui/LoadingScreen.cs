@@ -21,7 +21,7 @@ namespace PoolGame
 		{
 			if ( Game.Instance == null ) return;
 			
-			var isHidden = true;
+			var isHidden = (Local.Pawn is Player player && player.Camera != null);
 			var round = Game.Instance.Round;
 
 			if ( round is PlayRound )
@@ -30,13 +30,7 @@ namespace PoolGame
 				var playerTwo = Game.Instance.PlayerTwo;
 				var cue = Game.Instance.Cue;
 
-				if ( playerOne == null || !playerOne.IsValid() )
-					isHidden = false;
-
-				if ( playerTwo == null || !playerTwo.IsValid() )
-					isHidden = false;
-
-				if ( cue == null || !cue.IsValid() )
+				if ( !playerOne.IsValid() || !playerTwo.IsValid() || !cue.IsValid() )
 					isHidden = false;
 			}
 
