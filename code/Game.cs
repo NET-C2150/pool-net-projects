@@ -189,7 +189,7 @@ namespace PoolGame
 
 		public void SaveRatings()
 		{
-			FileSystem.Mounted.WriteAllText( "data/pool/ratings.json", JsonSerializer.Serialize( _ratings ) );
+			//FileSystem.Mounted.WriteAllText( "data/pool/ratings.json", JsonSerializer.Serialize( _ratings ) );
 		}
 
 		public void ChangeRound(BaseRound round)
