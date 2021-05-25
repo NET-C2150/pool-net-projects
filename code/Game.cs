@@ -189,7 +189,7 @@ namespace PoolGame
 
 		public void SaveRatings()
 		{
-			//FileSystem.Mounted.WriteAllText( "data/pool/ratings.json", JsonSerializer.Serialize( _ratings ) );
+			FileSystem.Mounted.WriteAllText( "data/pool/ratings.json", JsonSerializer.Serialize( _ratings ) );
 		}
 
 		public void ChangeRound(BaseRound round)
@@ -317,8 +317,7 @@ namespace PoolGame
 
 		private void LoadRatings()
 		{
-			_ratings = new();
-			//_ratings = FileSystem.Mounted.ReadJsonOrDefault<Dictionary<ulong, int>>( "data/pool/ratings.json" );
+			_ratings = FileSystem.Mounted.ReadJsonOrDefault<Dictionary<ulong, int>>( "data/pool/ratings.json" ) ?? new();
 		}
 
 		private void CheckMinimumPlayers()

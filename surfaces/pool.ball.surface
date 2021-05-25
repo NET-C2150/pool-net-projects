@@ -14,5 +14,6 @@
 		Sounds = 
 		{
 		}
+		BounceThreshold = 0.5
 	}
 }
