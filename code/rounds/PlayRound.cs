@@ -124,9 +124,12 @@ namespace PoolGame
 				{
 					if ( ball.LastStriker.BallType == PoolBallType.White )
 					{
+						// We only get a second shot if we didn't foul.
+						if ( ball.LastStriker.FoulReason == FoulReason.None )
+							ball.LastStriker.HasSecondShot = true;
+
 						// This is our ball type now, we've claimed it.
 						ball.LastStriker.DidHitOwnBall = true;
-						ball.LastStriker.HasSecondShot = true;
 						ball.LastStriker.BallType = ball.Type;
 
 						var otherPlayer = Game.Instance.GetOtherPlayer( ball.LastStriker );
