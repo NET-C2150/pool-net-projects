@@ -19,6 +19,7 @@ namespace PoolGame
 		public bool DidClaimThisTurn { get; private set; }
 		public Sound? ClockTickingSound { get; private set; }
 		public TimeSince TimeSinceTurnTaken { get; private set; }
+		public bool HasPlayedFastForwardSound { get; private set; }
 		[Net] PoolBall BallLikelyToPot { get; set; }
 
 		public override void OnPlayerLeave( Player player )
@@ -167,9 +168,14 @@ namespace PoolGame
 				}
 				else if ( other.Type == PoolBallType.Black )
 				{
-					if ( ball.LastStriker.BallsLeft > 0 && !ball.LastStriker.DidHitOwnBall )
+					if ( ball.LastStriker.BallsLeft > 0 )
 					{
-						ball.LastStriker.Foul( FoulReason.HitOtherBall );
+						if ( !ball.LastStriker.DidHitOwnBall )
+							ball.LastStriker.Foul( FoulReason.HitOtherBall );
+					}
+					else
+					{
+						ball.LastStriker.DidHitOwnBall = true;
 					}
 				}
 				else if ( other.Type != ball.LastStriker.BallType )
@@ -283,6 +289,9 @@ namespace PoolGame
 					player.MakeSpectator( true );
 					Spectators.Add( player );
 				} );
+
+				// We always start by letting the player choose the white ball location.
+				Game.Instance.CurrentPlayer.StartPlacingWhiteBall();
 
 				PlayerTurnEndTime = Sandbox.Time.Now + 30f;
 			}
@@ -415,7 +424,13 @@ namespace PoolGame
 
 			if ( ShouldIncreaseTimeScale() && !Game.Instance.IsFastForwarding )
 			{
-				currentPlayer.PlaySound( "fast-forward" ).SetVolume( 0.05f );
+				if ( !HasPlayedFastForwardSound )
+				{
+					// Only play this sound once per game because it's annoying.
+					HasPlayedFastForwardSound = true;
+					currentPlayer.PlaySound( "fast-forward" ).SetVolume( 0.05f );
+				}
+
 				Game.Instance.IsFastForwarding = true;
 			}
 

@@ -66,6 +66,7 @@ namespace PoolGame
 				Level.Text = level.ToString();
 
 				BallType.SetClass( "spots", player.BallType == PoolBallType.Spots );
+				BallType.SetClass( "black", player.BallsLeft == 0 );
 				BallType.SetClass( "stripes", player.BallType == PoolBallType.Stripes );
 
 				SetClass( "active", player.IsTurn );	

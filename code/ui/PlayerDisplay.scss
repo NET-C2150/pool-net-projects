@@ -113,8 +113,6 @@
         }
 
         .ball {
-
-
             &.stripes {
                 background-image: url(/ui/pool/balls/small/ball-stripes.png);
                 background-size: 100%;
@@ -122,6 +120,11 @@
 
             &.spots {
                 background-image: url(/ui/pool/balls/small/ball-spots.png);
+                background-size: 100%;
+            }
+
+            &.black {
+                background-image: url(/ui/pool/balls/small/ball-black.png);
                 background-size: 100%;
             }
         }
