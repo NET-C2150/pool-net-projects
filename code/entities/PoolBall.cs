@@ -89,6 +89,8 @@ namespace PoolGame
 
 		public void TryMoveTo( Vector3 worldPos, BBox within )
 		{
+			if ( !IsAuthority ) return;
+
 			var worldOBB = CollisionBounds + worldPos;
 
 			foreach (var ball in All.OfType<PoolBall>())
