@@ -173,7 +173,7 @@ namespace PoolGame
 			if ( controller == null )
 				return false;
 
-			if ( !controller.IsTurn || controller.IsFollowingBall )
+			if ( !controller.IsTurn || controller.HasStruckWhiteBall )
 				return false;
 
 			if ( whiteBall == null || !whiteBall.IsValid() )

@@ -40,8 +40,6 @@ namespace PoolGame
 		{
 			if ( player.BallType == PoolBallType.White )
 			{
-				Log.Info( Type.ToString() );
-
 				if ( Type != PoolBallType.Black )
 					return true;
 				else

@@ -17,6 +17,9 @@ namespace PoolGame
 		public List<Player> Spectators = new();
 		public float PlayerTurnEndTime { get; set; }
 		public bool DidClaimThisTurn { get; private set; }
+		public Sound? ClockTickingSound { get; private set; }
+		public TimeSince TimeSinceTurnTaken { get; private set; }
+		[Net] PoolBall BallLikelyToPot { get; set; }
 
 		public override void OnPlayerLeave( Player player )
 		{
@@ -29,6 +32,20 @@ namespace PoolGame
 			{
 				Game.Instance.ChangeRound( new StatsRound() );
 			}
+		}
+
+		public override void UpdatePlayerPosition( Player player )
+		{
+			if ( BallLikelyToPot.IsValid() )
+			{
+				player.Position = BallLikelyToPot.Position.WithZ( 200f );
+			}
+			else
+			{
+				player.Position = new Vector3( 0f, 0f, 350f );
+			}
+			
+			player.Rotation = Rotation.LookAt( Vector3.Down );
 		}
 
 		public override void OnPlayerJoin( Player player )
@@ -168,13 +185,19 @@ namespace PoolGame
 					return;
 
 				if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
-					currentPlayer.IsFollowingBall = true;
+					currentPlayer.HasStruckWhiteBall = true;
 
-				if ( currentPlayer.IsFollowingBall )
+				if ( currentPlayer.HasStruckWhiteBall )
 					return;
 
 				var timeLeft = MathF.Max( PlayerTurnEndTime - Time.Now, 0f );
 				TimeLeftSeconds = timeLeft.CeilToInt();
+
+				if ( timeLeft <= 4f && ClockTickingSound == null )
+				{
+					ClockTickingSound = currentPlayer.PlaySound( "clock-ticking" );
+					ClockTickingSound.Value.SetVolume( 0.5f );
+				}
 			}
 		}
 
@@ -184,7 +207,7 @@ namespace PoolGame
 			{
 				var currentPlayer = Game.Instance.CurrentPlayer;
 
-				if ( currentPlayer != null && currentPlayer.IsValid() && currentPlayer.IsFollowingBall )
+				if ( currentPlayer != null && currentPlayer.IsValid() && currentPlayer.HasStruckWhiteBall )
 					CheckForStoppedBalls();
 			}
 
@@ -297,24 +320,81 @@ namespace PoolGame
 				owner.Score++;
 		}
 
-		private void DoPlayerWin( Player player )
+		private void DoPlayerWin( Player winner )
 		{
-			var client = player.GetClientOwner();
+			var client = winner.GetClientOwner();
 
-			Game.Instance.AddToast( To.Everyone, player, $"{ client.Name } has won the game", "wins" );
+			Game.Instance.AddToast( To.Everyone, winner, $"{ client.Name } has won the game", "wins" );
 
-			var otherPlayer = Game.Instance.GetOtherPlayer( player );
-			player.Elo.Update( otherPlayer.Elo, EloOutcome.Win );
+			var loser = Game.Instance.GetOtherPlayer( winner );
+			winner.Elo.Update( loser.Elo, EloOutcome.Win );
 
-			Game.Instance.UpdateRating( player );
-			Game.Instance.UpdateRating( otherPlayer );
+			foreach ( var c in Entity.All.OfType<Player>() )
+			{
+				if ( c == loser )
+					c.SendSound( To.Single( c ), "lose-game" );
+				else
+					c.SendSound( To.Single( c ), "win-game" );
+			}
+
+			Game.Instance.UpdateRating( winner );
+			Game.Instance.UpdateRating( loser );
 			Game.Instance.SaveRatings();
 
 			Game.Instance.ChangeRound( new StatsRound() );
 		}
 
+		private PoolBall FindBallLikelyToPot()
+		{
+			var currentPlayer = Game.Instance.CurrentPlayer;
+			var potentials = Game.Instance.AllBalls.Where( b => b.Type != PoolBallType.White );
+			var pockets = Entity.All.OfType<TriggerBallPocket>();
+
+			foreach ( var ball in potentials )
+			{
+				if ( ball.PhysicsBody.Velocity.Length < 2f )
+					continue;
+
+				var fromTransform = ball.PhysicsBody.Transform;
+				var toTransform = ball.PhysicsBody.Transform;
+				toTransform.Position = ball.Position + ball.PhysicsBody.Velocity * 3f;
+
+				var sweep = Trace.Sweep( ball.PhysicsBody, fromTransform, toTransform )
+					.Ignore( ball )
+					.Run();
+
+				if ( sweep.Entity is PoolBall )
+					continue;
+
+				foreach ( var pocket in pockets )
+				{
+					if ( pocket.Position.Distance( sweep.EndPos ) <= 5f )
+						return ball;
+
+					if ( ball.Position.Distance( pocket.Position ) <= 5f )
+						return ball;
+				}
+			}
+
+			return null;
+		}
+
 		private void CheckForStoppedBalls()
 		{
+			var currentPlayer = Game.Instance.CurrentPlayer;
+
+			if ( currentPlayer.TimeSinceWhiteStruck >= 2f && !BallLikelyToPot.IsValid() )
+			{
+				BallLikelyToPot = FindBallLikelyToPot();
+
+				if ( BallLikelyToPot.IsValid() )
+					currentPlayer.PlaySound( $"gasp-{Rand.Int( 1, 2 )}" );
+			}
+
+			if ( currentPlayer.TimeSinceWhiteStruck >= 3f && !BallLikelyToPot.IsValid() )
+				Global.PhysicsTimeScale = 5f;
+
+			// Now check if all balls are essentially still.
 			foreach ( var ball in Game.Instance.AllBalls )
 			{
 				if ( !ball.PhysicsBody.Velocity.IsNearlyZero( 0.2f ) )
@@ -333,7 +413,6 @@ namespace PoolGame
 
 			Game.Instance.Cue.Reset();
 
-			var currentPlayer = Game.Instance.CurrentPlayer;
 			var didHitAnyBall = currentPlayer.DidPotBall;
 
 			if ( !didHitAnyBall )
@@ -387,8 +466,17 @@ namespace PoolGame
 				}
 			}
 
+			if ( ClockTickingSound != null )
+			{
+				ClockTickingSound.Value.Stop();
+				ClockTickingSound = null;
+			}
+
+			Global.PhysicsTimeScale = 1f;
+
 			PlayerTurnEndTime = Time.Now + 30f;
 			DidClaimThisTurn = false;
+			BallLikelyToPot = null;
 		}
 	}
 }

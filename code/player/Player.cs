@@ -7,7 +7,8 @@ namespace PoolGame
 {
 	public partial class Player : Entity
 	{
-		[Net] public bool IsFollowingBall { get; set; }
+		[Net] public TimeSince TimeSinceWhiteStruck { get; private set; }
+		[Net] public bool HasStruckWhiteBall { get; set; }
 		[Net] public PoolBallType BallType { get; set; }
 		[Net] public bool IsSpectator { get; private set;  }
 		[Net] public FoulReason FoulReason { get; private set; }
@@ -41,10 +42,16 @@ namespace PoolGame
 
 		public void MakeSpectator( bool isSpectator )
 		{
-			IsFollowingBall = false;
+			HasStruckWhiteBall = false;
 			IsSpectator = isSpectator;
 			IsTurn = false;
 			Score = 0;
+		}
+
+		[ClientRpc]
+		public void SendSound( string soundName )
+		{
+			PlaySound( soundName );
 		}
 
 		public void StartPlacingWhiteBall()
@@ -83,6 +90,8 @@ namespace PoolGame
 
 				Game.Instance.AddToast( To.Everyone, this, reason.ToMessage( this ), "foul" );
 
+				PlaySound( "foul" );
+
 				HasSecondShot = false;
 				FoulReason = reason;
 			}
@@ -104,11 +113,13 @@ namespace PoolGame
 			if ( showMessage )
 				Game.Instance.AddToast( To.Everyone, this, $"{ client.Name } has started their turn" );
 
+			SendSound( To.Single( this ), "ding" );
+
 			// This player will be predicting the pool cue now.
 			Game.Instance.CurrentPlayer = this;
 			Game.Instance.Cue.Owner = this;
 
-			IsFollowingBall = false;
+			HasStruckWhiteBall = false;
 			HasSecondShot = hasSecondShot;
 			FoulReason = FoulReason.None;
 			DidHitOwnBall = false;
@@ -121,7 +132,7 @@ namespace PoolGame
 
 		public void FinishTurn()
 		{
-			IsFollowingBall = false;
+			HasStruckWhiteBall = false;
 			IsTurn = false;
 		}
 
@@ -131,15 +142,13 @@ namespace PoolGame
 
 			whiteBall.PhysicsBody.ApplyImpulse( direction * force * whiteBall.PhysicsBody.Mass );
 
-			IsFollowingBall = true;
+			TimeSinceWhiteStruck = 0;
+			HasStruckWhiteBall = true;
 		}
 
 		public override void Simulate( Client client )
 		{
-			var zoomOutDistance = 350f;
-
-			Position = new Vector3( 0f, 0f, zoomOutDistance );
-			Rotation = Rotation.LookAt( Vector3.Down );
+			Game.Instance.Round?.UpdatePlayerPosition( this );
 
 			base.Simulate( client );
 		}
