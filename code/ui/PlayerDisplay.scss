@@ -220,16 +220,25 @@
         &.active {
             background-repeat: no-repeat;
 
-            .player-container {
-                &.one {
-                    background: linear-gradient(to left,rgba(#3273EB,0.5),rgba(#3273EB,0));
+            &.one {
+                .score-container {
+                    background-color: rgba(#3273EB,0.8);
                 }
 
-                &.two {
-                    background: linear-gradient(to right,rgba(#3273EB,0.5),rgba(#3273EB,0));
+                .player-container {
+                    background: linear-gradient(to left,rgba(#3273EB,0.5),rgba(#3273EB,0));
                 }
             }
 
+            &.two {
+                .score-container {
+                    background-color: rgba(#3273EB,0.8);
+                }
+
+                .player-container {
+                    background: linear-gradient(to right,rgba(#3273EB,0.5),rgba(#3273EB,0));
+                }
+            }
 
             .player-container {
                 opacity: 1;
