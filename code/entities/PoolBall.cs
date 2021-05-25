@@ -9,9 +9,9 @@ namespace PoolGame
 	[Library( "pool_ball" )]
 	public partial class PoolBall : ModelEntity
 	{
+		[Net] public PoolBallNumber Number { get; private set; }
+		[Net] public PoolBallType Type { get; private set; }
 		public Player LastStriker { get; private set; }
-		public PoolBallNumber Number { get; private set; }
-		public PoolBallType Type { get; private set; }
 		public bool IsAnimating { get; private set; }
 		public TriggerBallPocket LastPocket { get; set; }
 
@@ -34,6 +34,27 @@ namespace PoolGame
 				return "white";
 
 			return $"{ Type.ToString().ToLower() }_{ (int)Number }";
+		}
+
+		public bool CanPlayerHit( Player player )
+		{
+			if ( player.BallType == PoolBallType.White )
+			{
+				Log.Info( Type.ToString() );
+
+				if ( Type != PoolBallType.Black )
+					return true;
+				else
+					return false;
+			}
+
+			if ( Game.Instance.GetBallPlayer( this ) == player )
+				return true;
+
+			if ( Type == PoolBallType.Black && player.BallsLeft == 0 )
+				return true;
+
+			return false;
 		}
 
 		public async Task AnimateIntoPocket()

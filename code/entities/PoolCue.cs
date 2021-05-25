@@ -131,6 +131,7 @@ namespace PoolGame
 			ShotPowerLine.Position = trace.StartPos;
 			ShotPowerLine.ShotPower = ShotPower;
 			ShotPowerLine.EndPos = trace.EndPos;
+			ShotPowerLine.Color = Color.Green;
 			ShotPowerLine.Width = 0.1f + ((0.15f / 100f) * ShotPower);
 
 			var fromTransform = whiteBall.PhysicsBody.Transform;
@@ -148,6 +149,16 @@ namespace PoolGame
 					GhostBall = new ModelEntity();
 					GhostBall.SetModel( "models/pool/pool_ball.vmdl" );
 					GhostBall.RenderAlpha = 0.4f;
+				}
+
+				if ( sweep.Entity is PoolBall other && !other.CanPlayerHit( controller ) )
+				{
+					ShotPowerLine.Color = Color.Red;
+					GhostBall.RenderColor = Color.Red;
+				}
+				else
+				{
+					GhostBall.RenderColor = Color.White;
 				}
 
 				GhostBall.EnableDrawing = true;

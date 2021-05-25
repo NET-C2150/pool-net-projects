@@ -14,6 +14,7 @@ namespace PoolGame
 		public Material LineMaterial = Material.Load( "materials/pool_cue_line.vmat" );
 		public bool IsEnabled { get; set; }
 		public float ShotPower { get; set; }
+		public Color Color { get; set; }
 		public Vector3 EndPos { get; set; }
 		public float Width { get; set; } = 1f;
 
@@ -35,7 +36,7 @@ namespace PoolGame
 				vertexBuffer.AddQuad( a, b, c, d );
 
 				Render.Set( "Opacity", 0.5f + ( ( 0.5f / 100f ) * powerFraction ) );
-				Render.Set( "Color", Color.Green );
+				Render.Set( "Color", Color );
 
 				vertexBuffer.Draw( LineMaterial );
 
