@@ -35,19 +35,25 @@ namespace PoolGame
 		[Net] public Player PlayerTwo { get; set; }
 		[Net] public List<PotHistoryItem> PotHistory { get; set; } = new();
 		[Net] public bool IsFastForwarding { get; set; }
+		[Net] public Ruleset Ruleset { get; set; }
 
 		private FastForward _fastForwardHud;
+		private RuleVoting _ruleVotingHud;
 		private Dictionary<ulong, int> _ratings;
 		private BaseRound _lastRound;
 
 		[ServerVar( "pool_min_players", Help = "The minimum players required to start." )]
 		public static int MinPlayers { get; set; } = 2;
 
+		[ServerVar( "pool_voter_count", Help = "The minimum players required for a vote." )]
+		public static int MinVoterCount { get; set; } = 2;
+
 		public Game()
 		{
 			if ( IsServer )
 			{
 				LoadRatings();
+				Ruleset = new();
 				Hud = new();
 			}
 			else
@@ -104,6 +110,67 @@ namespace PoolGame
 			}
 
 			ToastList.Current.AddItem( player, text, iconClass );
+		}
+
+		[ClientRpc]
+		public void ShowRuleVoting()
+		{
+			HideRuleVoting();
+			_ruleVotingHud = Local.Hud.AddChild<RuleVoting>();
+		}
+
+		[ClientRpc]
+		public void HideRuleVoting()
+		{
+			if ( _ruleVotingHud != null )
+			{
+				_ruleVotingHud.Delete();
+				_ruleVotingHud = null;
+			}
+		}
+
+		[ServerCmd("pool_vote_add")]
+		public static void AddVote( int index )
+		{
+			var client = ConsoleSystem.Caller;
+
+			if ( client.Pawn is Player player && !player.IsSpectator )
+			{
+				if ( index < Instance.Ruleset.Available.Count )
+				{
+					var rule = Instance.Ruleset.Available[index];
+					rule.AddVote( client );
+				}
+			}
+		}
+
+		[ServerCmd( "pool_vote_remove" )]
+		public static void RemoveVote( int index )
+		{
+			var client = ConsoleSystem.Caller;
+
+			if ( client.Pawn is Player player && !player.IsSpectator )
+			{
+				if ( index < Instance.Ruleset.Available.Count )
+				{
+					var rule = Instance.Ruleset.Available[index];
+					rule.RemoveVote( client );
+				}
+			}
+		}
+
+		public void AddVote( Rule rule )
+		{
+			Host.AssertClient();
+
+			AddVote( Ruleset.Available.IndexOf( rule ) );
+		}
+
+		public void RemoveVote( Rule rule )
+		{
+			Host.AssertClient();
+
+			RemoveVote( Ruleset.Available.IndexOf( rule ) );
 		}
 
 		public void RemoveAllBalls()

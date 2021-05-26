@@ -20,7 +20,8 @@ namespace PoolGame
 		public Sound? ClockTickingSound { get; private set; }
 		public TimeSince TimeSinceTurnTaken { get; private set; }
 		public bool HasPlayedFastForwardSound { get; private set; }
-		[Net] PoolBall BallLikelyToPot { get; set; }
+		[Net] public bool IsVotingOnRules { get; set; }
+		[Net] public PoolBall BallLikelyToPot { get; set; }
 
 		public override void OnPlayerLeave( Player player )
 		{
@@ -192,27 +193,37 @@ namespace PoolGame
 
 		public override void OnSecond()
 		{
-			if ( Host.IsServer )
+			if ( Host.IsClient ) return;
+
+			var timeLeft = MathF.Max( PlayerTurnEndTime - Time.Now, 0f );
+
+			if ( IsVotingOnRules )
 			{
-				var currentPlayer = Game.Instance.CurrentPlayer;
-
-				if ( currentPlayer == null || !currentPlayer.IsValid() )
-					return;
-
 				if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
-					currentPlayer.HasStruckWhiteBall = true;
+					DoFinishRuleVoting();
+				else
+					TimeLeftSeconds = timeLeft.CeilToInt();
 
-				if ( currentPlayer.HasStruckWhiteBall )
-					return;
+				return;
+			}
 
-				var timeLeft = MathF.Max( PlayerTurnEndTime - Time.Now, 0f );
-				TimeLeftSeconds = timeLeft.CeilToInt();
+			var currentPlayer = Game.Instance.CurrentPlayer;
 
-				if ( timeLeft <= 4f && ClockTickingSound == null )
-				{
-					ClockTickingSound = currentPlayer.PlaySound( "clock-ticking" );
-					ClockTickingSound.Value.SetVolume( 0.5f );
-				}
+			if ( currentPlayer == null || !currentPlayer.IsValid() )
+				return;
+
+			if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
+				currentPlayer.HasStruckWhiteBall = true;
+
+			if ( currentPlayer.HasStruckWhiteBall )
+				return;
+
+			TimeLeftSeconds = timeLeft.CeilToInt();
+
+			if ( timeLeft <= 4f && ClockTickingSound == null )
+			{
+				ClockTickingSound = currentPlayer.PlaySound( "clock-ticking" );
+				ClockTickingSound.Value.SetVolume( 0.5f );
 			}
 		}
 
@@ -246,7 +257,7 @@ namespace PoolGame
 				var previousWinner = Game.Instance.PreviousWinner;
 				var previousLoser = Game.Instance.PreviousLoser;
 
-				if ( previousLoser != null && previousLoser.IsValid() )
+				if ( previousLoser.IsValid() )
 				{
 					if ( potentials.Count > 2 )
 					{
@@ -257,7 +268,7 @@ namespace PoolGame
 
 				var playerOne = previousWinner;
 
-				if ( playerOne == null || !playerOne.IsValid()) 
+				if ( !playerOne.IsValid()) 
 					playerOne = potentials[Rand.Int( 0, potentials.Count - 1 )];
 
 				potentials.Remove( playerOne );
@@ -275,11 +286,6 @@ namespace PoolGame
 				playerOne.StartPlaying();
 				playerTwo.StartPlaying();
 
-				if ( Rand.Float( 1f ) >= 0.5f )
-					playerOne.StartTurn();
-				else
-					playerTwo.StartTurn();
-
 				Game.Instance.PlayerOne = playerOne;
 				Game.Instance.PlayerTwo = playerTwo;
 
@@ -290,10 +296,10 @@ namespace PoolGame
 					Spectators.Add( player );
 				} );
 
-				// We always start by letting the player choose the white ball location.
-				Game.Instance.CurrentPlayer.StartPlacingWhiteBall();
+				Game.Instance.ShowRuleVoting( To.Everyone );
 
-				PlayerTurnEndTime = Sandbox.Time.Now + 30f;
+				PlayerTurnEndTime = Time.Now + 20f;
+				IsVotingOnRules = true;
 			}
 		}
 
@@ -313,6 +319,25 @@ namespace PoolGame
 
 				Spectators.Clear();
 			}
+		}
+
+		private void DoFinishRuleVoting()
+		{
+			var playerOne = Game.Instance.PlayerOne;
+			var playerTwo = Game.Instance.PlayerTwo;
+
+			if ( Rand.Float( 1f ) >= 0.5f )
+				playerOne.StartTurn();
+			else
+				playerTwo.StartTurn();
+
+			Game.Instance.HideRuleVoting( To.Everyone );
+
+			// We always start by letting the player choose the white ball location.
+			Game.Instance.CurrentPlayer.StartPlacingWhiteBall();
+
+			PlayerTurnEndTime = Time.Now + 30f;
+			IsVotingOnRules = false;
 		}
 
 		private void DoPlayerPotBall( Player player, PoolBall ball, BallPotType type )
@@ -354,6 +379,9 @@ namespace PoolGame
 				else
 					c.SendSound( To.Single( c ), "win-game" );
 			}
+
+			Game.Instance.PreviousWinner = winner;
+			Game.Instance.PreviousLoser = loser;
 
 			Game.Instance.UpdateRating( winner );
 			Game.Instance.UpdateRating( loser );
