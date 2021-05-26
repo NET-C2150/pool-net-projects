@@ -296,10 +296,14 @@ namespace PoolGame
 					Spectators.Add( player );
 				} );
 
+				/*
 				Game.Instance.ShowRuleVoting( To.Everyone );
 
 				PlayerTurnEndTime = Time.Now + 20f;
 				IsVotingOnRules = true;
+				*/
+
+				DoFinishRuleVoting();
 			}
 		}
 
