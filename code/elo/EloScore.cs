@@ -16,6 +16,7 @@ namespace PoolGame
 	public partial class EloScore : NetworkComponent
 	{
 		[Net] public int Rating { get; set; }
+		[Net] public int Delta { get; set; }
 
 		public PlayerRank GetRank()
 		{
@@ -31,6 +32,26 @@ namespace PoolGame
 				return PlayerRank.Diamond;
 		}
 
+		public int GetNextLevelRating()
+		{
+			var roundedUp = Math.Max( ((int)MathF.Ceiling( Rating / 100 ) * 100) - 1, 0 );
+			return Rating == roundedUp ? Rating + 100 : roundedUp;
+		}
+
+		public PlayerRank GetNextRank()
+		{
+			var rank = GetRank();
+
+			if ( rank == PlayerRank.Bronze )
+				return PlayerRank.Silver;
+			else if ( rank == PlayerRank.Silver )
+				return PlayerRank.Gold;
+			else if ( rank == PlayerRank.Gold )
+				return PlayerRank.Platinum;
+			else
+				return PlayerRank.Diamond;
+		}
+
 		public int GetLevel()
 		{
 			return Rating / 100;
@@ -41,8 +62,11 @@ namespace PoolGame
 			var eloK = 32;
 			var delta = (int)(eloK * ((int)outcome - Elo.GetWinChance( this, opponent )));
 
-			Rating += delta;
-			opponent.Rating -= delta;
+			Rating = Math.Max( Rating + delta, 0 );
+			Delta = delta;
+
+			opponent.Rating = Math.Max( opponent.Rating - delta, 0 );
+			opponent.Delta = Delta;
 		}
 	}
 }

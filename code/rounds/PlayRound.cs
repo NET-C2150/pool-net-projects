@@ -387,6 +387,9 @@ namespace PoolGame
 			Game.Instance.PreviousWinner = winner;
 			Game.Instance.PreviousLoser = loser;
 
+			Game.Instance.ShowWinSummary( To.Single( winner ), EloOutcome.Win, loser );
+			Game.Instance.ShowWinSummary( To.Single( loser ), EloOutcome.Loss, winner );
+
 			Game.Instance.UpdateRating( winner );
 			Game.Instance.UpdateRating( loser );
 			Game.Instance.SaveRatings();

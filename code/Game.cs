@@ -38,6 +38,7 @@ namespace PoolGame
 		[Net] public Ruleset Ruleset { get; set; }
 
 		private FastForward _fastForwardHud;
+		private WinSummary _winSummaryHud;
 		private RuleVoting _ruleVotingHud;
 		private Dictionary<ulong, int> _ratings;
 		private BaseRound _lastRound;
@@ -98,6 +99,25 @@ namespace PoolGame
 
 			AllBalls.Remove( ball );
 			ball.Delete();
+		}
+
+		[ClientRpc]
+		public void ShowWinSummary( EloOutcome outcome, Player opponent )
+		{
+			HideWinSummary();
+
+			_winSummaryHud = Local.Hud.AddChild<WinSummary>();
+			_winSummaryHud.Update( outcome, opponent );
+		}
+
+		[ClientRpc]
+		public void HideWinSummary()
+		{
+			if ( _winSummaryHud != null )
+			{
+				_winSummaryHud.Delete();
+				_winSummaryHud = null;
+			}
 		}
 
 		[ClientRpc]
