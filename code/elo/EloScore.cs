@@ -20,41 +20,17 @@ namespace PoolGame
 
 		public PlayerRank GetRank()
 		{
-			if ( Rating < 1149 )
-				return PlayerRank.Bronze;
-			else if ( Rating < 1499 )
-				return PlayerRank.Silver;
-			else if ( Rating < 1849 )
-				return PlayerRank.Gold;
-			else if ( Rating < 2199 )
-				return PlayerRank.Platinum;
-			else
-				return PlayerRank.Diamond;
-		}
-
-		public int GetNextLevelRating()
-		{
-			var roundedUp = Math.Max( ((int)MathF.Ceiling( Rating / 100 ) * 100) - 1, 0 );
-			return Rating == roundedUp ? Rating + 100 : roundedUp;
+			return Elo.GetRank( Rating );
 		}
 
 		public PlayerRank GetNextRank()
 		{
-			var rank = GetRank();
-
-			if ( rank == PlayerRank.Bronze )
-				return PlayerRank.Silver;
-			else if ( rank == PlayerRank.Silver )
-				return PlayerRank.Gold;
-			else if ( rank == PlayerRank.Gold )
-				return PlayerRank.Platinum;
-			else
-				return PlayerRank.Diamond;
+			return Elo.GetNextRank( Rating );
 		}
 
 		public int GetLevel()
 		{
-			return Rating / 100;
+			return Elo.GetLevel( Rating );
 		}
 
 		public void Update( EloScore opponent, EloOutcome outcome )

@@ -79,17 +79,13 @@ namespace PoolGame
 		public void Update( EloScore score )
 		{
 			// I'm not a fan of doing it all this way... it'll do for the time being.
-			var previousScore = new EloScore();
-			previousScore.Rating = score.Rating - score.Delta;
-
-			var nextScore = new EloScore();
-			nextScore.Rating = previousScore.GetNextLevelRating();
-
-			var progress = (nextScore.Rating - previousScore.Rating);
+			var previousScore = Math.Max( score.Rating - score.Delta, 0 );
+			var nextScore = Elo.GetNextLevelRating( previousScore );
+			var progress = 100 - (nextScore - previousScore);
 			var delta = Math.Min( score.Delta, 100 - progress );
 
-			LeftRank.Update( previousScore.GetRank(), previousScore.GetLevel() );
-			RightRank.Update( nextScore.GetRank(), nextScore.GetLevel() );
+			LeftRank.Update( Elo.GetRank( previousScore  ), Elo.GetLevel( previousScore ) );
+			RightRank.Update( Elo.GetRank( nextScore ), Elo.GetLevel( nextScore ) );
 
 			BarProgress.Style.Width = Length.Percent( progress );
 			BarDelta.Style.Width = Length.Percent( delta );
