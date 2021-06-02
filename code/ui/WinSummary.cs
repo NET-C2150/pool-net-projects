@@ -36,10 +36,10 @@ namespace PoolGame
 
 		public OpponentDisplay()
 		{
-			Text = Add.Label( "", "text" );
-			Container = Add.Panel( "background" );
-			Avatar = Container.Add.Image( "", "avatar" );
-			Name = Container.Add.Label( "", "name" );
+			Text = Add.Label( "", "opponent-text" );
+			Container = Add.Panel( "opponent-background" );
+			Avatar = Container.Add.Image( "", "opponent-avatar" );
+			Name = Container.Add.Label( "", "opponent-name" );
 			RankIcon = Container.AddChild<RankIcon>();
 		}
 
@@ -71,9 +71,9 @@ namespace PoolGame
 		{
 			LeftRank = AddChild<RankIcon>( "leftrank" );
 			RightRank = AddChild<RankIcon>( "rightrank" );
-			BarBackground = Add.Panel( "barbg" );
-			BarProgress = Add.Panel( "barprogress" );
-			BarDelta = Add.Panel( "bardelta" );
+			BarBackground = Add.Panel( "rank-bg" );
+			BarProgress = BarBackground.Add.Panel( "rank-progress" );
+			BarDelta = BarBackground.Add.Panel( "rank-delta" );
 		}
 
 		public void Update( EloScore score )
@@ -112,9 +112,10 @@ namespace PoolGame
 
 			Background = Add.Panel( "background" );
 			Container = Add.Panel( "container" );
-			Header = Container.Add.Panel( "header" );
-			RankProgress = Container.AddChild<RankProgress>();
+
+			Header = Container.Add.Panel( "win-header" );
 			OpponentDisplay = Container.AddChild<OpponentDisplay>();
+			RankProgress = Container.AddChild<RankProgress>();
 
 			AcceptsFocus = true;
 		}
@@ -123,13 +124,14 @@ namespace PoolGame
 		{
 			if ( Local.Pawn is Player player )
 			{
-				RankProgress.Update( player.Elo );
-				OpponentDisplay.Update( outcome, opponent );
-
 				if ( outcome == EloOutcome.Win )
 					Header.AddClass( "win" );
 				else
 					Header.AddClass( "loss" );
+
+				OpponentDisplay.Update( outcome, opponent );
+				RankProgress.Update( player.Elo );
+
 			}
 		}
 	}
