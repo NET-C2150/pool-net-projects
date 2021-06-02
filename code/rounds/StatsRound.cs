@@ -24,8 +24,7 @@ namespace PoolGame
 
 		protected override void OnTimeUp()
 		{
-			Log.Info( "Stats Time Up!" );
-
+			Game.Instance.HideWinSummary( To.Everyone );
 			Game.Instance.ChangeRound( new PlayRound() );
 
 			base.OnTimeUp();

@@ -127,7 +127,6 @@ namespace PoolGame
 
 				OpponentDisplay.Update( outcome, opponent );
 				RankProgress.Update( player.Elo );
-
 			}
 		}
 	}
