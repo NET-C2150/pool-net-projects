@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 namespace PoolGame
 {
 	[Library( "pool_ball_spawn" )]
+	[Hammer.EditorModel( "models/pool/pool_ball.vmdl" )]
+	[Hammer.Model]
 	public partial class PoolBallSpawn : ModelEntity
 	{
-		[HammerProp]
+		[Property]
 		public PoolBallType Type { get; set; }
 
-		[HammerProp]
+		[Property]
 		public PoolBallNumber Number { get; set; }
 	}
 }
