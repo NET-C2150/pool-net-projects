@@ -8,26 +8,26 @@ namespace PoolGame
 		public static bool ContainsXY( this BBox a, BBox b )
 		{
 			return (
-				b.Mins.x >= a.Mins.x && b.Maxs.x < a.Maxs.x &&
-				b.Mins.y >= a.Mins.y && b.Maxs.y < a.Maxs.y
+				b.Mins.X >= a.Mins.X && b.Maxs.X < a.Maxs.X &&
+				b.Mins.Y >= a.Mins.Y && b.Maxs.Y < a.Maxs.Y
 			); ;
 		}
 
 		public static bool Contains( this BBox a, BBox b )
 		{
 			return (
-				b.Mins.x >= a.Mins.x && b.Maxs.x < a.Maxs.x &&
-				b.Mins.y >= a.Mins.y && b.Maxs.y < a.Maxs.y &&
-				b.Mins.z >= a.Mins.z && b.Maxs.z < a.Maxs.z
+				b.Mins.X >= a.Mins.X && b.Maxs.X < a.Maxs.X &&
+				b.Mins.Y >= a.Mins.Y && b.Maxs.Y < a.Maxs.Y &&
+				b.Mins.Z >= a.Mins.Z && b.Maxs.Z < a.Maxs.Z
 			); ;
 		}
 
 		public static bool Overlaps( this BBox a, BBox b )
 		{
 			return (
-				a.Mins.x < b.Maxs.x && b.Mins.x < a.Maxs.x &&
-				a.Mins.y < b.Maxs.y && b.Mins.y < a.Maxs.y &&
-				a.Mins.z < b.Maxs.z && b.Mins.z < a.Maxs.z
+				a.Mins.X < b.Maxs.X && b.Mins.X < a.Maxs.X &&
+				a.Mins.Y < b.Maxs.Y && b.Mins.Y < a.Maxs.Y &&
+				a.Mins.Z < b.Maxs.Z && b.Mins.Z < a.Maxs.Z
 			); ;
 		}
 

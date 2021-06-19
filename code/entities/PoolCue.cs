@@ -30,7 +30,7 @@ namespace PoolGame
 
 		public Vector3 DirectionTo( PoolBall ball )
 		{
-			return (ball.Position - Position.WithZ( ball.Position.z )).Normal;
+			return (ball.Position - Position.WithZ( ball.Position.Z )).Normalized;
 		}
 
 		public override void Spawn()
@@ -249,7 +249,7 @@ namespace PoolGame
 
 			if ( !hitPos.HasValue ) return false;
 
-			AimDir = (hitPos.Value - ballCenter).WithZ( 0 ).Normal;
+			AimDir = (hitPos.Value - ballCenter).WithZ( 0 ).Normalized;
 
 			return true;
 		}

@@ -25,7 +25,7 @@ namespace PoolGame
 				Render.SetLighting( sceneObject );
 
 				var vertexBuffer = Render.GetDynamicVB( true );
-				var widthOffset = Vector3.Cross( ( EndPos - Position).Normal, Vector3.Up ) * Width;
+				var widthOffset = Vector3.Cross( ( EndPos - Position).Normalized, Vector3.Up ) * Width;
 				var powerFraction = (ShotPower / 100f);
 
 				var a = new Vertex( Position - widthOffset, Vector3.Up, Vector3.Right, new Vector4( 0, 1, 0, 0 ) );
