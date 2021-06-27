@@ -30,11 +30,11 @@ namespace PoolGame
 		{
 			var screenPos = position.ToScreen();
 
-			if ( screenPos.Z < 0 )
+			if ( screenPos.z < 0 )
 				return;
 
-			panel.Style.Left = Length.Fraction( screenPos.X );
-			panel.Style.Top = Length.Fraction( screenPos.Y );
+			panel.Style.Left = Length.Fraction( screenPos.x );
+			panel.Style.Top = Length.Fraction( screenPos.y );
 			panel.Style.Dirty();
 		}
 	}

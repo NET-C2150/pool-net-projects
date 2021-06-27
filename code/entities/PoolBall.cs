@@ -126,7 +126,7 @@ namespace PoolGame
 
 			if ( within.ContainsXY( worldOBB ) )
 			{
-				Position = worldPos.WithZ( Position.Z );
+				Position = worldPos.WithZ( Position.z );
 				ResetInterpolation();
 			}
 		}
