@@ -1,25 +1,41 @@
-@SolidClass = trigger_ball_pocket
+// 
+// PoolGame.Game : Sandbox.Game 
+// 
+@PointClass = pool : ""
 [
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 ]
 
-@SolidClass = trigger_white_area
+// 
+// PoolGame.PoolBall : Sandbox.ModelEntity 
+// 
+@PointClass = pool_ball : ""
 [
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 ]
 
-@PointClass editormodel( "models/pool/pool_ball.vmdl" ) = pool_ball_spawn
+// 
+// PoolGame.PoolBallSpawn : Sandbox.ModelEntity 
+// 
+@PointClass editormodel( "models/pool/pool_ball.vmdl" ) model() = pool_ball_spawn : ""
 [
-	rendercolor(color255) : "Color" : "255,255,255,255" : "The color of the ball"
-
-	type(choices) : "Type" : 0 : "The type of ball" =
-	[
+	model(studio) [report]: "World Model" : ""
+	skin(materialgroup) [ group="Render Properties" ] : "Skin" : "default" : "Some models have multiple versions of their textures, called skins." 
+	bodygroups(bodygroupchoices) [ group="Render Properties" ] : "Body Groups" : "" 
+	disableshadows(boolean) [ group="Misc" ] : "Disable Shadows" : 0 : "Used to disable dynamic shadows on this entity." 
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	type(choices) : "Type" : 0 : "" = [
 		0 : "Spots"
 		1 : "Stripes"
 		2 : "White"
 		3 : "Black"
 	]
-	
-	number(choices) : "Number" : 1 : "The number of the ball" =
-	[
+	number(choices) : "Number" : 1 : "" = [
 		1 : "One"
 		2 : "Two"
 		3 : "Three"
@@ -28,4 +44,110 @@
 		6 : "Six"
 		7 : "Seven"
 	]
+	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 ]
+
+// 
+// PoolGame.PoolCue : Sandbox.ModelEntity 
+// 
+@PointClass = pool_cue : ""
+[
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+]
+
+// 
+// PoolGame.ShotPowerLine : Sandbox.RenderEntity 
+// 
+@PointClass = shot_power_arrow : ""
+[
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+]
+
+// 
+// PoolGame.TriggerBallPocket : Sandbox.BaseTrigger 
+// 
+@SolidClass 
+metadata
+{
+	auto_apply_material = "materials/tools/toolstrigger.vmat"
+}
+= trigger_ball_pocket : ""
+[
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	startdisabled(boolean) : "Start Disabled" : 0 : "Should this entity start disabled?"
+	filtername(filterclass) : "Filtername" :  : "TODO: Filter to use to see if activator triggers me. See filter_activator_name for more explanation."
+	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+	spawnflags(flags) = [
+		1 : "Clients" : 1
+		2 : "Npcs" : 0
+		4 : "Pushables" : 0
+		8 : "Physics Objects" : 0
+		16 : "Allied Npcs" : 0
+		32 : "Client In Vehicle" : 0
+		64 : "Everything" : 0
+		512 : "Client Not In Vehicle" : 0
+		1024 : "Physics Debris" : 0
+	]
+
+	input Enable(void) : "Enables this trigger"
+	input Disable(void) : "Disables this trigger"
+	input Toggle(void) : "Toggles this trigger between enabled and disabled states"
+
+	output OnStartTouch(void) : "Fired when an entity starts touching this trigger. The touching entity must pass this trigger's filters to cause this output to fire."
+	output OnEndTouch(void) : "Fired when an entity stops touching this trigger. Only entities that passed this trigger's filters will cause this output to fire."
+	output OnStartTouchAll(void) : "Fired when an entity starts touching this trigger while no other passing entities are touching it."
+	output OnEndTouchAll(void) : "Fired when all entities touching this trigger have stopped touching it."
+]
+
+// 
+// PoolGame.TriggerWhiteArea : Sandbox.BaseTrigger 
+// 
+@SolidClass 
+metadata
+{
+	auto_apply_material = "materials/tools/toolstrigger.vmat"
+}
+= trigger_white_area : ""
+[
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	startdisabled(boolean) : "Start Disabled" : 0 : "Should this entity start disabled?"
+	filtername(filterclass) : "Filtername" :  : "TODO: Filter to use to see if activator triggers me. See filter_activator_name for more explanation."
+	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+	spawnflags(flags) = [
+		1 : "Clients" : 1
+		2 : "Npcs" : 0
+		4 : "Pushables" : 0
+		8 : "Physics Objects" : 0
+		16 : "Allied Npcs" : 0
+		32 : "Client In Vehicle" : 0
+		64 : "Everything" : 0
+		512 : "Client Not In Vehicle" : 0
+		1024 : "Physics Debris" : 0
+	]
+
+	input Enable(void) : "Enables this trigger"
+	input Disable(void) : "Disables this trigger"
+	input Toggle(void) : "Toggles this trigger between enabled and disabled states"
+
+	output OnStartTouch(void) : "Fired when an entity starts touching this trigger. The touching entity must pass this trigger's filters to cause this output to fire."
+	output OnEndTouch(void) : "Fired when an entity stops touching this trigger. Only entities that passed this trigger's filters will cause this output to fire."
+	output OnStartTouchAll(void) : "Fired when an entity starts touching this trigger while no other passing entities are touching it."
+	output OnEndTouchAll(void) : "Fired when all entities touching this trigger have stopped touching it."
+]
+
+// 
+// PoolGame.WhiteAreaQuad : Sandbox.RenderEntity 
+// 
+@PointClass = white_area_quad : ""
+[
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
+]
+

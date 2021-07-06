@@ -208,7 +208,7 @@ namespace PoolGame
 
 		private void HandleWhiteBallPlacement( Player controller, PoolBall whiteBall )
 		{
-			var cursorTrace = Trace.Ray( controller.EyePos, controller.EyePos + Input.CursorAim * 1000f )
+			var cursorTrace = Trace.Ray( controller.EyePos, controller.EyePos + Input.Cursor.Direction * 1000f )
 				.WorldOnly()
 				.Run();
 
@@ -223,7 +223,7 @@ namespace PoolGame
 
 		private void HandlePowerSelection( Player controller )
 		{
-			var cursorPlaneEndPos = controller.EyePos + Input.CursorAim * 350f;
+			var cursorPlaneEndPos = controller.EyePos + Input.Cursor.Direction * 350f;
 			var distanceToCue = cursorPlaneEndPos.Distance( Position - Rotation.Forward * 100f );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
 
@@ -245,7 +245,7 @@ namespace PoolGame
 			if ( IsMakingShot ) return true;
 
 			var tablePlane = new Plane( ballCenter, Vector3.Up );
-			var hitPos = tablePlane.Trace( new Ray( controller.EyePos, Input.CursorAim ), true );
+			var hitPos = tablePlane.Trace( new Ray( controller.EyePos, Input.Cursor.Direction ), true );
 
 			if ( !hitPos.HasValue ) return false;
 
