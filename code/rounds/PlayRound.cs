@@ -20,7 +20,6 @@ namespace PoolGame
 		public Sound? ClockTickingSound { get; private set; }
 		public TimeSince TimeSinceTurnTaken { get; private set; }
 		public bool HasPlayedFastForwardSound { get; private set; }
-		[Net] public bool IsVotingOnRules { get; set; }
 		[Net] public PoolBall BallLikelyToPot { get; set; }
 
 		public override void OnPlayerLeave( Player player )
@@ -197,16 +196,6 @@ namespace PoolGame
 
 			var timeLeft = MathF.Max( PlayerTurnEndTime - Time.Now, 0f );
 
-			if ( IsVotingOnRules )
-			{
-				if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
-					DoFinishRuleVoting();
-				else
-					TimeLeftSeconds = timeLeft.CeilToInt();
-
-				return;
-			}
-
 			var currentPlayer = Game.Instance.CurrentPlayer;
 
 			if ( currentPlayer == null || !currentPlayer.IsValid() )
@@ -296,14 +285,7 @@ namespace PoolGame
 					Spectators.Add( player );
 				} );
 
-				/*
-				Game.Instance.ShowRuleVoting( To.Everyone );
-
-				PlayerTurnEndTime = Time.Now + 20f;
-				IsVotingOnRules = true;
-				*/
-
-				DoFinishRuleVoting();
+				StartGame();
 			}
 		}
 
@@ -325,7 +307,7 @@ namespace PoolGame
 			}
 		}
 
-		private void DoFinishRuleVoting()
+		private void StartGame()
 		{
 			var playerOne = Game.Instance.PlayerOne;
 			var playerTwo = Game.Instance.PlayerTwo;
@@ -335,13 +317,10 @@ namespace PoolGame
 			else
 				playerTwo.StartTurn();
 
-			Game.Instance.HideRuleVoting( To.Everyone );
-
 			// We always start by letting the player choose the white ball location.
 			Game.Instance.CurrentPlayer.StartPlacingWhiteBall();
 
 			PlayerTurnEndTime = Time.Now + 30f;
-			IsVotingOnRules = false;
 		}
 
 		private void DoPlayerPotBall( Player player, PoolBall ball, BallPotType type )
