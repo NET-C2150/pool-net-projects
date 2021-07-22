@@ -10,8 +10,8 @@ namespace PoolGame
 	[Library( "pool_cue" )]
 	public partial class PoolCue : ModelEntity
 	{
-		[Net] public Vector3 AimDir { get; set; }
-		[Net] public float ShotPower { get; set; }
+		[Net, Predicted] public Vector3 AimDir { get; set; }
+		[Net, Predicted] public float ShotPower { get; set; }
 		public bool IsMakingShot { get; set; }
 		public float CuePitch { get; set; }
 		public float CueYaw { get; set; }
