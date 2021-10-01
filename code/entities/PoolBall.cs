@@ -67,12 +67,12 @@ namespace PoolGame
 				await Task.Delay( 30 );
 
 				Scale = Scale.LerpTo( 0.69f /* nice */, Time.Delta * 4f );
-				RenderAlpha = RenderAlpha.LerpTo( 0f, Time.Delta * 5f );
+				RenderColor = RenderColor.WithAlpha( RenderColor.a.LerpTo( 0f, Time.Delta * 5f ) );
 
 				if ( LastPocket != null && LastPocket.IsValid() )
 					Position = Position.LerpTo( LastPocket.Position + LastPocket.CollisionBounds.Center, Time.Delta * 16f );
 
-				if ( RenderAlpha.AlmostEqual( 0f ) )
+				if ( RenderColor.a.AlmostEqual( 0f ) )
 					break;
 			}
 

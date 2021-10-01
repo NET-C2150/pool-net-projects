@@ -34,7 +34,7 @@ namespace PoolGame
 		[Net] public Player PlayerOne { get; set; }
 		[Net] public Player PlayerTwo { get; set; }
 		[Net] public List<PotHistoryItem> PotHistory { get; set; } = new();
-		[Net] public bool IsFastForwarding { get; set; }
+		[Net, Change] public bool IsFastForwarding { get; set; }
 
 		private FastForward _fastForwardHud;
 		private WinSummary _winSummaryHud;
@@ -50,10 +50,6 @@ namespace PoolGame
 			{
 				LoadRatings();
 				Hud = new();
-			}
-			else
-			{
-				PropertyWatcher.Watch( () => IsFastForwarding, OnFastForwardingChanged );
 			}
 
 			Global.PhysicsSubSteps = 10;
@@ -304,7 +300,7 @@ namespace PoolGame
 			base.Simulate( client );
 		}
 
-		private void OnFastForwardingChanged( bool newValue, bool oldValue )
+		private void OnIsFastForwardingChanged( bool oldValue, bool newValue )
 		{
 			if ( _fastForwardHud != null )
 			{
