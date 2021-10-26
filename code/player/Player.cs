@@ -86,7 +86,7 @@ namespace PoolGame
 		{
 			if ( FoulReason == FoulReason.None )
 			{
-				Log.Info( GetClientOwner().Name + " has fouled (reason: " + reason.ToString() + ")" );
+				Log.Info( Client.Name + " has fouled (reason: " + reason.ToString() + ")" );
 
 				Game.Instance.AddToast( To.Everyone, this, reason.ToMessage( this ), "foul" );
 
@@ -106,12 +106,10 @@ namespace PoolGame
 
 		public void StartTurn(bool hasSecondShot = false, bool showMessage = true)
 		{
-			var client = GetClientOwner();
-
-			Log.Info( "Starting Turn: " + client.Name );
+			Log.Info( "Starting Turn: " + Client.Name );
 
 			if ( showMessage )
-				Game.Instance.AddToast( To.Everyone, this, $"{ client.Name } has started their turn" );
+				Game.Instance.AddToast( To.Everyone, this, $"{ Client.Name } has started their turn" );
 
 			SendSound( To.Single( this ), "ding" );
 

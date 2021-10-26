@@ -25,9 +25,7 @@ namespace PoolGame
 
 		public void Update( Player player, string text, string iconClass = "" )
 		{
-			var client = player.GetClientOwner();
-
-			Avatar.SetTexture( $"avatar:{ client.SteamId }" );
+			Avatar.SetTexture( $"avatar:{ player.Client.SteamId }" );
 			Text.Text = text;
 
 			if ( !string.IsNullOrEmpty( iconClass ) )

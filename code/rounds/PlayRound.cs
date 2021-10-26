@@ -15,10 +15,13 @@ namespace PoolGame
 		public override bool ShowTimeLeft => true;
 
 		public List<Player> Spectators = new();
-		public float PlayerTurnEndTime { get; set; }
+		
+		public RealTimeUntil PlayerTurnEndTime;
+		public TimeSince TimeSinceTurnTaken;
+
 		public bool DidClaimThisTurn { get; private set; }
 		public Sound? ClockTickingSound { get; private set; }
-		public TimeSince TimeSinceTurnTaken { get; private set; }
+
 		public bool HasPlayedFastForwardSound { get; private set; }
 		[Net] public PoolBall BallLikelyToPot { get; set; }
 
@@ -31,6 +34,8 @@ namespace PoolGame
 
 			if ( player == playerOne || player == playerTwo )
 			{
+				GameServices.AbandonGame( true );
+
 				Game.Instance.ChangeRound( new StatsRound() );
 			}
 		}
@@ -194,15 +199,12 @@ namespace PoolGame
 		{
 			if ( Host.IsClient ) return;
 
-			var timeLeft = MathF.Max( PlayerTurnEndTime - Time.Now, 0f );
+			var timeLeft = MathF.Max( PlayerTurnEndTime, 0f );
 
 			var currentPlayer = Game.Instance.CurrentPlayer;
 
-			if ( currentPlayer == null || !currentPlayer.IsValid() )
+			if ( !currentPlayer.IsValid() )
 				return;
-
-			if ( PlayerTurnEndTime > 0f && Time.Now >= PlayerTurnEndTime )
-				currentPlayer.HasStruckWhiteBall = true;
 
 			if ( currentPlayer.HasStruckWhiteBall )
 				return;
@@ -320,7 +322,9 @@ namespace PoolGame
 			// We always start by letting the player choose the white ball location.
 			Game.Instance.CurrentPlayer.StartPlacingWhiteBall();
 
-			PlayerTurnEndTime = Time.Now + 30f;
+			PlayerTurnEndTime = 30f;
+
+			GameServices.StartGame();
 		}
 
 		private void DoPlayerPotBall( Player player, PoolBall ball, BallPotType type )
@@ -333,12 +337,12 @@ namespace PoolGame
 				Number = ball.Number
 			} );
 
-			var client = player.GetClientOwner();
+			GameServices.RecordEvent( player.Client, $"Potted {ball.Number} ({ball.Type})", 1 );
 
 			if ( type == BallPotType.Normal )
-				Game.Instance.AddToast( To.Everyone, player, $"{ client.Name } has potted a ball", ball.GetIconClass() );
+				Game.Instance.AddToast( To.Everyone, player, $"{ player.Client.Name } has potted a ball", ball.GetIconClass() );
 			else if ( type == BallPotType.Claim )
-				Game.Instance.AddToast( To.Everyone, player, $"{ client.Name } has claimed { ball.Type }", ball.GetIconClass() );
+				Game.Instance.AddToast( To.Everyone, player, $"{ player.Client.Name } has claimed { ball.Type }", ball.GetIconClass() );
 
 			var owner = Game.Instance.GetBallPlayer( ball );
 
@@ -348,7 +352,15 @@ namespace PoolGame
 
 		private void DoPlayerWin( Player winner )
 		{
-			var client = winner.GetClientOwner();
+			var client = winner.Client;
+
+			//
+			// Set game results
+			//
+			foreach( var cl in Client.All )
+			{
+				cl.SetGameResult( client == cl ? 1 : 2 );
+			}
 
 			Game.Instance.AddToast( To.Everyone, winner, $"{ client.Name } has won the game", "wins" );
 
@@ -357,10 +369,7 @@ namespace PoolGame
 
 			foreach ( var c in Entity.All.OfType<Player>() )
 			{
-				if ( c == loser )
-					c.SendSound( To.Single( c ), "lose-game" );
-				else
-					c.SendSound( To.Single( c ), "win-game" );
+				c.SendSound( To.Single( c ), c == loser ? "lose-game" : "win-game" );
 			}
 
 			Game.Instance.PreviousWinner = winner;
@@ -372,6 +381,11 @@ namespace PoolGame
 			Game.Instance.UpdateRating( winner );
 			Game.Instance.UpdateRating( loser );
 			Game.Instance.SaveRatings();
+
+			//
+			// Save session
+			//
+			GameServices.EndGame();
 
 			Game.Instance.ChangeRound( new StatsRound() );
 		}

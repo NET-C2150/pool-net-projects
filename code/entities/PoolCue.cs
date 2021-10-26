@@ -146,7 +146,7 @@ namespace PoolGame
 				{
 					GhostBall = new ModelEntity();
 					GhostBall.SetModel( "models/pool/pool_ball.vmdl" );
-					GhostBall.RenderAlpha = 0.4f;
+					GhostBall.RenderColor = Color.White.WithAlpha( 0.4f );
 				}
 
 				if ( sweep.Entity is PoolBall other && !other.CanPlayerHit( controller ) )

@@ -21,7 +21,7 @@ namespace PoolGame
 	{
 		public static string ToMessage( this FoulReason reason, Player player )
 		{
-			var client = player.GetClientOwner();
+			var client = player.Client;
 
 			switch ( reason )
 			{

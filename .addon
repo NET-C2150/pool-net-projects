@@ -1,20 +1,5 @@
 {
-	"name": "Pool",
-	"version": "1.0",
 	"sharedassets": "*.*",
-
-	"depends": 
-	[
-		"base",
-		"rust"
-	],
-	
-	"gamemodes":
-	[
-		{
-			"name": "pool",
-			"title": "Pool",
-			"description": "A classic pub game where your skill is determined by your blood-alcohol content"
-		}
-	]
+	"type": "game",
+	"ident": "facepunch.pool"
 }

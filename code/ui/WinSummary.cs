@@ -50,7 +50,7 @@ namespace PoolGame
 			else
 				Text.Text = "You lost to";
 
-			var opponentClient = opponent.GetClientOwner();
+			var opponentClient = opponent.Client;
 
 			Avatar.SetTexture( $"avatar:{opponentClient.SteamId}" );
 			Name.Text = opponentClient.Name;

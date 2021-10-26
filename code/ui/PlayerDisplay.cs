@@ -47,7 +47,7 @@ namespace PoolGame
 
 			if ( isValid )
 			{
-				var owner = player.GetClientOwner();
+				var owner = player.Client;
 
 				Name.Text = owner.Name;
 

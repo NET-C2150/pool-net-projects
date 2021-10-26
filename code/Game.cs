@@ -70,7 +70,7 @@ namespace PoolGame
 					{
 						ball.Scale = 1f;
 						ball.Position = spawner.Position;
-						ball.RenderAlpha = 1f;
+						ball.RenderColor = ball.RenderColor.WithAlpha(1.0f);
 						ball.PhysicsBody.AngularVelocity = Vector3.Zero;
 						ball.PhysicsBody.Velocity = Vector3.Zero;
 						ball.PhysicsBody.ClearForces();
@@ -179,8 +179,6 @@ namespace PoolGame
 			{
 				if ( entity is PoolBallSpawn spawner )
 				{
-					Log.Info( "Spawning " + spawner.Type.ToString() + " Ball" );
-
 					var ball = new PoolBall
 					{
 						Position = spawner.Position,
@@ -205,8 +203,7 @@ namespace PoolGame
 
 		public void UpdateRating( Player player )
 		{
-			var client = player.GetClientOwner();
-			_ratings[client.SteamId] = player.Elo.Rating;
+			_ratings[player.Client.SteamId] = player.Elo.Rating;
 		}
 
 		public void SaveRatings()
@@ -294,7 +291,7 @@ namespace PoolGame
 
 		public override void Simulate( Client client )
 		{
-			if ( Cue != null && Cue.IsValid() && Cue.IsClientOwner( client ) )
+			if ( Cue != null && Cue.IsValid() && Cue.Client == client )
 				Cue.Simulate( client );
 
 			base.Simulate( client );
