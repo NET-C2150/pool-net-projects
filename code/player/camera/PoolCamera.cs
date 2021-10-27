@@ -9,8 +9,8 @@ namespace PoolGame
 		{
 			if ( Local.Pawn is Player player )
 			{
-				Pos = player.Position;
-				Rot = player.Rotation;
+				Position = player.Position;
+				Rotation = player.Rotation;
 			}
 
 			base.Activated();
@@ -21,8 +21,8 @@ namespace PoolGame
 			if ( Local.Pawn is Player player )
 			{
 				FieldOfView = 20f;
-				Pos = Pos.LerpTo( player.Position, Time.Delta );
-				Rot = player.Rotation;
+				Position = Position.LerpTo( player.Position, Time.Delta );
+				Rotation = player.Rotation;
 			}
 
 			Viewer = null;
