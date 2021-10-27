@@ -359,7 +359,7 @@ namespace PoolGame
 			//
 			foreach( var cl in Client.All )
 			{
-				cl.SetGameResult( client == cl ? 1 : 2 );
+				cl.SetGameResult( client == cl ? GameplayResult.Win : GameplayResult.Lose, (cl.Pawn as Player)?.Score ?? 0 );
 			}
 
 			Game.Instance.AddToast( To.Everyone, winner, $"{ client.Name } has won the game", "wins" );
