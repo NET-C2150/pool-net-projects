@@ -354,18 +354,13 @@ namespace PoolGame
 		{
 			var client = winner.Client;
 
-			//
-			// Set game results
-			//
-			foreach( var cl in Client.All )
-			{
-				cl.SetGameResult( client == cl ? GameplayResult.Win : GameplayResult.Lose, (cl.Pawn as Player)?.Score ?? 0 );
-			}
-
 			Game.Instance.AddToast( To.Everyone, winner, $"{ client.Name } has won the game", "wins" );
 
 			var loser = Game.Instance.GetOtherPlayer( winner );
 			winner.Elo.Update( loser.Elo, EloOutcome.Win );
+
+			winner.Client.SetGameResult( GameplayResult.Win, winner.Score );
+			loser.Client.SetGameResult( GameplayResult.Lose, loser.Score );
 
 			foreach ( var c in Entity.All.OfType<Player>() )
 			{
