@@ -354,14 +354,6 @@ namespace PoolGame
 		{
 			var client = winner.Client;
 
-			//
-			// Set game results
-			//
-			foreach( var cl in Client.All )
-			{
-				cl.SetGameResult( client == cl ? 1 : 2 );
-			}
-
 			Game.Instance.AddToast( To.Everyone, winner, $"{ client.Name } has won the game", "wins" );
 
 			var loser = Game.Instance.GetOtherPlayer( winner );
@@ -381,6 +373,9 @@ namespace PoolGame
 			Game.Instance.UpdateRating( winner );
 			Game.Instance.UpdateRating( loser );
 			Game.Instance.SaveRatings();
+
+			winner.Client.SetGameResult( GameplayResult.Win );
+			loser.Client.SetGameResult( GameplayResult.Lose );
 
 			//
 			// Save session
