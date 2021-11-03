@@ -165,11 +165,12 @@ namespace PoolGame
 			}
 			else
 			{
-				// TODO: If this is the side entity (no way to determine it yet.)
-				/*
-				var sound = PlaySound( "ball-hit-side" );
-				sound.SetPitch( Rand.Float( 0.8f, 1f ) );
-				*/
+				if ( Math.Abs( eventData.Normal.x ) >= 0.5f || Math.Abs( eventData.Normal.y ) >= 0.5f )
+				{
+					var sound = PlaySound( "ball-hit-side" );
+					sound.SetPitch( Rand.Float( 0.9f, 1f ) );
+					sound.SetVolume( (1f / 100f) * eventData.Speed );
+				}
 			}
 
 			Velocity = eventData.PostVelocity.WithZ( 0f );
