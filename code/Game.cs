@@ -33,12 +33,12 @@ namespace PoolGame
 		[Net] public Player CurrentPlayer { get; set; }
 		[Net] public Player PlayerOne { get; set; }
 		[Net] public Player PlayerTwo { get; set; }
-		[Net] public List<PotHistoryItem> PotHistory { get; set; } = new();
+		[Net] public IList<PotHistoryItem> PotHistory { get; set; }
 		[Net, Change] public bool IsFastForwarding { get; set; }
 
 		private FastForward _fastForwardHud;
 		private WinSummary _winSummaryHud;
-		private Dictionary<ulong, int> _ratings;
+		private Dictionary<long, int> _ratings;
 		private BaseRound _lastRound;
 
 		[ServerVar( "pool_min_players", Help = "The minimum players required to start." )]
@@ -203,7 +203,7 @@ namespace PoolGame
 
 		public void UpdateRating( Player player )
 		{
-			_ratings[player.Client.SteamId] = player.Elo.Rating;
+			_ratings[player.Client.PlayerId] = player.Elo.Rating;
 		}
 
 		public void SaveRatings()
@@ -279,7 +279,7 @@ namespace PoolGame
 		{
 			var player = new Player();
 
-			if ( _ratings.TryGetValue( client.SteamId, out var rating ) )
+			if ( _ratings.TryGetValue( client.PlayerId, out var rating ) )
 				player.Elo.Rating = rating;
 
 			client.Pawn = player;
@@ -350,7 +350,7 @@ namespace PoolGame
 
 		private void LoadRatings()
 		{
-			_ratings = FileSystem.Mounted.ReadJsonOrDefault<Dictionary<ulong, int>>( "data/pool/ratings.json" ) ?? new();
+			_ratings = FileSystem.Mounted.ReadJsonOrDefault<Dictionary<long, int>>( "data/pool/ratings.json" ) ?? new();
 		}
 
 		private void CheckMinimumPlayers()

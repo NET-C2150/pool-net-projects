@@ -52,7 +52,7 @@ namespace PoolGame
 
 			var opponentClient = opponent.Client;
 
-			Avatar.SetTexture( $"avatar:{opponentClient.SteamId}" );
+			Avatar.SetTexture( $"avatar:{opponentClient.PlayerId}" );
 			Name.Text = opponentClient.Name;
 
 			RankIcon.Update( opponent.Elo.GetRank(), opponent.Elo.GetLevel() );

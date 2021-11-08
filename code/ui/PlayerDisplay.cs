@@ -51,7 +51,7 @@ namespace PoolGame
 
 				Name.Text = owner.Name;
 
-				Avatar.SetTexture( $"avatar:{ owner.SteamId }" );
+				Avatar.SetTexture( $"avatar:{ owner.PlayerId }" );
 
 				var rank = player.Elo.GetRank();
 				var level = player.Elo.GetLevel();
