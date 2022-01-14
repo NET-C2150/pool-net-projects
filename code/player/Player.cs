@@ -3,7 +3,7 @@ using Sandbox.Joints;
 using System;
 using System.Linq;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	public partial class Player : Entity
 	{

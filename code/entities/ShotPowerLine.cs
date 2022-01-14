@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	[Library( "shot_power_arrow" )]
 	public partial class ShotPowerLine : RenderEntity

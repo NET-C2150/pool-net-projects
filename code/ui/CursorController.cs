@@ -4,7 +4,7 @@ using Sandbox.UI;
 using Sandbox.UI.Construct;
 using System;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	public class CursorController : Panel
 	{

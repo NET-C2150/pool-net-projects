@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	[Library( "trigger_white_area" )]
 	public partial class TriggerWhiteArea : BaseTrigger

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	[Library( "white_area_quad" )]
 	public partial class WhiteAreaQuad : RenderEntity

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	[Library( "pool_ball_spawn" )]
 	[Hammer.EditorModel( "models/pool/pool_ball.vmdl" )]

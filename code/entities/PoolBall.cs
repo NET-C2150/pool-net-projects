@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	[Library( "pool_ball" )]
 	public partial class PoolBall : ModelEntity

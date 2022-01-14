@@ -6,7 +6,7 @@ using Sandbox.UI.Tests;
 using System;
 using System.Collections.Generic;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	public class RankIcon : Panel
 	{

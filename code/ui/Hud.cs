@@ -5,7 +5,7 @@ using Sandbox.UI.Construct;
 using System;
 using System.Threading.Tasks;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	[Library]
 	public partial class Hud : HudEntity<RootPanel>

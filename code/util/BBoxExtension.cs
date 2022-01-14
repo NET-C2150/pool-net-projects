@@ -1,7 +1,7 @@
 ﻿using System;
 using Sandbox;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	public static class BBoxExtension
 	{

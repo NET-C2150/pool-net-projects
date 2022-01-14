@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using System;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	public partial class PoolCamera : Camera
 	{

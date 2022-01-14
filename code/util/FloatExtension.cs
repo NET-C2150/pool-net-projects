@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PoolGame
+namespace Facepunch.Pool
 {
 	public static class FloatExtension
 	{
