@@ -3,7 +3,7 @@ using System;
 
 namespace Facepunch.Pool
 {
-	public partial class PoolCamera : Camera
+	public partial class PoolCamera : CameraMode
 	{
 		public override void Activated()
 		{

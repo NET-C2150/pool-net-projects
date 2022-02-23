@@ -126,15 +126,15 @@ namespace Facepunch.Pool
 				.Run();
 
 			ShotPowerLine.IsEnabled = true;
-			ShotPowerLine.Position = trace.StartPos;
+			ShotPowerLine.Position = trace.StartPosition;
 			ShotPowerLine.ShotPower = ShotPower;
-			ShotPowerLine.EndPos = trace.EndPos;
+			ShotPowerLine.EndPos = trace.EndPosition;
 			ShotPowerLine.Color = Color.Green;
 			ShotPowerLine.Width = 0.1f + ((0.15f / 100f) * ShotPower);
 
 			var fromTransform = whiteBall.PhysicsBody.Transform;
 			var toTransform = whiteBall.PhysicsBody.Transform;
-			toTransform.Position = trace.EndPos;
+			toTransform.Position = trace.EndPosition;
 
 			var sweep = Trace.Sweep( whiteBall.PhysicsBody, fromTransform, toTransform )
 				.Ignore( whiteBall )
@@ -160,7 +160,7 @@ namespace Facepunch.Pool
 				}
 
 				GhostBall.EnableDrawing = true;
-				GhostBall.Position = sweep.EndPos;
+				GhostBall.Position = sweep.EndPosition;
 			}
 		}
 
@@ -208,14 +208,14 @@ namespace Facepunch.Pool
 
 		private void HandleWhiteBallPlacement( Player controller, PoolBall whiteBall )
 		{
-			var cursorTrace = Trace.Ray( controller.EyePos, controller.EyePos + Input.Cursor.Direction * 1000f )
+			var cursorTrace = Trace.Ray( controller.EyePosition, controller.EyePosition + Input.Cursor.Direction * 1000f )
 				.WorldOnly()
 				.Run();
 
 			var whiteArea = Game.Instance.WhiteArea;
 			var whiteAreaWorldOBB = whiteArea.CollisionBounds.ToWorldSpace( whiteArea );
 
-			whiteBall.TryMoveTo( cursorTrace.EndPos, whiteAreaWorldOBB );
+			whiteBall.TryMoveTo( cursorTrace.EndPosition, whiteAreaWorldOBB );
 
 			if ( Input.Released( InputButton.Attack1 ) )
 				controller.StopPlacingWhiteBall();
@@ -223,7 +223,7 @@ namespace Facepunch.Pool
 
 		private void HandlePowerSelection( Player controller )
 		{
-			var cursorPlaneEndPos = controller.EyePos + Input.Cursor.Direction * 350f;
+			var cursorPlaneEndPos = controller.EyePosition + Input.Cursor.Direction * 350f;
 			var distanceToCue = cursorPlaneEndPos.Distance( Position - Rotation.Forward * 100f );
 			var cuePullBackDelta = (_lastPowerDistance - distanceToCue) * Time.Delta * 20f;
 
@@ -245,7 +245,7 @@ namespace Facepunch.Pool
 			if ( IsMakingShot ) return true;
 
 			var tablePlane = new Plane( ballCenter, Vector3.Up );
-			var hitPos = tablePlane.Trace( new Ray( controller.EyePos, Input.Cursor.Direction ), true );
+			var hitPos = tablePlane.Trace( new Ray( controller.EyePosition, Input.Cursor.Direction ), true );
 
 			if ( !hitPos.HasValue ) return false;
 

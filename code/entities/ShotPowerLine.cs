@@ -22,7 +22,7 @@ namespace Facepunch.Pool
 		{
 			if ( IsEnabled )
 			{
-				Render.SetLighting( sceneObject );
+				Render.SetupLighting( sceneObject );
 
 				var vertexBuffer = Render.GetDynamicVB( true );
 				var widthOffset = Vector3.Cross( ( EndPos - Position).Normal, Vector3.Up ) * Width;
@@ -36,8 +36,8 @@ namespace Facepunch.Pool
 
 				vertexBuffer.AddQuad( a, b, c, d );
 
-				Render.Set( "Opacity", 0.5f + ( ( 0.5f / 100f ) * powerFraction ) );
-				Render.Set( "Color", Color );
+				Render.Attributes.Set( "Opacity", 0.5f + ( ( 0.5f / 100f ) * powerFraction ) );
+				Render.Attributes.Set( "Color", Color );
 
 				vertexBuffer.Draw( LineMaterial );
 
@@ -52,7 +52,7 @@ namespace Facepunch.Pool
 
 				vertexBuffer.AddQuad( a, b, c, d );
 
-				Render.Set( "Opacity", powerFraction );
+				Render.Attributes.Set( "Opacity", powerFraction );
 
 				vertexBuffer.Draw( PowerCircleMaterial );
 			}

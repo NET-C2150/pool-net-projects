@@ -409,7 +409,7 @@ namespace Facepunch.Pool
 
 				foreach ( var pocket in pockets )
 				{
-					if ( pocket.Position.Distance( sweep.EndPos ) <= 5f )
+					if ( pocket.Position.Distance( sweep.EndPosition ) <= 5f )
 						return ball;
 
 					if ( ball.Position.Distance( pocket.Position ) <= 5f )

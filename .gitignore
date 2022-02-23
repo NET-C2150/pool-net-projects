@@ -7,3 +7,5 @@ sbox-pool.csproj
 .intermediate
 *bakeresourcecache*
 tools_*_*.bin
+*.csproj
+.vs

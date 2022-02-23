@@ -1,14 +1,12 @@
 {
-  "SharedAssets": "*.*",
   "Title": "Pool",
   "Type": "game",
   "Org": "facepunch",
   "Ident": "pool",
-  "FullIdent": "facepunch.pool",
   "Schema": 1,
-  "NeedsUpgrade": false,
   "HasAssets": true,
   "AssetsPath": "",
+  "ResourcePaths": null,
   "HasCode": true,
   "CodePath": "code",
   "RootNamespace": "Facepunch.Pool"

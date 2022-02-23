@@ -1,5 +1,4 @@
 ﻿using Sandbox;
-using Sandbox.Joints;
 using System;
 using System.Linq;
 
@@ -30,6 +29,19 @@ namespace Facepunch.Pool
 				} );
 
 				return balls.Count();
+			}
+		}
+
+		public PoolCamera Camera
+		{
+			get => Components.Get<PoolCamera>();
+			set
+			{
+				var current = Camera;
+				if ( current == value ) return;
+
+				Components.RemoveAny<PoolCamera>();
+				Components.Add( value );
 			}
 		}
 
