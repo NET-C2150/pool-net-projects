@@ -16,6 +16,8 @@
     ],
     "MinPlayers": 1,
     "MaxPlayers": 2,
-    "MapSelect": 1
+    "MapSelect": 1,
+    "RankType": 1,
+    "LeaderboardType": 1
   }
 }
