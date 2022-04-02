@@ -6,7 +6,11 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "ResourcePaths": null,
+  "ResourcePaths": [
+    "/ui/pool/*",
+    "/sounds/*",
+    "/surfaces/*"
+  ],
   "HasCode": true,
   "CodePath": "code",
   "RootNamespace": "Facepunch.Pool",
