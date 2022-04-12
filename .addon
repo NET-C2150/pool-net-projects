@@ -6,8 +6,22 @@
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
-  "ResourcePaths": null,
+  "ResourcePaths": [
+    "/ui/pool/*",
+    "/sounds/*",
+    "/surfaces/*"
+  ],
   "HasCode": true,
   "CodePath": "code",
-  "RootNamespace": "Facepunch.Pool"
+  "RootNamespace": "Facepunch.Pool",
+  "Metadata": {
+    "MapList": [
+      "pool_lounge_v2"
+    ],
+    "MinPlayers": 1,
+    "MaxPlayers": 2,
+    "MapSelect": 1,
+    "RankType": 1,
+    "LeaderboardType": 1
+  }
 }
