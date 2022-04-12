@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 namespace Facepunch.Pool
 {
 	[Library( "trigger_white_area" )]
+	[Display( Name = "White Area", GroupName = "Pool" )]
 	public partial class TriggerWhiteArea : BaseTrigger
 	{
 		public WhiteAreaQuad Quad { get; set; }
